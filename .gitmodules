@@ -1,0 +1,3 @@
+[submodule "canvas-game-engine"]
+	path = canvas-game-engine
+	url = https://github.com/dylanclarke890/canvas-game-engine.git
