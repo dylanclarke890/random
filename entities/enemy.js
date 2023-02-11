@@ -1,11 +1,28 @@
 import { Entity } from "../canvas-game-engine/modules/core/entity.js";
-import { Guard } from "../canvas-game-engine/modules/lib/guard.js";
 
 class Enemy extends Entity {
-  constructor({ assetRoot, ...rest }) {
-    super(rest);
-    Guard.againstNull({ assetRoot });
+  static get_sequence(start) {
+    start ??= 0;
+    return Array.from({ length: 20 }, (_v, i) => i + start);
+  }
+  static threeFrames = 0.03;
+
+  constructor({ spritesheetName, ...opts }) {
+    super(opts);
+    this.createAnimationSheet(`assets/spritesheets/${spritesheetName}.png`, { x: 64, y: 60 });
+    const t = Enemy.threeFrames;
+    this.addAnim("attack", t, Enemy.get_sequence(0), false);
+    this.addAnim("die", t, Enemy.get_sequence(20), false);
+    this.addAnim("hurt", t, Enemy.get_sequence(40), false);
+    this.addAnim("idle", t, Enemy.get_sequence(60), false);
+    this.addAnim("jump", t, Enemy.get_sequence(80), false);
+    this.addAnim("run", t, Enemy.get_sequence(100), false);
+    this.addAnim("walk", t, Enemy.get_sequence(120), false);
   }
 }
 
-export class Enemy_Pitchfork extends Enemy {}
+export class Enemy_Pitchfork extends Enemy {
+  constructor(opts) {
+    super({ spritesheetName: "pitchfork_guy", ...opts });
+  }
+}
