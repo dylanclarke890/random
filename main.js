@@ -8,5 +8,5 @@ new GameRunner({
   width: 768,
   height: 624,
   debugMode: false,
-  fonts: { standard: "arcade-classic.TTF" },
+  fonts: { standard: "assets/arcade-classic.TTF" },
 });
