@@ -1,4 +1,5 @@
 import { Entity } from "../canvas-game-engine/modules/core/entity.js";
+import { Register } from "../canvas-game-engine/modules/core/register.js";
 
 class Enemy extends Entity {
   static get_sequence(start) {
@@ -18,6 +19,7 @@ class Enemy extends Entity {
     this.addAnim("jump", t, Enemy.get_sequence(80), false);
     this.addAnim("run", t, Enemy.get_sequence(100), false);
     this.addAnim("walk", t, Enemy.get_sequence(120), false);
+    this.currentAnim = this.anims.idle;
   }
 }
 
@@ -26,3 +28,6 @@ export class Enemy_Pitchfork extends Enemy {
     super({ spritesheetName: "pitchfork_guy", ...opts });
   }
 }
+
+Register.entityTypes(Enemy_Pitchfork);
+Register.preloadImages("assets/spritesheets/pitchfork_guy.png");
