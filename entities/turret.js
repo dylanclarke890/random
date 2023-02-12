@@ -1,6 +1,6 @@
 import { Entity } from "../canvas-game-engine/modules/core/entity.js";
 import { Register } from "../canvas-game-engine/modules/core/register.js";
-import { RandomGame } from "../game.js";
+import { TowerDefenseGame } from "../game.js";
 
 class TurretBase extends Entity {
   _levelEditorIgnore = true;
@@ -80,7 +80,7 @@ export class TurretSelector extends Entity {
   }
 
   snapToGrip(val) {
-    return RandomGame.MAP_TILE_SIZE * Math.round(val / RandomGame.MAP_TILE_SIZE);
+    return TowerDefenseGame.MAP_TILE_SIZE * Math.round(val / TowerDefenseGame.MAP_TILE_SIZE);
   }
 
   setPosition({ x, y }) {
@@ -98,8 +98,8 @@ export class TurretSelector extends Entity {
     this.selected.pos.y = y;
 
     // Check if the selected turret is in a valid area by comparing its position with the map data's
-    x /= RandomGame.MAP_TILE_SIZE;
-    y /= RandomGame.MAP_TILE_SIZE;
+    x /= TowerDefenseGame.MAP_TILE_SIZE;
+    y /= TowerDefenseGame.MAP_TILE_SIZE;
     this.isValidPosition = true;
 
     // Check if any of the positions of the selected turret are on invalid tiles
