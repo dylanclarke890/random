@@ -56,22 +56,37 @@ export class Cannon extends Entity {
   }
 }
 
+/** @inheritdoc */
 export class TurretSelector extends Entity {
   /** @type {Entity} */
   selected;
+  isValidPosition = true;
+
+  collides = Entity.COLLIDES.LITE;
 
   constructor(opts) {
     super(opts);
   }
 
-  setPosition(pos) {
+  snapToGrip(val) {
+    return 32 * Math.round(val / 32);
+  }
+
+  setPosition({ x, y }) {
     if (!this.selected) return;
-    this.selected.pos.x = pos.x;
-    this.selected.pos.y = pos.y;
+    // Center the selected turret on the mouse position
+    x = x - this.selected.size.x / 2;
+    y = y - this.selected.size.y / 2;
+    // Snap to grid
+
+    x = this.snapToGrip(x);
+    y = this.snapToGrip(y);
+
+    this.selected.pos.x = x;
+    this.selected.pos.y = y;
   }
 
   setSelected(turretType) {
-    if (this.selected) this.selected.kill();
     this.selected = new turretType({ x: this.pos.x, y: this.pos.y, game: this.game });
     this.selected.setAlpha(0.5);
   }
@@ -80,13 +95,23 @@ export class TurretSelector extends Entity {
     if (!this.selected) return;
     this.selected.draw();
     const { ctx } = this.game.system;
-    ctx.strokeStyle = "yellow";
+    ctx.strokeStyle = this.isValidPosition ? "green" : "red";
     const lineWidth = 2;
     ctx.lineWidth = lineWidth;
-    const { x, y } = this.selected.base.pos;
-    const x2 = this.selected.base.size.x + lineWidth;
-    const y2 = this.selected.base.size.y + lineWidth;
+    const { x, y } = this.selected.pos;
+    const x2 = this.selected.size.x + lineWidth;
+    const y2 = this.selected.size.y + lineWidth;
     ctx.strokeRect(x - lineWidth, y - lineWidth, x2, y2);
+  }
+
+  update() {
+    return; // not needed.
+  }
+
+  handleMovementTrace(res) {
+    const { collision } = res;
+    this.isValidPosition = !collision.x && !collision.y && !collision.slope;
+    super.handleMovementTrace(res);
   }
 }
 
