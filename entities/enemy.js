@@ -10,6 +10,7 @@ class Enemy extends Entity {
 
   constructor({ spritesheetName, ...opts }) {
     super(opts);
+    this.size = { x: 64, y: 64 };
     this.createAnimationSheet(`assets/spritesheets/${spritesheetName}.png`, { x: 64, y: 60 });
     const t = Enemy.threeFrames;
     this.addAnim("attack", t, Enemy.get_sequence(0), false);
