@@ -1,7 +1,7 @@
 import { Entity } from "../canvas-game-engine/modules/core/entity.js";
 import { Register } from "../canvas-game-engine/modules/core/register.js";
 
-class TowerBase extends Entity {
+class TurretBase extends Entity {
   _levelEditorIgnore = true;
   constructor(opts) {
     super(opts);
@@ -34,7 +34,7 @@ export class Cannon extends Entity {
   constructor(opts) {
     super(opts);
     this.size = { x: 64, y: 64 };
-    this.base = new TowerBase({ game: this.game }, this.pos);
+    this.base = new TurretBase({ game: this.game }, this.pos);
     this.head = new Cannon_Head({ game: this.game }, this.pos);
   }
 
@@ -49,8 +49,46 @@ export class Cannon extends Entity {
     this.base.update();
     this.head.update();
   }
+
+  setAlpha(alpha) {
+    this.base.currentAnim.alpha = alpha;
+    this.head.currentAnim.alpha = alpha;
+  }
 }
 
-Register.entityTypes(Cannon);
+export class TurretSelector extends Entity {
+  /** @type {Entity} */
+  selected;
+
+  constructor(opts) {
+    super(opts);
+  }
+
+  setPosition(pos) {
+    if (!this.selected) return;
+    this.selected.pos.x = pos.x;
+    this.selected.pos.y = pos.y;
+  }
+
+  setSelected(turretType) {
+    this.selected = new turretType({ x: this.pos.x, y: this.pos.y, game: this.game });
+    this.selected.setAlpha(0.5);
+  }
+
+  draw() {
+    if (!this.selected) return;
+    this.selected.draw();
+    const { ctx } = this.game.system;
+    ctx.strokeStyle = "yellow";
+    const lineWidth = 2;
+    ctx.lineWidth = lineWidth;
+    const { x, y } = this.selected.base.pos;
+    const x2 = this.selected.base.size.x + lineWidth;
+    const y2 = this.selected.base.size.y + lineWidth;
+    ctx.strokeRect(x - lineWidth, y - lineWidth, x2, y2);
+  }
+}
+
+Register.entityTypes(Cannon, TurretSelector);
 const turretRoot = "assets/turrets/";
 Register.preloadImages(`${turretRoot}Cannon.png`, `${turretRoot}Tower.png`);
