@@ -5,6 +5,9 @@ import { baseLevel } from "./levels/baseLevel.js";
 
 export class RandomGame extends Game {
   static MAP_TILE_SIZE = 32;
+  /** @type {TurretSelector}  */
+  turretSelector;
+
   constructor(opts) {
     super(opts);
     this.loadLevel(baseLevel);
@@ -19,8 +22,8 @@ export class RandomGame extends Game {
 
   update() {
     this.turretSelector.setPosition(this.input.mouse);
-    if (this.input.pressed("place_cannon")) {
-      let { x, y } = this.input.mouse;
+    if (this.turretSelector.isValidPosition && this.input.pressed("place_cannon")) {
+      let { x, y } = this.turretSelector.selected.pos;
       this.spawnEntity(Cannon, x, y);
     }
     super.update();

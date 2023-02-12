@@ -64,9 +64,16 @@ export class TurretSelector extends Entity {
   isValidPosition = true;
 
   collides = Entity.COLLIDES.LITE;
+  /** @type {number[][]} */
+  buildPositions;
+  mapWidth;
+  mapHeight;
 
   constructor(opts) {
     super(opts);
+    this.buildPositions = this.game.backgroundMaps.find((map) => map.name === "build_sites").data;
+    this.mapHeight = this.buildPositions.length;
+    this.mapWidth = this.buildPositions[0].length;
   }
 
   snapToGrip(val) {
@@ -78,13 +85,34 @@ export class TurretSelector extends Entity {
     // Center the selected turret on the mouse position
     x = x - this.selected.size.x / 2;
     y = y - this.selected.size.y / 2;
-    // Snap to grid
 
+    // Snap to grid
     x = this.snapToGrip(x);
     y = this.snapToGrip(y);
 
     this.selected.pos.x = x;
     this.selected.pos.y = y;
+
+    // Check if the selector is in a valid area by comparing its position with the map data's
+    x /= RandomGame.MAP_TILE_SIZE;
+    y /= RandomGame.MAP_TILE_SIZE;
+
+    this.isValidPosition = true;
+
+    if (x < 0 || y < 0 || x > this.mapWidth || y > this.mapHeight) {
+      this.isValidPosition = false;
+      return;
+    }
+    x = Math.abs(x);
+    y = Math.abs(y);
+
+    const positions = [
+      this.buildPositions[y][x],
+      this.buildPositions[y][x + 1],
+      this.buildPositions[y + 1][x],
+      this.buildPositions[y + 1][x + 1],
+    ];
+    this.isValidPosition = !positions.some((pos) => pos !== 1);
   }
 
   setSelected(turretType) {
@@ -107,12 +135,6 @@ export class TurretSelector extends Entity {
 
   update() {
     return; // not needed.
-  }
-
-  handleMovementTrace(res) {
-    const { collision } = res;
-    this.isValidPosition = !collision.x && !collision.y && !collision.slope;
-    super.handleMovementTrace(res);
   }
 }
 
