@@ -7,6 +7,6 @@ new GameRunner({
   fps: 60,
   width: 768,
   height: 640,
-  debugMode: false,
+  debugMode: true,
   fonts: { standard: "assets/arcade-classic.TTF" },
 });

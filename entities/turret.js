@@ -65,7 +65,6 @@ export class TurretSelector extends Entity {
   turretType;
   isValidPosition = true;
 
-  collides = Entity.COLLIDES.LITE;
   /** @type {number[][]} */
   buildPositions;
   mapWidth;
@@ -73,9 +72,11 @@ export class TurretSelector extends Entity {
 
   constructor(opts) {
     super(opts);
-    this.buildPositions = this.game.backgroundMaps.find((map) => map.name === "build_sites").data;
-    this.mapHeight = this.buildPositions.length;
-    this.mapWidth = this.buildPositions[0].length;
+    this.buildPositions = this.game.backgroundMaps?.find((map) => map.name === "build_sites")?.data;
+    if (this.buildPositions) {
+      this.mapHeight = this.buildPositions.length;
+      this.mapWidth = this.buildPositions[0].length;
+    }
   }
 
   snapToGrip(val) {
@@ -131,10 +132,12 @@ export class TurretSelector extends Entity {
   draw() {
     if (!this.selected) return;
     this.selected.draw();
+
     const { ctx } = this.game.system;
     ctx.strokeStyle = this.isValidPosition ? "green" : "red";
     const lineWidth = 2;
     ctx.lineWidth = lineWidth;
+
     const { x, y } = this.selected.pos;
     const x2 = this.selected.size.x + lineWidth;
     const y2 = this.selected.size.y + lineWidth;
