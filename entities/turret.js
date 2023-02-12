@@ -1,5 +1,6 @@
 import { Entity } from "../canvas-game-engine/modules/core/entity.js";
 import { Register } from "../canvas-game-engine/modules/core/register.js";
+import { RandomGame } from "../game.js";
 
 class TurretBase extends Entity {
   _levelEditorIgnore = true;
@@ -69,7 +70,7 @@ export class TurretSelector extends Entity {
   }
 
   snapToGrip(val) {
-    return 32 * Math.round(val / 32);
+    return RandomGame.MAP_TILE_SIZE * Math.round(val / RandomGame.MAP_TILE_SIZE);
   }
 
   setPosition({ x, y }) {
