@@ -71,6 +71,7 @@ export class TurretSelector extends Entity {
   }
 
   setSelected(turretType) {
+    if (this.selected) this.selected.kill();
     this.selected = new turretType({ x: this.pos.x, y: this.pos.y, game: this.game });
     this.selected.setAlpha(0.5);
   }
