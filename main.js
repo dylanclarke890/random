@@ -6,7 +6,7 @@ new GameRunner({
   gameClass: RandomGame,
   fps: 60,
   width: 768,
-  height: 624,
-  debugMode: false,
+  height: 640,
+  debugMode: true,
   fonts: { standard: "assets/arcade-classic.TTF" },
 });
