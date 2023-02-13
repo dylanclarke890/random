@@ -195,7 +195,7 @@ export class TurretSelector extends Entity {
     }
   }
 
-  snapToGrip(val) {
+  snapToGrid(val) {
     return TowerDefenseGame.MAP_TILE_SIZE * Math.round(val / TowerDefenseGame.MAP_TILE_SIZE);
   }
 
@@ -207,8 +207,8 @@ export class TurretSelector extends Entity {
     y = y - this.selected.size.y / 2;
 
     // Snap the selected turret to the grid to grid
-    x = this.snapToGrip(x);
-    y = this.snapToGrip(y);
+    x = this.snapToGrid(x);
+    y = this.snapToGrid(y);
 
     this.selected.pos.x = x;
     this.selected.pos.y = y;
