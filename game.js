@@ -15,11 +15,20 @@ export class TowerDefenseGame extends Game {
   pathfinder;
   /** @type {number[][]}  */
   path;
+  selected;
+
+  MODE = {
+    selectTurret: 0,
+    placeTurret: 1,
+  };
+  mode = this.MODE.selectTurret;
 
   constructor(opts) {
     super(opts);
     this.loadLevel(baseLevel);
-    this.input.bind(Input.KEY.MOUSE1, "place_cannon");
+    this.input.bind(Input.KEY.MOUSE1, "action");
+    this.input.bind(Input.KEY.Q, "modePlaceTurret");
+    this.input.bind(Input.KEY.ESC, "modeSelectTurret");
 
     this.pathfinder = new PathFinder({
       algorithm: Algorithm.AStar,
@@ -43,6 +52,27 @@ export class TowerDefenseGame extends Game {
       .repeat();
   }
 
+  action() {
+    switch (this.mode) {
+      case this.MODE.placeTurret: {
+        if (!this.turretSelector.isValidPosition) return;
+        const { x, y } = this.turretSelector.selected.pos;
+        this.spawnEntity(Cannon, x, y);
+        return;
+      }
+      case this.MODE.selectTurret: {
+        if (this.selected == null) return;
+        if (!this.selected.base.anyClickablesInFocus()) {
+          this.selected.range.show = false;
+          this.selected = null;
+        }
+        return;
+      }
+      default:
+        return;
+    }
+  }
+
   draw() {
     super.draw();
     this.drawPath();
@@ -64,12 +94,14 @@ export class TowerDefenseGame extends Game {
 
   update() {
     this.turretSelector.setPosition(this.input.mouse);
-
-    if (this.turretSelector.isValidPosition && this.input.pressed("place_cannon")) {
-      const { x, y } = this.turretSelector.selected.pos;
-      this.spawnEntity(Cannon, x, y);
+    if (this.input.pressed("modeSelectTurret")) {
+      this.mode = this.MODE.selectTurret;
+      this.turretSelector.selected.base._clickableIgnore = true;
+    } else if (this.input.pressed("modePlaceTurret")) {
+      this.mode = this.MODE.placeTurret;
+      this.turretSelector.selected.base._clickableIgnore = false;
     }
-
+    if (this.input.pressed("action")) this.action();
     this.chain.update();
     super.update();
   }

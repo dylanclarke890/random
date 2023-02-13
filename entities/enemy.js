@@ -8,11 +8,12 @@ class Enemy extends Entity {
   }
   static framesToSecs = (frames) => (1 / 60) * frames;
 
+  collides = Entity.COLLIDES.ACTIVE;
+  currentWaypoint = 0;
+  health = 20;
+  offset = { x: 32, y: 32 };
   speed = 1;
   vel = { x: 0, y: 0 };
-  offset = { x: 32, y: 32 };
-  currentWaypoint = 0;
-  collides = Entity.COLLIDES.ACTIVE;
 
   constructor({ spritesheetName, ...opts }) {
     super(opts);

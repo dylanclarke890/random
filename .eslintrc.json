@@ -11,10 +11,7 @@
         "sourceType": "module"
     },
     "rules": {
-        "indent": [
-            "error",
-            2
-        ],
+        "indent": "off",
         "linebreak-style": "off",
         "quotes": [
             "error",

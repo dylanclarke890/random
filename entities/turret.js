@@ -2,11 +2,13 @@ import { Entity } from "../canvas-game-engine/modules/core/entity.js";
 import { Register } from "../canvas-game-engine/modules/core/register.js";
 import { removeItem } from "../canvas-game-engine/modules/lib/array-utils.js";
 import { EventChain } from "../canvas-game-engine/modules/lib/event-chain.js";
+import { mix } from "../canvas-game-engine/modules/lib/mixin.js";
 import { toRad } from "../canvas-game-engine/modules/lib/number-utils.js";
+import { ClickableMixin } from "../canvas-game-engine/modules/plugins/clickable.js";
 import { TowerDefenseGame } from "../game.js";
 import { Enemy_Pitchfork, Bullet_Cannon } from "./entities.js";
 
-class TurretBase extends Entity {
+class TurretBase extends mix(Entity).with(ClickableMixin) {
   _levelEditorIgnore = true;
   constructor(opts) {
     super(opts);
@@ -19,17 +21,23 @@ class TurretBase extends Entity {
     this.pos.x = pos.x;
     this.pos.y = pos.y;
   }
+
+  onClick() {
+    this.turret.onSelected();
+  }
 }
 
 class TurretRange extends Entity {
   r = 100;
   alpha = 0.5;
+  show = false;
 
   constructor(opts) {
     super(opts);
   }
 
   draw() {
+    if (!this.show) return;
     const { ctx } = this.game.system;
     ctx.globalAlpha = this.alpha;
     ctx.fillStyle = "white";
@@ -138,11 +146,10 @@ export class Cannon extends Entity {
       const enemy = enemies[i];
       for (let j = 0; j < this.activeBullets.length; j++) {
         const bullet = this.activeBullets[j];
-        if (enemy.touches(bullet)) {
-          enemy.receiveDamage(bullet.damage);
-          bullet.kill();
-          removeItem(this.activeBullets, bullet);
-        }
+        if (!enemy.touches(bullet)) continue;
+        enemy.receiveDamage(bullet.damage);
+        bullet.kill();
+        removeItem(this.activeBullets, bullet);
       }
     }
     this.base.update();
@@ -156,6 +163,14 @@ export class Cannon extends Entity {
 
   onBulletFired(bullet) {
     this.activeBullets.push(bullet);
+  }
+
+  onSelected() {
+    if (this.game.mode !== this.game.MODE.selectTurret) return;
+    if (this.game.selected) this.game.selected.range.show = false;
+    console.log("selected");
+    this.game.selected = this;
+    this.game.selected.range.show = true;
   }
 }
 
@@ -228,10 +243,11 @@ export class TurretSelector extends Entity {
     this.turretType = turretType;
     this.selected = new turretType({ x: this.pos.x, y: this.pos.y, game: this.game });
     this.selected.setAlpha(0.5);
+    this.selected.range.show = true;
   }
 
   draw() {
-    if (!this.selected) return;
+    if (!this.selected || this.game.mode !== this.game.MODE.placeTurret) return;
     this.selected.draw();
 
     const { ctx } = this.game.system;
