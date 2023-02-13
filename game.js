@@ -39,8 +39,9 @@ export class TowerDefenseGame extends Game {
     this.turretSelector.setSelected(Cannon);
 
     this.chain = new EventChain()
-      .wait(0.5)
-      .then(() => this.spawnEntity(Enemy_Pitchfork, -50, 96, { path: this.path }));
+      .wait(1)
+      .then(() => this.spawnEntity(Enemy_Pitchfork, -50, 96, { path: this.path }))
+      .repeat();
   }
 
   draw() {
