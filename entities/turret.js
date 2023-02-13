@@ -31,17 +31,44 @@ class Cannon_Head extends Entity {
   }
 }
 
+class TurretRange extends Entity {
+  r = 100;
+  alpha = 0.5;
+  constructor(opts) {
+    super(opts);
+  }
+
+  draw() {
+    const { ctx } = this.game.system;
+    ctx.globalAlpha = this.alpha;
+    ctx.fillStyle = "white";
+    console.log(this.pos);
+    ctx.beginPath();
+    ctx.arc(this.pos.x, this.pos.y, this.r, 0, 2 * Math.PI);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+  }
+
+  setPosition(pos) {
+    this.pos.x = pos.x + 32;
+    this.pos.y = pos.y + 32;
+  }
+}
+
 export class Cannon extends Entity {
   constructor(opts) {
     super(opts);
     this.size = { x: 64, y: 64 };
-    this.base = new TurretBase({ game: this.game }, this.pos);
-    this.head = new Cannon_Head({ game: this.game }, this.pos);
+    this.base = new TurretBase({ game: this.game });
+    this.head = new Cannon_Head({ game: this.game });
+    this.range = new TurretRange({ game: this.game });
   }
 
   draw() {
     this.base.setPosition(this.pos);
     this.head.setPosition(this.pos);
+    this.range.setPosition(this.pos);
+    this.range.draw();
     this.base.draw();
     this.head.draw();
   }
