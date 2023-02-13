@@ -25,11 +25,10 @@ export class TowerDefenseGame extends Game {
       algorithm: Algorithm.AStar,
       heuristic: HeuristicType.Octile,
       allowDiagonal: true,
-      unitSize: { x: 1, y: 2 },
     });
 
     const grid = new Grid({ matrix: this.collisionMap.data });
-    const pathMatrix = this.pathfinder.findPath(0, 3, 0, 16, grid, true);
+    const pathMatrix = this.pathfinder.findPath(0, 3, 0, 16, grid, false);
     this.path = pathMatrix.map(([x, y]) => [
       x * TowerDefenseGame.MAP_TILE_SIZE,
       y * TowerDefenseGame.MAP_TILE_SIZE,

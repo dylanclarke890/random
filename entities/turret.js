@@ -1,6 +1,9 @@
 import { Entity } from "../canvas-game-engine/modules/core/entity.js";
 import { Register } from "../canvas-game-engine/modules/core/register.js";
+import { EventChain } from "../canvas-game-engine/modules/lib/event-chain.js";
+import { toRad } from "../canvas-game-engine/modules/lib/number-utils.js";
 import { TowerDefenseGame } from "../game.js";
+import { Enemy_Pitchfork } from "./enemy.js";
 
 class TurretBase extends Entity {
   _levelEditorIgnore = true;
@@ -17,23 +20,10 @@ class TurretBase extends Entity {
   }
 }
 
-class Cannon_Head extends Entity {
-  constructor(opts) {
-    super(opts);
-    this.size = { x: 35, y: 64 };
-    this.createAnimationSheet("assets/turrets/Cannon.png", this.size);
-    this.addAnim("Default", 1, [0], false);
-  }
-
-  setPosition(pos) {
-    this.pos.x = pos.x + 16;
-    this.pos.y = pos.y - 16;
-  }
-}
-
 class TurretRange extends Entity {
   r = 100;
   alpha = 0.5;
+
   constructor(opts) {
     super(opts);
   }
@@ -42,7 +32,6 @@ class TurretRange extends Entity {
     const { ctx } = this.game.system;
     ctx.globalAlpha = this.alpha;
     ctx.fillStyle = "white";
-    console.log(this.pos);
     ctx.beginPath();
     ctx.arc(this.pos.x, this.pos.y, this.r, 0, 2 * Math.PI);
     ctx.fill();
@@ -50,8 +39,64 @@ class TurretRange extends Entity {
   }
 
   setPosition(pos) {
-    this.pos.x = pos.x + 32;
-    this.pos.y = pos.y + 32;
+    this.pos.x = pos.x + TowerDefenseGame.MAP_TILE_SIZE;
+    this.pos.y = pos.y + TowerDefenseGame.MAP_TILE_SIZE;
+  }
+
+  getEnemiesInRange() {
+    const enemies = this.game.getEntitiesByType(Enemy_Pitchfork);
+    const res = [];
+    for (let i = 0; i < enemies.length; i++) {
+      const enemy = enemies[i];
+      if (this.touches(enemy)) res.push(enemy);
+    }
+    return res;
+  }
+
+  touches(other) {
+    return !(
+      this.pos.x - this.r >= other.pos.x + other.size.x ||
+      this.pos.x + this.r <= other.pos.x ||
+      this.pos.y - this.r >= other.pos.y + other.size.y ||
+      this.pos.y + this.r <= other.pos.y
+    );
+  }
+}
+
+class Cannon_Head extends Entity {
+  target;
+  angleToTarget;
+  fireRate = 1;
+
+  static NINETY_DEGREES = toRad(90);
+
+  constructor(opts) {
+    super(opts);
+    this.size = { x: 32, y: 32 };
+    this.createAnimationSheet("assets/turrets/Cannon.png", { x: 35, y: 64 });
+    this.addAnim("Default", 1, [0], false);
+    this.chain = new EventChain()
+      .waitUntil(() => this.target != null)
+      .thenUntil(
+        () => this.target == null,
+        () => {
+          this.currentAnim.angle = this.angleToTarget + Cannon_Head.NINETY_DEGREES;
+        }
+      )
+      .every(this.fireRate, () => {
+        // Shoot projectile.
+      })
+      .repeat();
+  }
+
+  update() {
+    this.chain.update();
+    super.update();
+  }
+
+  setPosition(pos) {
+    this.pos.x = pos.x + TowerDefenseGame.MAP_TILE_SIZE / 2;
+    this.pos.y = pos.y;
   }
 }
 
@@ -74,6 +119,12 @@ export class Cannon extends Entity {
   }
 
   update() {
+    const inRange = this.range.getEnemiesInRange();
+    if (inRange.length) {
+      this.head.target = inRange.sort((a, b) => b.currentWaypoint - a.currentWaypoint)[0];
+      this.head.angleToTarget = this.angleTo(this.head.target);
+    } else this.head.target = null;
+
     this.base.update();
     this.head.update();
   }
