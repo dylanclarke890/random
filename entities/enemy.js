@@ -8,11 +8,14 @@ class Enemy extends Entity {
   }
   static framesToSecs = (frames) => (1 / 60) * frames;
 
-  vel = { x: 30, y: 30 };
+  speed = 90;
+  vel = { x: 0, y: 0 };
+
+  currentWaypoint = 0;
 
   constructor({ spritesheetName, ...opts }) {
     super(opts);
-    this.size = { x: 32, y: 64 };
+    this.size = { x: 16, y: 16 };
     this.createAnimationSheet(`assets/spritesheets/${spritesheetName}.png`, { x: 66, y: 58 });
 
     const defaultDuration = Enemy.framesToSecs(3);
@@ -24,6 +27,23 @@ class Enemy extends Entity {
     this.addAnim("run", defaultDuration, Enemy.get_sequence(100), false);
     this.addAnim("walk", defaultDuration, Enemy.get_sequence(120), false);
     this.currentAnim = this.anims.walk;
+  }
+
+  update() {
+    if (!this.path) {
+      super.update();
+      return;
+    }
+    const [x, y] = this.path[this.currentWaypoint];
+    const xDistance = x - this.pos.x;
+    const yDistance = y - this.pos.y;
+    const angle = Math.atan2(yDistance, xDistance);
+    this.vel.x = Math.cos(angle) * this.speed;
+    this.vel.y = Math.sin(angle) * this.speed;
+    super.update();
+
+    if (Math.round(this.pos.x) === Math.round(x) && Math.round(this.pos.y) === Math.round(y))
+      this.currentWaypoint++;
   }
 }
 

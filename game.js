@@ -1,9 +1,10 @@
 import { Game } from "./canvas-game-engine/modules/core/game.js";
 import { Input } from "./canvas-game-engine/modules/core/input.js";
+import { EventChain } from "./canvas-game-engine/modules/lib/event-chain.js";
 import { Algorithm, HeuristicType } from "./canvas-game-engine/modules/pathfinding/constants.js";
 import { Grid } from "./canvas-game-engine/modules/pathfinding/data-structures.js";
 import { PathFinder } from "./canvas-game-engine/modules/pathfinding/pathfinder.js";
-import { Cannon, TurretSelector } from "./entities/entities.js";
+import { Cannon, Enemy_Pitchfork, TurretSelector } from "./entities/entities.js";
 import { baseLevel } from "./levels/baseLevel.js";
 
 export class TowerDefenseGame extends Game {
@@ -28,7 +29,7 @@ export class TowerDefenseGame extends Game {
     });
 
     const grid = new Grid({ matrix: this.collisionMap.data });
-    const pathMatrix = this.pathfinder.findPath(0, 2, 0, 16, grid);
+    const pathMatrix = this.pathfinder.findPath(0, 3, 0, 16, grid, true);
     this.path = pathMatrix.map(([x, y]) => [
       x * TowerDefenseGame.MAP_TILE_SIZE,
       y * TowerDefenseGame.MAP_TILE_SIZE,
@@ -36,6 +37,10 @@ export class TowerDefenseGame extends Game {
 
     this.turretSelector = this.spawnEntity(TurretSelector, this.input.mouse.x, this.input.mouse.x);
     this.turretSelector.setSelected(Cannon);
+
+    this.chain = new EventChain()
+      .wait(0.5)
+      .then(() => this.spawnEntity(Enemy_Pitchfork, -50, 96, { path: this.path }));
   }
 
   draw() {
@@ -46,7 +51,7 @@ export class TowerDefenseGame extends Game {
   drawPath() {
     const { ctx } = this.system;
     const start = this.path[0];
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 1;
     ctx.strokeStyle = "orange";
     ctx.beginPath();
     ctx.moveTo(start[0], start[1]);
@@ -63,6 +68,7 @@ export class TowerDefenseGame extends Game {
       let { x, y } = this.turretSelector.selected.pos;
       this.spawnEntity(Cannon, x, y);
     }
+    this.chain.update();
     super.update();
   }
 }
