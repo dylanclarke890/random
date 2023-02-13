@@ -10,7 +10,8 @@ class Enemy extends Entity {
 
   collides = Entity.COLLIDES.ACTIVE;
   currentWaypoint = 0;
-  health = 20;
+  maxHealth = 20;
+  health = this.maxHealth;
   offset = { x: 32, y: 32 };
   speed = 1;
   vel = { x: 0, y: 0 };
@@ -35,6 +36,19 @@ class Enemy extends Entity {
     if (this.vel.x > 0) this.currentAnim.flip.x = false;
     else if (this.vel.x < 0) this.currentAnim.flip.x = true;
     super.draw();
+    this.drawHealthBar();
+  }
+
+  drawHealthBar() {
+    const { ctx } = this.game.system;
+    const w = 32,
+      h = 5,
+      xOffset = -25,
+      yOffset = -20;
+    ctx.fillStyle = "red";
+    ctx.fillRect(this.pos.x + xOffset, this.pos.y + yOffset, w, h);
+    ctx.fillStyle = "green";
+    ctx.fillRect(this.pos.x + xOffset, this.pos.y + yOffset, w * (this.health / this.maxHealth), h);
   }
 
   update() {

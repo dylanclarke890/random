@@ -75,7 +75,6 @@ export class TowerDefenseGame extends Game {
 
   draw() {
     super.draw();
-    this.drawPath();
   }
 
   drawPath() {
