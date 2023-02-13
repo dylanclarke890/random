@@ -95,10 +95,10 @@ export class TowerDefenseGame extends Game {
     this.turretSelector.setPosition(this.input.mouse);
     if (this.input.pressed("modeSelectTurret")) {
       this.mode = this.MODE.selectTurret;
-      this.turretSelector.selected.base._clickableIgnore = true;
+      this.turretSelector.selected._clickableIgnore = true;
     } else if (this.input.pressed("modePlaceTurret")) {
       this.mode = this.MODE.placeTurret;
-      this.turretSelector.selected.base._clickableIgnore = false;
+      this.turretSelector.selected._clickableIgnore = false;
     }
     if (this.input.pressed("action")) this.action();
     this.chain.update();

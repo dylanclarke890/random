@@ -10,8 +10,7 @@ import { Enemy_Pitchfork, Bullet_Cannon } from "./entities.js";
 
 const NINETY_DEGREES = toRad(90);
 
-class TurretBase extends mix(Entity).with(ClickableMixin) {
-  _levelEditorIgnore = true;
+class TurretBase extends Entity {
   constructor(opts) {
     super(opts);
     this.size = { x: 64, y: 64 };
@@ -118,7 +117,7 @@ class CannonTurretHead extends TurretHead {
   }
 }
 
-class Turret extends Entity {
+class Turret extends mix(Entity).with(ClickableMixin) {
   activeBullets = [];
 
   constructor(opts) {
@@ -252,6 +251,7 @@ export class TurretSelector extends Entity {
     this.turretType = turretType;
     this.selected = new turretType({ x: this.pos.x, y: this.pos.y, game: this.game });
     this.selected.setAlpha(0.5);
+    this.selected._clickableIgnore = true;
     this.selected.range.show = true;
   }
 
