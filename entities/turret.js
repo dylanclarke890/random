@@ -8,6 +8,8 @@ import { ClickableMixin } from "../canvas-game-engine/modules/plugins/clickable.
 import { TowerDefenseGame } from "../game.js";
 import { Enemy_Pitchfork, Bullet_Cannon } from "./entities.js";
 
+const NINETY_DEGREES = toRad(90);
+
 class TurretBase extends mix(Entity).with(ClickableMixin) {
   _levelEditorIgnore = true;
   constructor(opts) {
@@ -28,12 +30,11 @@ class TurretBase extends mix(Entity).with(ClickableMixin) {
 }
 
 class TurretRange extends Entity {
-  r = 100;
-  alpha = 0.5;
-  show = false;
-
   constructor(opts) {
     super(opts);
+    this.show ??= false;
+    this.alpha ??= 0.5;
+    this.r ??= 100;
   }
 
   draw() {
@@ -72,29 +73,24 @@ class TurretRange extends Entity {
   }
 }
 
-class Cannon_Head extends Entity {
-  target;
-  angleToTarget;
-  fireRate = 1;
-  activeBullets = [];
-  static NINETY_DEGREES = toRad(90);
-
+class TurretHead extends Entity {
   constructor(opts) {
     super(opts);
+    this.target = null;
+    this.angleToTarget = null;
+    this.fireRate = 1;
     this.size = { x: 32, y: 32 };
-    this.createAnimationSheet("assets/turrets/Cannon.png", { x: 35, y: 64 });
-    this.addAnim("Default", 1, [0], false);
     this.chain = new EventChain()
       .waitUntil(() => this.target != null)
       .waitUntil(() => this.target == null)
       .whilst(() => {
-        this.currentAnim.angle = this.angleToTarget + Cannon_Head.NINETY_DEGREES;
+        this.currentAnim.angle = this.angleToTarget + NINETY_DEGREES;
       })
       .every(this.fireRate, () => {
         // Shoot projectile.
-        const bullet = this.game.spawnEntity(Bullet_Cannon, this.pos.x, this.pos.y);
+        const bullet = this.game.spawnEntity(this.bulletType, this.pos.x, this.pos.y);
         const a = bullet.angleTo(this.target);
-        bullet.currentAnim.angle = a + Cannon_Head.NINETY_DEGREES;
+        bullet.currentAnim.angle = a + NINETY_DEGREES;
         bullet.vel.x = Math.floor(Math.cos(a) * bullet.speed);
         bullet.vel.y = Math.floor(Math.sin(a) * bullet.speed);
         this.turret.onBulletFired(bullet);
@@ -114,7 +110,15 @@ class Cannon_Head extends Entity {
   }
 }
 
-export class Cannon extends Entity {
+class CannonTurretHead extends TurretHead {
+  constructor({ settings = {}, ...rest }) {
+    super({ ...rest, settings: { ...settings, bulletType: Bullet_Cannon } });
+    this.createAnimationSheet("assets/turrets/Cannon.png", { x: 35, y: 64 });
+    this.addAnim("Default", 1, [0], false);
+  }
+}
+
+class Turret extends Entity {
   activeBullets = [];
 
   constructor(opts) {
@@ -122,8 +126,8 @@ export class Cannon extends Entity {
     this.size = { x: 64, y: 64 };
     const turretOpts = { game: this.game, settings: { turret: this } };
     this.base = new TurretBase(turretOpts);
-    this.head = new Cannon_Head(turretOpts);
     this.range = new TurretRange(turretOpts);
+    this.head = new this.turretType(turretOpts);
   }
 
   draw() {
@@ -168,9 +172,14 @@ export class Cannon extends Entity {
   onSelected() {
     if (this.game.mode !== this.game.MODE.selectTurret) return;
     if (this.game.selected) this.game.selected.range.show = false;
-    console.log("selected");
     this.game.selected = this;
     this.game.selected.range.show = true;
+  }
+}
+
+export class Cannon extends Turret {
+  constructor({ settings = {}, ...rest }) {
+    super({ ...rest, settings: { ...settings, turretType: CannonTurretHead } });
   }
 }
 
