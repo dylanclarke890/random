@@ -8,10 +8,11 @@ class Enemy extends Entity {
   }
   static framesToSecs = (frames) => (1 / 60) * frames;
 
-  speed = 90;
+  speed = 1;
   vel = { x: 0, y: 0 };
   offset = { x: 32, y: 32 };
   currentWaypoint = 0;
+  collides = Entity.COLLIDES.ACTIVE;
 
   constructor({ spritesheetName, ...opts }) {
     super(opts);
@@ -44,8 +45,8 @@ class Enemy extends Entity {
     const xDistance = x - this.pos.x;
     const yDistance = y - this.pos.y;
     const angle = Math.atan2(yDistance, xDistance);
-    this.vel.x = Math.cos(angle);
-    this.vel.y = Math.sin(angle);
+    this.vel.x = Math.cos(angle) * this.speed;
+    this.vel.y = Math.sin(angle) * this.speed;
     this.pos.x += this.vel.x;
     this.pos.y += this.vel.y;
 

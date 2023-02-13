@@ -3,6 +3,9 @@ import { Register } from "../canvas-game-engine/modules/core/register.js";
 
 export class Bullet_Cannon extends Entity {
   speed = 10;
+  damage = 10;
+  zIndex = -10;
+  collides = Entity.COLLIDES.LITE;
 
   constructor(opts) {
     super(opts);

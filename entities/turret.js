@@ -1,5 +1,6 @@
 import { Entity } from "../canvas-game-engine/modules/core/entity.js";
 import { Register } from "../canvas-game-engine/modules/core/register.js";
+import { removeItem } from "../canvas-game-engine/modules/lib/array-utils.js";
 import { EventChain } from "../canvas-game-engine/modules/lib/event-chain.js";
 import { toRad } from "../canvas-game-engine/modules/lib/number-utils.js";
 import { TowerDefenseGame } from "../game.js";
@@ -67,7 +68,7 @@ class Cannon_Head extends Entity {
   target;
   angleToTarget;
   fireRate = 1;
-
+  activeBullets = [];
   static NINETY_DEGREES = toRad(90);
 
   constructor(opts) {
@@ -86,8 +87,10 @@ class Cannon_Head extends Entity {
         const bullet = this.game.spawnEntity(Bullet_Cannon, this.pos.x, this.pos.y);
         const a = bullet.angleTo(this.target);
         bullet.currentAnim.angle = a + Cannon_Head.NINETY_DEGREES;
-        bullet.vel.x = Math.floor(Math.cos(a) * 20);
-        bullet.vel.y = Math.floor(Math.sin(a) * 20);
+        bullet.vel.x = Math.floor(Math.cos(a) * bullet.speed);
+        bullet.vel.y = Math.floor(Math.sin(a) * bullet.speed);
+        this.turret.onBulletFired(bullet);
+        this.game.sortEntitiesDeferred();
       })
       .repeat();
   }
@@ -104,12 +107,15 @@ class Cannon_Head extends Entity {
 }
 
 export class Cannon extends Entity {
+  activeBullets = [];
+
   constructor(opts) {
     super(opts);
     this.size = { x: 64, y: 64 };
-    this.base = new TurretBase({ game: this.game });
-    this.head = new Cannon_Head({ game: this.game });
-    this.range = new TurretRange({ game: this.game });
+    const turretOpts = { game: this.game, settings: { turret: this } };
+    this.base = new TurretBase(turretOpts);
+    this.head = new Cannon_Head(turretOpts);
+    this.range = new TurretRange(turretOpts);
   }
 
   draw() {
@@ -127,7 +133,18 @@ export class Cannon extends Entity {
       this.head.target = inRange.sort((a, b) => b.currentWaypoint - a.currentWaypoint)[0];
       this.head.angleToTarget = this.angleTo(this.head.target);
     } else this.head.target = null;
-
+    const enemies = this.game.getEntitiesByType(Enemy_Pitchfork);
+    for (let i = 0; i < enemies.length; i++) {
+      const enemy = enemies[i];
+      for (let j = 0; j < this.activeBullets.length; j++) {
+        const bullet = this.activeBullets[j];
+        if (enemy.touches(bullet)) {
+          enemy.receiveDamage(bullet.damage);
+          bullet.kill();
+          removeItem(this.activeBullets, bullet);
+        }
+      }
+    }
     this.base.update();
     this.head.update();
   }
@@ -135,6 +152,10 @@ export class Cannon extends Entity {
   setAlpha(alpha) {
     this.base.currentAnim.alpha = alpha;
     this.head.currentAnim.alpha = alpha;
+  }
+
+  onBulletFired(bullet) {
+    this.activeBullets.push(bullet);
   }
 }
 
