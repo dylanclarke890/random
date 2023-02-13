@@ -1,3 +1,4 @@
 export { Enemy_Pitchfork } from "./enemy.js";
-export { Cannon, TurretSelector } from "./turret.js";
-export { Bullet_Cannon } from "./projectiles.js";
+export { Cannon, RPG, MachineGun } from "./turret.js";
+export { CannonBullet, MGBullet, Missile } from "./projectiles.js";
+export { TurretSelector } from "./turret-selector.js";

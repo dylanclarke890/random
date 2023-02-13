@@ -5,8 +5,8 @@ import { EventChain } from "../canvas-game-engine/modules/lib/event-chain.js";
 import { mix } from "../canvas-game-engine/modules/lib/mixin.js";
 import { toRad } from "../canvas-game-engine/modules/lib/number-utils.js";
 import { ClickableMixin } from "../canvas-game-engine/modules/plugins/clickable.js";
+import { Enemy_Pitchfork, CannonBullet, MGBullet, Missile } from "./entities.js";
 import { TowerDefenseGame } from "../game.js";
-import { Enemy_Pitchfork, Bullet_Cannon } from "./entities.js";
 
 const NINETY_DEGREES = toRad(90);
 
@@ -109,14 +109,6 @@ class TurretHead extends Entity {
   }
 }
 
-class CannonTurretHead extends TurretHead {
-  constructor({ settings = {}, ...rest }) {
-    super({ ...rest, settings: { ...settings, bulletType: Bullet_Cannon } });
-    this.createAnimationSheet("assets/turrets/Cannon.png", { x: 35, y: 64 });
-    this.addAnim("Default", 1, [0], false);
-  }
-}
-
 class Turret extends mix(Entity).with(ClickableMixin) {
   activeBullets = [];
 
@@ -176,105 +168,53 @@ class Turret extends mix(Entity).with(ClickableMixin) {
   }
 }
 
+class CannonTurretHead extends TurretHead {
+  constructor({ settings = {}, ...rest }) {
+    super({ ...rest, settings: { ...settings, bulletType: CannonBullet } });
+    this.createAnimationSheet("assets/turrets/Cannon.png", { x: 35, y: 64 });
+    this.addAnim("Default", 1, [0], false);
+  }
+}
+
+class MachineGunTurretHead extends TurretHead {
+  constructor({ settings = {}, ...rest }) {
+    super({ ...rest, settings: { ...settings, bulletType: MGBullet } });
+    this.createAnimationSheet("assets/turrets/MachineGun.png", { x: 35, y: 64 });
+    this.addAnim("Default", 1, [0], false);
+  }
+}
+
+class RPGTurretHead extends TurretHead {
+  constructor({ settings = {}, ...rest }) {
+    super({ ...rest, settings: { ...settings, bulletType: Missile } });
+    this.createAnimationSheet("assets/turrets/Rocket.png", { x: 35, y: 64 });
+    this.addAnim("Default", 1, [0], false);
+  }
+}
+
 export class Cannon extends Turret {
   constructor({ settings = {}, ...rest }) {
     super({ ...rest, settings: { ...settings, turretType: CannonTurretHead } });
   }
 }
 
-export class TurretSelector extends Entity {
-  /** @type {Entity} */
-  selected;
-  /** @type {typeof Entity} */
-  turretType;
-  isValidPosition = true;
-
-  /** @type {number[][]} */
-  buildPositions;
-  mapWidth;
-  mapHeight;
-
-  constructor(opts) {
-    super(opts);
-    this.buildPositions = this.game.backgroundMaps?.find((map) => map.name === "build_sites")?.data;
-    if (this.buildPositions) {
-      this.mapHeight = this.buildPositions.length;
-      this.mapWidth = this.buildPositions[0].length;
-    }
-  }
-
-  snapToGrid(val) {
-    return TowerDefenseGame.MAP_TILE_SIZE * Math.round(val / TowerDefenseGame.MAP_TILE_SIZE);
-  }
-
-  setPosition({ x, y }) {
-    if (!this.selected) return;
-
-    // Center the selected turret on the mouse position
-    x = x - this.selected.size.x / 2;
-    y = y - this.selected.size.y / 2;
-
-    // Snap the selected turret to the grid to grid
-    x = this.snapToGrid(x);
-    y = this.snapToGrid(y);
-
-    this.selected.pos.x = x;
-    this.selected.pos.y = y;
-
-    // Check if the selected turret is in a valid area by comparing its position with the map data's
-    x /= TowerDefenseGame.MAP_TILE_SIZE;
-    y /= TowerDefenseGame.MAP_TILE_SIZE;
-    this.isValidPosition = true;
-
-    // Check if any of the positions of the selected turret are on invalid tiles
-    const positions = [
-      this.buildPositions[y]?.[x],
-      this.buildPositions[y]?.[x + 1],
-      this.buildPositions[y + 1]?.[x],
-      this.buildPositions[y + 1]?.[x + 1],
-    ];
-    this.isValidPosition = !positions.some((pos) => pos !== 1);
-    if (!this.isValidPosition) return;
-
-    // Check if there are any turrets where the selected turret is about to be placed
-    const currentlyPlacedTurrets = this.game.getEntitiesByType(this.turretType);
-    for (let i = 0; i < currentlyPlacedTurrets.length; i++) {
-      const current = currentlyPlacedTurrets[i];
-      if (this.selected.touches(current)) {
-        this.isValidPosition = false;
-        return;
-      }
-    }
-  }
-
-  setSelected(turretType) {
-    this.turretType = turretType;
-    this.selected = new turretType({ x: this.pos.x, y: this.pos.y, game: this.game });
-    this.selected.setAlpha(0.5);
-    this.selected._clickableIgnore = true;
-    this.selected.range.show = true;
-  }
-
-  draw() {
-    if (!this.selected || this.game.mode !== this.game.MODE.placeTurret) return;
-    this.selected.draw();
-
-    const { ctx } = this.game.system;
-    ctx.strokeStyle = this.isValidPosition ? "green" : "red";
-    const lineWidth = 2;
-    ctx.lineWidth = lineWidth;
-
-    const { x, y } = this.selected.pos;
-    const x2 = this.selected.size.x + lineWidth;
-    const y2 = this.selected.size.y + lineWidth;
-    ctx.strokeRect(x - lineWidth, y - lineWidth, x2, y2);
-  }
-
-  update() {
-    return; // not needed.
+export class MachineGun extends Turret {
+  constructor({ settings = {}, ...rest }) {
+    super({ ...rest, settings: { ...settings, turretType: MachineGunTurretHead } });
   }
 }
 
-Register.entityTypes(Cannon, TurretSelector);
+export class RPG extends Turret {
+  constructor({ settings = {}, ...rest }) {
+    super({ ...rest, settings: { ...settings, turretType: RPGTurretHead } });
+  }
+}
+
+Register.entityTypes(Cannon, MachineGun, RPG, Turret);
 const turretRoot = "assets/turrets/";
-Register.preloadImages(`${turretRoot}Cannon.png`, `${turretRoot}Tower.png`);
+Register.preloadImages(
+  `${turretRoot}Cannon.png`,
+  `${turretRoot}Tower.png`,
+  `${turretRoot}MachineGun.png`,
+  `${turretRoot}Rocket.png`
+);
