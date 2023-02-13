@@ -51,7 +51,7 @@ export class TowerDefenseGame extends Game {
   drawPath() {
     const { ctx } = this.system;
     const start = this.path[0];
-    ctx.lineWidth = 1;
+    ctx.lineWidth = 2;
     ctx.strokeStyle = "orange";
     ctx.beginPath();
     ctx.moveTo(start[0], start[1]);
@@ -64,10 +64,12 @@ export class TowerDefenseGame extends Game {
 
   update() {
     this.turretSelector.setPosition(this.input.mouse);
+
     if (this.turretSelector.isValidPosition && this.input.pressed("place_cannon")) {
-      let { x, y } = this.turretSelector.selected.pos;
+      const { x, y } = this.turretSelector.selected.pos;
       this.spawnEntity(Cannon, x, y);
     }
+
     this.chain.update();
     super.update();
   }

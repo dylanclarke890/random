@@ -3,7 +3,7 @@ import { Register } from "../canvas-game-engine/modules/core/register.js";
 import { EventChain } from "../canvas-game-engine/modules/lib/event-chain.js";
 import { toRad } from "../canvas-game-engine/modules/lib/number-utils.js";
 import { TowerDefenseGame } from "../game.js";
-import { Enemy_Pitchfork } from "./enemy.js";
+import { Enemy_Pitchfork, Bullet_Cannon } from "./entities.js";
 
 class TurretBase extends Entity {
   _levelEditorIgnore = true;
@@ -77,14 +77,17 @@ class Cannon_Head extends Entity {
     this.addAnim("Default", 1, [0], false);
     this.chain = new EventChain()
       .waitUntil(() => this.target != null)
-      .thenUntil(
-        () => this.target == null,
-        () => {
-          this.currentAnim.angle = this.angleToTarget + Cannon_Head.NINETY_DEGREES;
-        }
-      )
+      .waitUntil(() => this.target == null)
+      .whilst(() => {
+        this.currentAnim.angle = this.angleToTarget + Cannon_Head.NINETY_DEGREES;
+      })
       .every(this.fireRate, () => {
         // Shoot projectile.
+        const bullet = this.game.spawnEntity(Bullet_Cannon, this.pos.x, this.pos.y);
+        const a = bullet.angleTo(this.target);
+        bullet.currentAnim.angle = a + Cannon_Head.NINETY_DEGREES;
+        bullet.vel.x = Math.floor(Math.cos(a) * 20);
+        bullet.vel.y = Math.floor(Math.sin(a) * 20);
       })
       .repeat();
   }
@@ -135,7 +138,6 @@ export class Cannon extends Entity {
   }
 }
 
-/** @inheritdoc */
 export class TurretSelector extends Entity {
   /** @type {Entity} */
   selected;
