@@ -4,7 +4,7 @@ import { EventChain } from "./canvas-game-engine/modules/lib/event-chain.js";
 import { Algorithm, HeuristicType } from "./canvas-game-engine/modules/pathfinding/constants.js";
 import { Grid } from "./canvas-game-engine/modules/pathfinding/data-structures.js";
 import { PathFinder } from "./canvas-game-engine/modules/pathfinding/pathfinder.js";
-import { Cannon, Enemy_Pitchfork, TurretSelector } from "./entities/entities.js";
+import { Cannon, Enemy_Pitchfork, MachineGun, RPG, TurretSelector } from "./entities/entities.js";
 import { baseLevel } from "./levels/baseLevel.js";
 
 export class TowerDefenseGame extends Game {
@@ -29,6 +29,9 @@ export class TowerDefenseGame extends Game {
     this.input.bind(Input.KEY.MOUSE1, "action");
     this.input.bind(Input.KEY.Q, "modePlaceTurret");
     this.input.bind(Input.KEY.ESC, "modeSelectTurret");
+    this.input.bind(Input.KEY._1, "hotkeyOne");
+    this.input.bind(Input.KEY._2, "hotkeyTwo");
+    this.input.bind(Input.KEY._3, "hotkeyThree");
 
     this.pathfinder = new PathFinder({
       algorithm: Algorithm.AStar,
@@ -44,7 +47,7 @@ export class TowerDefenseGame extends Game {
     ]);
 
     this.turretSelector = this.spawnEntity(TurretSelector, this.input.mouse.x, this.input.mouse.x);
-    this.turretSelector.setSelected(Cannon);
+    this.turretSelector.setSelected(MachineGun);
 
     this.chain = new EventChain()
       .wait(1)
@@ -57,7 +60,7 @@ export class TowerDefenseGame extends Game {
       case this.MODE.placeTurret: {
         if (!this.turretSelector.isValidPosition) return;
         const { x, y } = this.turretSelector.selected.pos;
-        this.spawnEntity(Cannon, x, y);
+        this.spawnEntity(this.turretSelector.turretType, x, y);
         return;
       }
       case this.MODE.selectTurret: {
@@ -92,6 +95,12 @@ export class TowerDefenseGame extends Game {
   }
 
   update() {
+    this.handleInput();
+    this.chain.update();
+    super.update();
+  }
+
+  handleInput() {
     this.turretSelector.setPosition(this.input.mouse);
     if (this.input.pressed("modeSelectTurret")) {
       this.mode = this.MODE.selectTurret;
@@ -101,7 +110,10 @@ export class TowerDefenseGame extends Game {
       this.turretSelector.selected._clickableIgnore = false;
     }
     if (this.input.pressed("action")) this.action();
-    this.chain.update();
-    super.update();
+
+    // let newTurretSelected = false; // TODO
+    if (this.input.pressed("hotkeyOne")) this.turretSelector.setSelected(MachineGun);
+    else if (this.input.pressed("hotkeyTwo")) this.turretSelector.setSelected(Cannon);
+    else if (this.input.pressed("hotkeyThree")) this.turretSelector.setSelected(RPG);
   }
 }

@@ -179,7 +179,7 @@ class CannonTurretHead extends TurretHead {
 class MachineGunTurretHead extends TurretHead {
   constructor({ settings = {}, ...rest }) {
     super({ ...rest, settings: { ...settings, bulletType: MGBullet } });
-    this.createAnimationSheet("assets/turrets/MachineGun.png", { x: 35, y: 64 });
+    this.createAnimationSheet("assets/turrets/MG.png", { x: 31, y: 64 });
     this.addAnim("Default", 1, [0], false);
   }
 }
@@ -187,7 +187,7 @@ class MachineGunTurretHead extends TurretHead {
 class RPGTurretHead extends TurretHead {
   constructor({ settings = {}, ...rest }) {
     super({ ...rest, settings: { ...settings, bulletType: Missile } });
-    this.createAnimationSheet("assets/turrets/Rocket.png", { x: 35, y: 64 });
+    this.createAnimationSheet("assets/turrets/Missile_Launcher.png", { x: 39, y: 64 });
     this.addAnim("Default", 1, [0], false);
   }
 }
@@ -215,6 +215,6 @@ const turretRoot = "assets/turrets/";
 Register.preloadImages(
   `${turretRoot}Cannon.png`,
   `${turretRoot}Tower.png`,
-  `${turretRoot}MachineGun.png`,
-  `${turretRoot}Rocket.png`
+  `${turretRoot}MG.png`,
+  `${turretRoot}Missile_Launcher.png`
 );
