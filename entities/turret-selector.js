@@ -11,16 +11,10 @@ export class TurretSelector extends Entity {
 
   /** @type {number[][]} */
   buildPositions;
-  mapWidth;
-  mapHeight;
 
   constructor(opts) {
     super(opts);
     this.buildPositions = this.game.backgroundMaps?.find((map) => map.name === "build_sites")?.data;
-    if (this.buildPositions) {
-      this.mapHeight = this.buildPositions.length;
-      this.mapWidth = this.buildPositions[0].length;
-    }
   }
 
   snapToGrid(val) {

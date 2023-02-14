@@ -34,8 +34,8 @@ export class MGBullet extends Projectile {
 export class Missile extends Projectile {
   constructor(opts) {
     super(opts);
-    this.speed = 10;
-    this.damage = 10;
+    this.speed = 5;
+    this.damage = 20;
     this.createAnimationSheet("assets/projectiles/Missile.png", { x: 18, y: 32 });
     this.addAnim("Default", 0.3, [0], false);
   }
