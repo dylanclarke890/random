@@ -33,7 +33,7 @@ export class EntityMover extends Entity {
   constructor(opts) {
     super(opts);
     this.addAnim("idle", 1, [0]);
-    this.createAnimationSheet("media/mover.png", { x: 24, y: 8 });
+    this.createAnimationSheet("assets/entities/mover.png", { x: 24, y: 8 });
     // Transform the target object into an ordered array of targets
     this.targets = Object.keys(this.target).sort();
   }
@@ -66,3 +66,4 @@ export class EntityMover extends Entity {
 }
 
 Register.entityType(EntityMover);
+Register.preloadAsset("assets/entities/mover.png");
