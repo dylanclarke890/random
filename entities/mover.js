@@ -1,21 +1,19 @@
-/*
-Simple Mover that visits all its targets in an ordered fashion. You can use
-the void entities (or any other) as targets.
-
-
-Keys for Weltmeister:
-
-speed
-	Traveling speed of the mover in pixels per second.
-	Default: 20
-	
-target.1, target.2 ... target.n
-	Names of the entities to visit.
-*/
-
 import { Entity } from "../canvas-game-engine/modules/core/entity.js";
 import { Register } from "../canvas-game-engine/modules/core/register.js";
 
+/**
+ * Simple Mover that visits all its targets in an ordered fashion. You can use
+ * the void entities (or any other) as targets.
+ *
+ * Keys for LevelEditor:
+ *
+ * - speed:
+ * Traveling speed of the mover in pixels per second.
+ * Default: 20
+ *
+ * target.1, target.2 ... target.n
+ * Names of the entities to visit.
+ */
 export class EntityMover extends Entity {
   size = { x: 24, y: 8 };
   maxVel = { x: 100, y: 100 };
