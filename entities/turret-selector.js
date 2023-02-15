@@ -1,6 +1,7 @@
 import { Entity } from "../canvas-game-engine/modules/core/entity.js";
 import { Register } from "../canvas-game-engine/modules/core/register.js";
 import { TowerDefenseGame } from "../game.js";
+import { Turret } from "./turret.js";
 
 export class TurretSelector extends Entity {
   /** @type {Entity} */
@@ -51,7 +52,7 @@ export class TurretSelector extends Entity {
     if (!this.isValidPosition) return;
 
     // Check if there are any turrets where the selected turret is about to be placed
-    const currentlyPlacedTurrets = this.game.getEntitiesByType(this.turretType);
+    const currentlyPlacedTurrets = this.game.getEntitiesByType(Turret);
     for (let i = 0; i < currentlyPlacedTurrets.length; i++) {
       const current = currentlyPlacedTurrets[i];
       if (this.selected.touches(current)) {

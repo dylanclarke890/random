@@ -109,7 +109,7 @@ class TurretHead extends Entity {
   }
 }
 
-class Turret extends mix(Entity).with(ClickableMixin) {
+export class Turret extends mix(Entity).with(ClickableMixin) {
   activeBullets = [];
 
   constructor(opts) {
