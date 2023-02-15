@@ -1,4 +1,5 @@
 import { Entity } from "../canvas-game-engine/modules/core/entity.js";
+import { Register } from "../canvas-game-engine/modules/core/register.js";
 
 /**
  *  This entity gives damage (through ig.Entity's receiveDamage() method) to
@@ -24,3 +25,5 @@ export class EntityHurt extends Entity {
 
   updatefunction() {}
 }
+
+Register.entityType(EntityHurt);

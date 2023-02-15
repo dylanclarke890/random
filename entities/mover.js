@@ -14,6 +14,7 @@ target.1, target.2 ... target.n
 */
 
 import { Entity } from "../canvas-game-engine/modules/core/entity.js";
+import { Register } from "../canvas-game-engine/modules/core/register.js";
 
 export class EntityMover extends Entity {
   size = { x: 24, y: 8 };
@@ -63,3 +64,5 @@ export class EntityMover extends Entity {
     }
   }
 }
+
+Register.entityType(EntityMover);

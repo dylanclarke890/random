@@ -1,4 +1,5 @@
 import { Entity } from "../canvas-game-engine/modules/core/entity.js";
+import { Register } from "../canvas-game-engine/modules/core/register.js";
 import { Timer } from "../canvas-game-engine/modules/lib/timer.js";
 
 /**
@@ -61,3 +62,5 @@ export class EntityTrigger extends Entity {
 
   update() {}
 }
+
+Register.entityType(EntityTrigger);

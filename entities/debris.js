@@ -1,7 +1,7 @@
 import { Entity } from "../canvas-game-engine/modules/core/entity.js";
 import { Register } from "../canvas-game-engine/modules/core/register.js";
 import { Timer } from "../canvas-game-engine/modules/lib/timer.js";
-import { EntityParticle } from "./particle.js";
+import { Particle } from "./particle.js";
 
 /**
  * The EntityDebris will randomly spawn a certain count of EntityDebrisParticle
@@ -20,7 +20,7 @@ import { EntityParticle } from "./particle.js";
  * Total count of particles to spawn during the #duration# time span.
  * Default: 5
  */
-export class EntityDebris extends Entity {
+export class Debris extends Entity {
   _levelEditorIsScalable = true;
   _levelEditorDrawBox = true;
   _levelEditorBoxColor = "rgba(255, 170, 66, 0.7)";
@@ -50,7 +50,7 @@ export class EntityDebris extends Entity {
 
       var x = Math.random().map(0, 1, this.pos.x, this.pos.x + this.size.x);
       var y = Math.random().map(0, 1, this.pos.y, this.pos.y + this.size.y);
-      this.game.spawnEntity(EntityDebrisParticle, x, y);
+      this.game.spawnEntity(DebrisParticle, x, y);
     }
   }
 }
@@ -58,7 +58,7 @@ export class EntityDebris extends Entity {
 /**
  * The particles to spawn by the EntityDebris. See particle.js for more details.
  */
-export class EntityDebrisParticle extends EntityParticle {
+export class DebrisParticle extends Particle {
   lifetime = 2;
   fadetime = 1;
   bounciness = 0.6;
@@ -72,5 +72,5 @@ export class EntityDebrisParticle extends EntityParticle {
   }
 }
 
-Register.entityTypes(EntityDebris, EntityDebrisParticle);
+Register.entityTypes(Debris, DebrisParticle);
 Register.preloadImage("assets/entities/debris.png");

@@ -1,4 +1,5 @@
 import { Entity } from "../canvas-game-engine/modules/core/entity.js";
+import { Register } from "../canvas-game-engine/modules/core/register.js";
 import { Timer } from "../canvas-game-engine/modules/lib/timer.js";
 
 /**
@@ -13,7 +14,7 @@ import { Timer } from "../canvas-game-engine/modules/lib/timer.js";
  * duration of the screen shaking in seconds
  * default: 1
  */
-export class EntityEarthquake extends Entity {
+export class Earthquake extends Entity {
   _levelEditorDrawBox = true;
   _levelEditorBoxColor = "rgba(80, 130, 170, 0.7)";
 
@@ -43,3 +44,5 @@ export class EntityEarthquake extends Entity {
     this.game.screen.y += Math.random().map(0, 1, -s, s);
   }
 }
+
+Register.entityType(Earthquake);

@@ -10,6 +10,7 @@
  */
 
 import { Entity } from "../canvas-game-engine/modules/core/entity.js";
+import { Register } from "../canvas-game-engine/modules/core/register.js";
 
 export class EntityLevelChange extends Entity {
   _levelEditorDrawBox = true;
@@ -24,3 +25,5 @@ export class EntityLevelChange extends Entity {
 
   update() {}
 }
+
+Register.entityType(EntityLevelChange);

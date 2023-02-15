@@ -1,4 +1,5 @@
 import { Entity } from "../canvas-game-engine/modules/core/entity.js";
+import { Register } from "../canvas-game-engine/modules/core/register.js";
 
 /**
  * This entity does nothing but just sits there. It can be used as a target
@@ -12,3 +13,5 @@ export class EntityVoid extends Entity {
 
   update() {}
 }
+
+Register.entityType(EntityVoid);

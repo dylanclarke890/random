@@ -1,4 +1,5 @@
 import { Entity } from "../canvas-game-engine/modules/core/entity.js";
+import { Register } from "../canvas-game-engine/modules/core/register.js";
 import { map } from "../canvas-game-engine/modules/lib/number-utils.js";
 import { Timer } from "../canvas-game-engine/modules/lib/timer.js";
 
@@ -12,7 +13,7 @@ import { Timer } from "../canvas-game-engine/modules/lib/timer.js";
  * The velocity of a particle is randomly determined by its initial .vel
  * properties. Its Animation will start at a random frame.
  */
-export class EntityParticle extends Entity {
+export class Particle extends Entity {
   size = { x: 4, y: 4 };
   offset = { x: 0, y: 0 };
   maxVel = { x: 160, y: 160 };
@@ -51,3 +52,5 @@ export class EntityParticle extends Entity {
     super.update();
   }
 }
+
+Register.entityType(Particle);
