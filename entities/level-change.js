@@ -1,3 +1,6 @@
+import { Entity } from "../canvas-game-engine/modules/core/entity.js";
+import { Register } from "../canvas-game-engine/modules/core/register.js";
+
 /**
  * This entity calls ig.game.loadLevel() when its triggeredBy() method is called -
  * usually through an EntityTrigger entity.
@@ -8,10 +11,6 @@
  * Name of the level to load. E.g. "LevelTest1" or just "test1" will load the
  * 'LevelTest1' level.
  */
-
-import { Entity } from "../canvas-game-engine/modules/core/entity.js";
-import { Register } from "../canvas-game-engine/modules/core/register.js";
-
 export class EntityLevelChange extends Entity {
   _levelEditorDrawBox = true;
   _levelEditorBoxColor = "rgba(0, 0, 255, 0.7)";
