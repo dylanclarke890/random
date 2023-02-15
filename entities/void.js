@@ -1,23 +1,14 @@
-/*
-This entity does nothing but just sits there. It can be used as a target
-for other entities, such as movers.
-*/
+import { Entity } from "../canvas-game-engine/modules/core/entity.js";
 
-ig.module(
-	'game.entities.void'
-)
-.requires(
-	'impact.entity'
-)
-.defines(function(){
-	
-EntityVoid = ig.Entity.extend({
-	_wmDrawBox: true,
-	_wmBoxColor: 'rgba(128, 28, 230, 0.7)',
-	
-	size: {x: 8, y: 8},
-	
-	update: function(){}
-});
+/**
+ * This entity does nothing but just sits there. It can be used as a target
+ * for other entities, such as movers.
+ */
+export class EntityVoid extends Entity {
+  _levelEditorDrawBox = true;
+  _levelEditorColor = "rgba(128, 28, 230, 0.7)";
 
-});
+  size = { x: 8, y: 8 };
+
+  update() {}
+}
