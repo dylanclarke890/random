@@ -1,4 +1,5 @@
 import { Entity } from "../canvas-game-engine/modules/core/entity.js";
+import { Register } from "../canvas-game-engine/modules/core/register.js";
 import { Timer } from "../canvas-game-engine/modules/lib/timer.js";
 import { EntityParticle } from "./particle.js";
 
@@ -65,8 +66,11 @@ export class EntityDebrisParticle extends EntityParticle {
 
   constructor(opts) {
     super(opts);
-    this.createAnimationSheet("media/debris.png", { x: 4, y: 4 }); // TODO - add media
+    this.createAnimationSheet("media/entities/debris.png", { x: 4, y: 4 });
     this.addAnim("idle", 5, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]);
     this.randomiseParticle();
   }
 }
+
+Register.entityTypes(EntityDebris, EntityDebrisParticle);
+Register.preloadImage("assets/entities/debris.png");
