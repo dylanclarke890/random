@@ -1,62 +1,53 @@
-/*
-Base entity class for particle entities. Subclass your own particles from
-this class. See the EntityDebrisParticle in debris.js for an example.
+import { Entity } from "../canvas-game-engine/modules/core/entity.js";
+import { map } from "../canvas-game-engine/modules/lib/number-utils.js";
+import { Timer } from "../canvas-game-engine/modules/lib/timer.js";
 
-Particle entities will kill themselfs after #lifetime# seconds. #fadetime#
-seconds before the #lifetime# ends, they will start to fade out.
+/**
+ * Base entity class for particle entities. Subclass your own particles from
+ * this class. See the EntityDebrisParticle in debris.js for an example.
+ *
+ * Particle entities will kill themselfs after #lifetime# seconds. #fadetime#
+ * seconds before the #lifetime# ends, they will start to fade out.
+ *
+ * The velocity of a particle is randomly determined by its initial .vel
+ * properties. Its Animation will start at a random frame.
+ */
+export class EntityParticle extends Entity {
+  size = { x: 4, y: 4 };
+  offset = { x: 0, y: 0 };
+  maxVel = { x: 160, y: 160 };
+  minBounceVelocity = 0;
 
-The velocity of a particle is randomly determined by its initial .vel 
-properties. Its Animation will start at a random frame.
-*/
+  type = Entity.TYPE.NONE;
+  checkAgainst = Entity.TYPE.NONE;
+  collides = Entity.COLLIDES.LITE;
 
-ig.module(
-	'game.entities.particle'
-)
-.requires(
-	'impact.entity'
-)
-.defines(function(){
+  lifetime = 5;
+  fadetime = 1;
+  bounciness = 0.6;
+  friction = { x: 20, y: 0 };
 
-EntityParticle = ig.Entity.extend({
-	size: {x: 4, y: 4},
-	offset: {x: 0, y: 0},
-	maxVel: {x: 160, y: 160},
-	minBounceVelocity: 0,
-	
-	type: ig.Entity.TYPE.NONE,
-	checkAgainst: ig.Entity.TYPE.NONE,
-	collides: ig.Entity.COLLIDES.LITE,
-	
-	lifetime: 5,
-	fadetime: 1,
-	bounciness: 0.6,
-	friction: {x:20, y: 0},
-	
-	
-	init: function( x, y, settings ) {
-		this.parent( x, y, settings );
-		this.vel.x = (Math.random() * 2 - 1) * this.vel.x;
-		this.vel.y = (Math.random() * 2 - 1) * this.vel.y;
-		
-		this.currentAnim.flip.x = (Math.random() > 0.5);
-		this.currentAnim.flip.y = (Math.random() > 0.5);
-		this.currentAnim.gotoRandomFrame();
-		this.idleTimer = new ig.Timer();
-	},
-	
-	
-	update: function() {
-		if( this.idleTimer.delta() > this.lifetime ) {
-			this.kill();
-			return;
-		}
-		this.currentAnim.alpha = this.idleTimer.delta().map(
-			this.lifetime - this.fadetime, this.lifetime,
-			1, 0
-		);
-		this.parent();
-	}
-});
+  constructor(opts) {
+    super(opts);
+    this.vel.x = (Math.random() * 2 - 1) * this.vel.x;
+    this.vel.y = (Math.random() * 2 - 1) * this.vel.y;
+    this.idleTimer = new Timer();
+  }
 
+  randomiseParticle() {
+    this.currentAnim.flip.x = Math.random() > 0.5;
+    this.currentAnim.flip.y = Math.random() > 0.5;
+    this.currentAnim.gotoRandomFrame();
+  }
 
-});
+  update() {
+    if (this.idleTimer.delta() > this.lifetime) {
+      this.kill();
+      return;
+    }
+
+    const lt = this.lifetime;
+    this.currentAnim.alpha = map(this.idleTimer.delta(), lt - this.fadetime, lt, 1, 0);
+    super.update();
+  }
+}
