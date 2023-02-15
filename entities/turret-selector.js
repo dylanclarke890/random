@@ -1,7 +1,7 @@
 import { Entity } from "../canvas-game-engine/modules/core/entity.js";
 import { Register } from "../canvas-game-engine/modules/core/register.js";
 import { TowerDefenseGame } from "../game.js";
-import { Turret } from "./turret.js";
+import { Turret } from "./turrets.js";
 
 export class TurretSelector extends Entity {
   /** @type {Entity} */
