@@ -25,6 +25,7 @@ export class TowerDefenseGame extends Game {
 
   constructor(opts) {
     super(opts);
+
     this.loadLevel(baseLevel);
     this.input.bind(Input.KEY.MOUSE1, "action");
     this.input.bind(Input.KEY.Q, "modePlaceTurret");
