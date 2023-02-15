@@ -1,66 +1,53 @@
-/*
-This entity passes through all calls to triggeredBy() to its own targets
-after a delay of n seconds.
+import { Entity } from "../canvas-game-engine/modules/core/entity.js";
+import { Timer } from "../canvas-game-engine/modules/lib/timer.js";
 
-E.g.: Set an EntityDelay as the target of an EntityTrigger and connect the
-entities that should be triggered after the delay as targets to the 
-EntityDelay.
+/**
+ * This entity passes through all calls to triggeredBy() to its own targets
+ * after a delay of n seconds.
+ *
+ * E.g.: Set an EntityDelay as the target of an EntityTrigger and connect the
+ * entities that should be triggered after the delay as targets to the
+ * EntityDelay.
+ *
+ * Keys for LevelEditor:
+ *
+ * delay
+ * Delay in seconds after which the targets should be triggered.
+ * default: 1
+ *
+ * target.1, target.2 ... target.n
+ * Names of the entities whose triggeredBy() method will be called after
+ * the delay.
+ */
+export class EntityDelay extends Entity {
+  _levelEditorDrawBox = true;
+  _levelEditorBoxColor = "rgba(255, 100, 0, 0.7)";
 
+  size = { x: 8, y: 8 };
+  delay = 1;
+  delayTimer = null;
+  triggerEntity = null;
 
-Keys for Weltmeister:
+  constructor(opts) {
+    super(opts);
+    this.delayTimer = new Timer();
+  }
 
-delay 
-	Delay in seconds after which the targets should be triggered.
-	default: 1
-	
-target.1, target.2 ... target.n
-	Names of the entities whose triggeredBy() method will be called after 
-	the delay.
-*/
+  // eslint-disable-next-line no-unused-vars
+  triggeredBy(entity, _trigger) {
+    this.fire = true;
+    this.delayTimer.set(this.delay);
+    this.triggerEntity = entity;
+  }
 
-ig.module(
-	'game.entities.delay'
-)
-.requires(
-	'impact.entity'
-)
-.defines(function(){
+  update() {
+    if (!this.fire || this.delayTimer.delta() < 0) return;
 
-EntityDelay = ig.Entity.extend({
-	_wmDrawBox: true,
-	_wmBoxColor: 'rgba(255, 100, 0, 0.7)',
-	
-	size: {x: 8, y: 8},
-	delay: 1,
-	delayTimer: null,
-	triggerEntity: null,
-	
-	
-	init: function( x, y, settings ) {
-		this.parent( x, y, settings );
-		this.delayTimer = new ig.Timer();
-	},
-	
-	
-	triggeredBy: function( entity, trigger ) {		
-		this.fire = true;
-		this.delayTimer.set( this.delay );
-		this.triggerEntity = entity;
-	},
-	
-	
-	update: function(){
-		if( this.fire && this.delayTimer.delta() > 0 ) {
-			this.fire = false;
-
-			for( var t in this.target ) {
-				var ent = ig.game.getEntityByName( this.target[t] );
-				if( ent && typeof(ent.triggeredBy) == 'function' ) {
-					ent.triggeredBy( this.triggerEntity, this );
-				}
-			}
-		}
-	}
-});
-
-});
+    this.fire = false;
+    for (const t in this.target) {
+      const entity = this.game.getEntityByName(this.target[t]);
+      if (!entity && typeof entity.triggeredBy !== "function") continue;
+      entity.triggeredBy(this.triggerEntity, this);
+    }
+  }
+}
