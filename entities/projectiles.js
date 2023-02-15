@@ -4,6 +4,7 @@ import { Register } from "../canvas-game-engine/modules/core/register.js";
 export class Projectile extends Entity {
   zIndex = -10;
   collides = Entity.COLLIDES.LITE;
+  size = { x: 32, y: 32 };
 
   update() {
     this.pos.x += this.vel.x;
