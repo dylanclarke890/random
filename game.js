@@ -65,7 +65,7 @@ export class TowerDefenseGame extends Game {
       }
       case this.MODE.selectTurret: {
         if (this.selected == null) return;
-        if (!this.selected.base.anyClickablesInFocus()) {
+        if (!this.selected.anyClickablesInFocus()) {
           this.selected.range.show = false;
           this.selected = null;
         }
