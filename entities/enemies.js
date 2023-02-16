@@ -1,8 +1,7 @@
-import { Entity } from "../canvas-game-engine/modules/core/entity.js";
 import { Register } from "../canvas-game-engine/modules/core/register.js";
 import { EntityMover } from "../canvas-game-engine/modules/lib/entities/mover.js";
 
-export class MoverEnemy extends EntityMover {
+export class Enemy extends EntityMover {
   static get_sequence(start) {
     start ??= 0;
     return Array.from({ length: 20 }, (_v, i) => i + start);
@@ -17,38 +16,6 @@ export class MoverEnemy extends EntityMover {
     super(opts);
     this.size = { x: 16, y: 16 };
     this.speed = 40;
-    this.createAnimationSheet(`assets/spritesheets/${spritesheetName}.png`, { x: 66, y: 58 });
-
-    const defaultDuration = Enemy.framesToSecs(3);
-    this.addAnim("attack", defaultDuration, Enemy.get_sequence(0), false);
-    this.addAnim("die", defaultDuration, Enemy.get_sequence(20), false);
-    this.addAnim("hurt", defaultDuration, Enemy.get_sequence(40), false);
-    this.addAnim("idle", defaultDuration, Enemy.get_sequence(60), false);
-    this.addAnim("jump", defaultDuration, Enemy.get_sequence(80), false);
-    this.addAnim("run", defaultDuration, Enemy.get_sequence(100), false);
-    this.addAnim("walk", defaultDuration, Enemy.get_sequence(120), false);
-    this.currentAnim = this.anims.walk;
-  }
-}
-
-class Enemy extends Entity {
-  static get_sequence(start) {
-    start ??= 0;
-    return Array.from({ length: 20 }, (_v, i) => i + start);
-  }
-  static framesToSecs = (frames) => (1 / 60) * frames;
-
-  collides = Entity.COLLIDES.ACTIVE;
-  currentWaypoint = 0;
-  maxHealth = 20;
-  health = this.maxHealth;
-  offset = { x: 32, y: 32 };
-  speed = 1;
-  vel = { x: 0, y: 0 };
-
-  constructor({ spritesheetName, ...opts }) {
-    super(opts);
-    this.size = { x: 16, y: 16 };
     this.createAnimationSheet(`assets/spritesheets/${spritesheetName}.png`, { x: 66, y: 58 });
 
     const defaultDuration = Enemy.framesToSecs(3);
@@ -80,30 +47,9 @@ class Enemy extends Entity {
     ctx.fillStyle = "green";
     ctx.fillRect(this.pos.x + xOffset, this.pos.y + yOffset, w * (this.health / this.maxHealth), h);
   }
-
-  update() {
-    if (!this.path) {
-      super.update();
-      return;
-    }
-    const [x, y] = this.path[this.currentWaypoint];
-    const xDistance = x - this.pos.x;
-    const yDistance = y - this.pos.y;
-    const angle = Math.atan2(yDistance, xDistance);
-    this.vel.x = Math.cos(angle) * this.speed;
-    this.vel.y = Math.sin(angle) * this.speed;
-    this.pos.x += this.vel.x;
-    this.pos.y += this.vel.y;
-
-    if (Math.round(this.pos.x) === Math.round(x) && Math.round(this.pos.y) === Math.round(y))
-      this.currentWaypoint++;
-
-    if (this.currentAnim) this.currentAnim.update();
-    if (this.currentWaypoint === this.path.length) this.kill();
-  }
 }
 
-export class Enemy_Pitchfork extends MoverEnemy {
+export class Enemy_Pitchfork extends Enemy {
   constructor(opts) {
     super({ spritesheetName: "pitchfork_guy", ...opts });
   }
