@@ -51,7 +51,7 @@ export class TowerDefenseGame extends Game {
     ]);
 
     this.turretSelector = this.spawnEntity(TurretSelector, this.input.mouse.x, this.input.mouse.x);
-    this.turretSelector.setSelected(MachineGun);
+    this.turretSelector.setSelected(MachineGun, false);
 
     this.chain = new EventChain()
       .wait(1)
@@ -122,11 +122,14 @@ export class TowerDefenseGame extends Game {
 
   handleInput() {
     this.turretSelector.setPosition(this.input.mouse);
+
+    // Mode change hotkeys
     if (this.input.pressed("modeSelectTurret")) this.enterMode(this.MODE.selectTurret);
     else if (this.input.pressed("modePlaceTurret")) this.enterMode(this.MODE.placeTurret);
 
     if (this.input.pressed("action")) this.action();
 
+    // Turret select hotkeys
     if (this.input.pressed("hotkeyOne")) this.turretSelector.setSelected(MachineGun);
     else if (this.input.pressed("hotkeyTwo")) this.turretSelector.setSelected(Cannon);
     else if (this.input.pressed("hotkeyThree")) this.turretSelector.setSelected(RPG);

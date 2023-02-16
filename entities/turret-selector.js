@@ -35,6 +35,8 @@ export class TurretSelector extends Entity {
 
     this.selected.pos.x = x;
     this.selected.pos.y = y;
+    this.pos.x = x;
+    this.pos.y = y;
 
     // Check if the selected turret is in a valid area by comparing its position with the map data's
     x /= TowerDefenseGame.MAP_TILE_SIZE;
@@ -62,13 +64,14 @@ export class TurretSelector extends Entity {
     }
   }
 
-  setSelected(turretType) {
+  setSelected(turretType, setMode) {
+    setMode ??= true;
     this.turretType = turretType;
     this.selected = new turretType({ x: this.pos.x, y: this.pos.y, game: this.game });
     this.selected.setAlpha(0.5);
     this.selected._clickableIgnore = true;
     this.selected.range.show = true;
-    this.game.enterMode(this.game.MODE.placeTurret);
+    if (setMode) this.game.enterMode(this.game.MODE.placeTurret);
   }
 
   draw() {
