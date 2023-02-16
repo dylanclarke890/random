@@ -78,7 +78,7 @@ class TurretHead extends Entity {
     super(opts);
     this.target = null;
     this.angleToTarget = null;
-    this.fireRate = 1;
+    this.fireRate ??= 1;
     this.size = { x: 32, y: 32 };
     this.chain = new EventChain()
       .waitUntil(() => this.target != null)
@@ -171,7 +171,7 @@ export class Turret extends mix(Entity).with(ClickableMixin) {
 
 class CannonTurretHead extends TurretHead {
   constructor({ settings = {}, ...rest }) {
-    super({ ...rest, settings: { ...settings, bulletType: CannonBullet } });
+    super({ ...rest, settings: { ...settings, bulletType: CannonBullet, fireRate: 1 } });
     this.createAnimationSheet("assets/turrets/Cannon.png", { x: 35, y: 64 });
     this.addAnim("Default", 1, [0], false);
   }
@@ -179,7 +179,7 @@ class CannonTurretHead extends TurretHead {
 
 class MachineGunTurretHead extends TurretHead {
   constructor({ settings = {}, ...rest }) {
-    super({ ...rest, settings: { ...settings, bulletType: MGBullet } });
+    super({ ...rest, settings: { ...settings, bulletType: MGBullet, fireRate: 0.3 } });
     this.createAnimationSheet("assets/turrets/MG.png", { x: 31, y: 64 });
     this.addAnim("Default", 1, [0], false);
   }
@@ -187,7 +187,7 @@ class MachineGunTurretHead extends TurretHead {
 
 class RPGTurretHead extends TurretHead {
   constructor({ settings = {}, ...rest }) {
-    super({ ...rest, settings: { ...settings, bulletType: Missile } });
+    super({ ...rest, settings: { ...settings, bulletType: Missile, fireRate: 2.5 } });
     this.createAnimationSheet("assets/turrets/Missile_Launcher.png", { x: 39, y: 64 });
     this.addAnim("Default", 1, [0], false);
   }
