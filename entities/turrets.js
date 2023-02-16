@@ -23,10 +23,6 @@ class TurretBase extends Entity {
     this.pos.x = pos.x;
     this.pos.y = pos.y;
   }
-
-  onClick() {
-    this.turret.onSelected();
-  }
 }
 
 class TurretRange extends Entity {
@@ -161,8 +157,8 @@ export class Turret extends mix(Entity).with(ClickableMixin) {
     this.activeBullets.push(bullet);
   }
 
-  onSelected() {
-    if (this.game.mode !== this.game.MODE.selectTurret) return;
+  onClick() {
+    this.game.enterMode(this.game.MODE.selectTurret);
     if (this.game.selected) this.game.selected.range.show = false;
     this.game.selected = this;
     this.game.selected.range.show = true;

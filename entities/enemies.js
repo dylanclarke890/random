@@ -15,7 +15,7 @@ export class Enemy extends EntityMover {
   constructor({ spritesheetName, ...opts }) {
     super(opts);
     this.size = { x: 16, y: 16 };
-    this.speed = 40;
+    this.speed = 100;
     this.createAnimationSheet(`assets/spritesheets/${spritesheetName}.png`, { x: 66, y: 58 });
 
     const defaultDuration = Enemy.framesToSecs(3);

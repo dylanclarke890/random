@@ -134,8 +134,10 @@ export class TowerDefenseGame extends Game {
     this.turretSelector.setPosition(this.input.mouse);
 
     // Mode change hotkeys
-    if (this.input.pressed("modeSelectTurret")) this.enterMode(this.MODE.selectTurret);
-    else if (this.input.pressed("modePlaceTurret")) this.enterMode(this.MODE.placeTurret);
+    if (this.input.pressed("modeSelectTurret")) {
+      this.enterMode(this.MODE.selectTurret);
+      console.log("selected");
+    } else if (this.input.pressed("modePlaceTurret")) this.enterMode(this.MODE.placeTurret);
 
     if (this.input.pressed("action")) this.action();
 
