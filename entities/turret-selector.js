@@ -68,6 +68,7 @@ export class TurretSelector extends Entity {
     this.selected.setAlpha(0.5);
     this.selected._clickableIgnore = true;
     this.selected.range.show = true;
+    this.game.enterMode(this.game.MODE.placeTurret);
   }
 
   draw() {

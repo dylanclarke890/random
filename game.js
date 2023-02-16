@@ -105,18 +105,28 @@ export class TowerDefenseGame extends Game {
     super.update();
   }
 
+  enterMode(mode) {
+    switch (mode) {
+      case this.MODE.selectTurret:
+        this.mode = this.MODE.selectTurret;
+        this.turretSelector.selected._clickableIgnore = true;
+        break;
+      case this.MODE.placeTurret:
+        this.mode = this.MODE.placeTurret;
+        this.turretSelector.selected._clickableIgnore = false;
+        break;
+      default:
+        break;
+    }
+  }
+
   handleInput() {
     this.turretSelector.setPosition(this.input.mouse);
-    if (this.input.pressed("modeSelectTurret")) {
-      this.mode = this.MODE.selectTurret;
-      this.turretSelector.selected._clickableIgnore = true;
-    } else if (this.input.pressed("modePlaceTurret")) {
-      this.mode = this.MODE.placeTurret;
-      this.turretSelector.selected._clickableIgnore = false;
-    }
+    if (this.input.pressed("modeSelectTurret")) this.enterMode(this.MODE.selectTurret);
+    else if (this.input.pressed("modePlaceTurret")) this.enterMode(this.MODE.placeTurret);
+
     if (this.input.pressed("action")) this.action();
 
-    // let newTurretSelected = false; // TODO
     if (this.input.pressed("hotkeyOne")) this.turretSelector.setSelected(MachineGun);
     else if (this.input.pressed("hotkeyTwo")) this.turretSelector.setSelected(Cannon);
     else if (this.input.pressed("hotkeyThree")) this.turretSelector.setSelected(RPG);
