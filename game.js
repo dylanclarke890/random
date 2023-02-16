@@ -1,9 +1,12 @@
 import { Game } from "./canvas-game-engine/modules/core/game.js";
 import { Input } from "./canvas-game-engine/modules/core/input.js";
 import { EventChain } from "./canvas-game-engine/modules/lib/event-chain.js";
-import { Algorithm, HeuristicType } from "./canvas-game-engine/modules/pathfinding/constants.js";
-import { Grid } from "./canvas-game-engine/modules/pathfinding/data-structures.js";
-import { PathFinder } from "./canvas-game-engine/modules/pathfinding/pathfinder.js";
+import {
+  Algorithm,
+  HeuristicType,
+} from "./canvas-game-engine/modules/lib/pathfinding/constants.js";
+import { Grid } from "./canvas-game-engine/modules/lib/pathfinding/data-structures.js";
+import { PathFinder } from "./canvas-game-engine/modules/lib/pathfinding/pathfinder.js";
 import { Cannon, Enemy_Pitchfork, MachineGun, RPG, TurretSelector } from "./entities/entities.js";
 import { baseLevel } from "./levels/baseLevel.js";
 
