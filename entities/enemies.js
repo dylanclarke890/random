@@ -1,5 +1,35 @@
 import { Entity } from "../canvas-game-engine/modules/core/entity.js";
 import { Register } from "../canvas-game-engine/modules/core/register.js";
+import { EntityMover } from "../canvas-game-engine/modules/lib/entities/mover.js";
+
+export class MoverEnemy extends EntityMover {
+  static get_sequence(start) {
+    start ??= 0;
+    return Array.from({ length: 20 }, (_v, i) => i + start);
+  }
+  static framesToSecs = (frames) => (1 / 60) * frames;
+
+  maxHealth = 20;
+  health = this.maxHealth;
+  offset = { x: 32, y: 32 };
+
+  constructor({ spritesheetName, ...opts }) {
+    super(opts);
+    this.size = { x: 16, y: 16 };
+    this.speed = 40;
+    this.createAnimationSheet(`assets/spritesheets/${spritesheetName}.png`, { x: 66, y: 58 });
+
+    const defaultDuration = Enemy.framesToSecs(3);
+    this.addAnim("attack", defaultDuration, Enemy.get_sequence(0), false);
+    this.addAnim("die", defaultDuration, Enemy.get_sequence(20), false);
+    this.addAnim("hurt", defaultDuration, Enemy.get_sequence(40), false);
+    this.addAnim("idle", defaultDuration, Enemy.get_sequence(60), false);
+    this.addAnim("jump", defaultDuration, Enemy.get_sequence(80), false);
+    this.addAnim("run", defaultDuration, Enemy.get_sequence(100), false);
+    this.addAnim("walk", defaultDuration, Enemy.get_sequence(120), false);
+    this.currentAnim = this.anims.walk;
+  }
+}
 
 class Enemy extends Entity {
   static get_sequence(start) {
@@ -73,7 +103,7 @@ class Enemy extends Entity {
   }
 }
 
-export class Enemy_Pitchfork extends Enemy {
+export class Enemy_Pitchfork extends MoverEnemy {
   constructor(opts) {
     super({ spritesheetName: "pitchfork_guy", ...opts });
   }

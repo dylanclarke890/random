@@ -17,7 +17,7 @@ export class TowerDefenseGame extends Game {
   turretSelector;
   /** @type {PathFinder}  */
   pathfinder;
-  /** @type {number[][]}  */
+  /** @type {Waypoint[]}  */
   path;
   selected;
 
@@ -45,7 +45,7 @@ export class TowerDefenseGame extends Game {
     });
 
     const grid = new Grid({ matrix: this.collisionMap.data });
-    const pathMatrix = this.pathfinder.findPath(0, 3, 0, 16, grid, false);
+    const pathMatrix = this.pathfinder.findPath(0, 3, 0, 16, grid, true);
     this.path = pathMatrix.map(([x, y]) =>
       this.spawnEntity(
         Waypoint,
@@ -58,8 +58,8 @@ export class TowerDefenseGame extends Game {
     this.turretSelector.setSelected(MachineGun, false);
 
     this.chain = new EventChain()
-      .wait(1)
-      .then(() => this.spawnEntity(Enemy_Pitchfork, -50, 96, { path: this.path }))
+      .wait(3)
+      .then(() => this.spawnEntity(Enemy_Pitchfork, -50, 96, { targets: this.path }))
       .repeat();
   }
 
@@ -97,7 +97,7 @@ export class TowerDefenseGame extends Game {
     ctx.beginPath();
     ctx.moveTo(start.pos.x, start.pos.y);
     for (let i = 1; i < this.path.length; i++) {
-      const {x, y }= this.path[i].pos;
+      const { x, y } = this.path[i].pos;
       ctx.lineTo(x, y);
     }
     ctx.stroke();
