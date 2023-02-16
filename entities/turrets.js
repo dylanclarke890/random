@@ -6,7 +6,7 @@ import { EventChain } from "../canvas-game-engine/modules/lib/event-chain.js";
 import { ClickableMixin } from "../canvas-game-engine/modules/lib/mixins/clickable.js";
 import { mix } from "../canvas-game-engine/modules/lib/mixin.js";
 
-import { Enemy_Pitchfork, CannonBullet, MGBullet, Missile } from "./entities.js";
+import { Enemy_Pitchfork, CannonBullet, MGBullet, Missile } from "./index.js";
 import { TowerDefenseGame } from "../game.js";
 
 const NINETY_DEGREES = toRad(90);

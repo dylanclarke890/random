@@ -7,8 +7,14 @@ import {
 } from "./canvas-game-engine/modules/lib/pathfinding/constants.js";
 import { Grid } from "./canvas-game-engine/modules/lib/pathfinding/data-structures.js";
 import { PathFinder } from "./canvas-game-engine/modules/lib/pathfinding/pathfinder.js";
-import { Cannon, Enemy_Pitchfork, MachineGun, RPG, TurretSelector } from "./entities/entities.js";
-import { Waypoint } from "./entities/waypoint.js";
+import {
+  Cannon,
+  Enemy_Pitchfork,
+  MachineGun,
+  RPG,
+  TurretSelector,
+  Waypoint,
+} from "./entities/index.js";
 import { baseLevel } from "./levels/baseLevel.js";
 
 export class TowerDefenseGame extends Game {
