@@ -3,4 +3,4 @@ import { EntityVoid } from "../canvas-game-engine/modules/lib/entities/void.js";
 
 export class Waypoint extends EntityVoid {}
 
-Register.entityType(Waypoint);
+Register.entityTypes(Waypoint);

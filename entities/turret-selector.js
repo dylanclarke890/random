@@ -94,4 +94,4 @@ export class TurretSelector extends Entity {
   }
 }
 
-Register.entityType(TurretSelector);
+Register.entityTypes(TurretSelector);

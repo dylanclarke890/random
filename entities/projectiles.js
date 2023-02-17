@@ -42,9 +42,9 @@ export class Missile extends Projectile {
   }
 }
 
-Register.entityType(CannonBullet, MGBullet);
+Register.entityTypes(CannonBullet, MGBullet);
 const imgRoot = "assets/projectiles/";
-Register.preloadImage(
+Register.preloadImages(
   `${imgRoot}Bullet_Cannon.png`,
   `${imgRoot}Bullet_MG.png`,
   `${imgRoot}Missile.png`
