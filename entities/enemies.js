@@ -41,6 +41,11 @@ export class Enemy extends EntityMover {
     ctx.fillStyle = "green";
     ctx.fillRect(this.pos.x + xOffset, this.pos.y + yOffset, w * (this.health / this.maxHealth), h);
   }
+
+  onEndReached() {
+    this.kill();
+    this.game.lives--;
+  }
 }
 
 export class Enemy_Pitchfork extends Enemy {

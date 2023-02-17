@@ -27,6 +27,8 @@ export class TowerDefenseGame extends Game {
   path;
   selected;
 
+  lives = 50;
+
   MODE = {
     selectTurret: 0,
     placeTurret: 1,
@@ -67,7 +69,7 @@ export class TowerDefenseGame extends Game {
     this.chain = new EventChain()
       .wait(3)
       .then(() =>
-        this.spawnEntity(Enemy_Pitchfork, -50, 96, { targets: this.path, killOnEndReached: true })
+        this.spawnEntity(Enemy_Pitchfork, -50, 96, { targets: this.path, cbOnEndReached: true })
       )
       .repeat();
   }
