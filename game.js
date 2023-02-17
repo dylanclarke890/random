@@ -52,6 +52,7 @@ export class TowerDefenseGame extends Game {
 
     const grid = new Grid({ matrix: this.collisionMap.data });
     const pathMatrix = this.pathfinder.findPath(0, 3, 0, 16, grid, true);
+    pathMatrix.push([-1, 16]);
     this.path = pathMatrix.map(([x, y]) =>
       this.spawnEntity(
         Waypoint,
@@ -65,7 +66,9 @@ export class TowerDefenseGame extends Game {
 
     this.chain = new EventChain()
       .wait(3)
-      .then(() => this.spawnEntity(Enemy_Pitchfork, -50, 96, { targets: this.path }))
+      .then(() =>
+        this.spawnEntity(Enemy_Pitchfork, -50, 96, { targets: this.path, killOnEndReached: true })
+      )
       .repeat();
   }
 
