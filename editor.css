@@ -6,8 +6,10 @@
   padding: 0;
 }
 
-html {
+html,
+body {
   background-color: black;
+  height: 100%;
 }
 
 header {
@@ -15,16 +17,17 @@ header {
   display: flex;
   font-weight: bold;
   justify-content: space-between;
-  background: linear-gradient(to left bottom, black, #2e3033)
+  background: linear-gradient(to left bottom, black, #2e3033);
 }
 
 button {
   background-color: grey;
   border: none;
+  border-radius: 2px;
   color: white;
   cursor: pointer;
   font-size: 16px;
-  padding: 12px 28px;
+  padding: 10px 24px;
   text-align: center;
 }
 
@@ -51,4 +54,20 @@ button:hover {
 #menu-bar {
   margin-right: 1em;
   padding-top: 0.5em;
+}
+
+#editor {
+  display: grid;
+  grid-template-columns: 4fr 1fr;
+  height: calc(100% - 52px);
+}
+
+canvas {
+  background-color: green;
+  width: 100%;
+  height: 100%;
+}
+
+#panels {
+  background-color: blue;
 }
