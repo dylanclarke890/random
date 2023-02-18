@@ -1,0 +1,54 @@
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  background-color: black;
+}
+
+header {
+  align-items: center;
+  display: flex;
+  font-weight: bold;
+  justify-content: space-between;
+  background: linear-gradient(to left bottom, black, #2e3033)
+}
+
+button {
+  background-color: grey;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 12px 28px;
+  text-align: center;
+}
+
+button:hover {
+  background-color: rgb(88, 88, 88);
+}
+
+#level-name {
+  cursor: default;
+  color: rgba(0, 0, 0, 0.1);
+  font-size: 2em;
+  font-family: cursive;
+  padding-left: 0.5em;
+  padding-top: 0.2em;
+  text-shadow: 0px -1px 0px rgb(255 255 255 / 40%);
+}
+
+#level-name[data-unsaved="true"]::after {
+  margin-left: 0.2em;
+  color: firebrick;
+  content: "*";
+}
+
+#menu-bar {
+  margin-right: 1em;
+  padding-top: 0.5em;
+}
