@@ -169,3 +169,33 @@ canvas {
 }
 
 /* #endregion LAYER PANEL */
+
+.input-text-group {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.5em;
+}
+
+.input-text-group > input {
+  max-width: 120px;
+  margin-right: 0.5em;
+}
+
+.input-text-group > label {
+  margin-left: 0.5em;
+}
+
+.input-number-group {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.5em;
+}
+
+.input-number-group > input {
+  max-width: 40px;
+  margin-right: 0.5em;
+}
+
+.input-number-group > label {
+  margin-left: 0.5em;
+}
