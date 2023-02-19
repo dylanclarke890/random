@@ -1,3 +1,6 @@
+import { config } from "./config.js";
+import { KrystalizorHttpClient } from "./http-client.js";
+
 export class Modal {
   /**
    * @param {Object} settings
@@ -135,5 +138,81 @@ export class ConfirmModal extends Modal {
       onOk(e);
       this.close();
     });
+  }
+}
+
+export class SelectLevelModal extends Modal {
+  /**
+   * @param {Object} settings
+   * @param {string} settings.id
+   * @param {[string[]]} settings.buttonIds
+   * @param {[string]} settings.onSelect
+   */
+  constructor(settings = {}) {
+    super(settings);
+    new KrystalizorHttpClient().api.browse(config.levels.directory, "scripts").then((levels) => {
+      this.levels = levels;
+      this.updateLevels();
+    });
+    this.selected = null;
+  }
+
+  construct({ id }) {
+    const body = "No levels to display.";
+    const footer = `
+      <div class="panel__actions">
+        <button class="btn btn-sm modal-confirm">Select</button>
+        <button class="btn btn-sm modal-cancel">Cancel</button>
+      </div>
+    `;
+    super.construct({ id, title: "Select Level", body, footer, size: "fullscreen" });
+  }
+
+  updateLevels() {
+    const body = this.modal.querySelector(".modal-body");
+    body.innerHTML = "";
+    for (let i = 0; i < this.levels.length; i++) {
+      let level = this.levels[i];
+      level = level.substring(level.lastIndexOf("/") + 1);
+      const levelOption = document.createElement("div");
+      levelOption.innerHTML = `
+        <div class="level-option">
+          <img class="level-option__preview">
+          <span class="level-option__name">${level}</span>
+        </div>`;
+      body.appendChild(levelOption);
+    }
+  }
+
+  bindEvents({ buttonIds, onSelect }) {
+    super.bindEvents({ buttonIds });
+
+    const noop = () => null;
+    this.onSelected = onSelect ?? noop;
+
+    const closeBtns = this.modal.querySelectorAll(".modal-close");
+    for (let i = 0; i < closeBtns.length; i++) {
+      const btn = closeBtns[i];
+      btn.addEventListener("click", () => {
+        this.selected = null;
+        this.close(null);
+      });
+    }
+
+    const cancelBtn = this.modal.querySelector(".modal-cancel");
+    const confirmBtn = this.modal.querySelector(".modal-confirm");
+
+    cancelBtn.addEventListener("click", () => {
+      this.selected = null;
+      this.close();
+    });
+    confirmBtn.addEventListener("click", () => {
+      this.close();
+    });
+  }
+
+  close() {
+    this.onSelected(this.selected);
+    super.close();
   }
 }
