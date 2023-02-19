@@ -214,8 +214,6 @@ export class SelectLevelModal extends Modal {
   updateLevels(levels) {
     this.levels = levels;
     const options = [];
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
 
     for (let i = 0; i < levels.length; i++) {
       const { path, data } = levels[i];
@@ -227,7 +225,8 @@ export class SelectLevelModal extends Modal {
         <img class="level-option__preview loading" src="../krystalizor/assets/loading.svg" >
         <span class="level-option__name">${levelName}</span>`;
       options.push(levelOption);
-      this.getLevelPreviewImage(levelOption, ctx, data);
+      console.log(data);
+      this.getLevelPreviewImage(levelOption, data);
     }
     const body = this.modal.querySelector(".modal-body");
     body.innerHTML = "";
@@ -241,11 +240,64 @@ export class SelectLevelModal extends Modal {
    * @param {*} data
    * @returns
    */
-  getLevelPreviewImage(levelOption, ctx, data) {
-    console.log(data.layer);
-    // const img = levelOption.querySelector("img");
-    // img.src = ctx.getImageData(0, 0, 150, 150);
-    // img.classList.remove("loading");
+  getLevelPreviewImage(levelOption, data) {
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+
+    const { x, y, ts } = data.layer.reduce(
+      (prev, curr) => ({
+        x: Math.max(prev.x, curr.width),
+        y: Math.max(prev.y, curr.height),
+        ts: Math.max(prev.ts, curr.tilesize),
+      }),
+      { x: 0, y: 0, ts: 0 }
+    );
+    canvas.width = x * ts;
+    canvas.height = y * ts;
+
+    const colors = [
+      "red",
+      "gray",
+      "orange",
+      "blue",
+      "purple",
+      "turquoise",
+      "cyan",
+      "pink",
+      "hotpink",
+    ];
+    let currentColor = 0;
+    ctx.fillStyle = colors[currentColor];
+    for (let i = 0; i < data.layer.length; i++) {
+      const layer = data.layer[i];
+      if (!layer.visible || layer.repeat || layer.name === "collision") continue;
+      this.drawMapLayer(layer, ctx);
+      ctx.fillStyle = colors[++currentColor];
+    }
+
+    const img = levelOption.querySelector("img");
+    const orig = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    canvas.width = 150;
+    canvas.height = 150;
+    ctx.putImageData(orig, 0, 0);
+    img.src = canvas.toDataURL();
+    img.classList.remove("loading");
+  }
+
+  /**
+   *
+   * @param {*} layer
+   * @param {CanvasRenderingContext2D} ctx
+   * @returns
+   */
+  drawMapLayer(layer, ctx) {
+    const { tilesize, height, width, data } = layer;
+    console.log(layer);
+    for (let y = 0; y < height; y++)
+      for (let x = 0; x < width; x++) {
+        if (layer.name === "path") console.log(data[y][x]);
+        if (data[y][x] > 0) ctx.fillRect(x * tilesize, y * tilesize, tilesize, tilesize);
+      }
   }
 
   bindLevelOptionEvents(options) {

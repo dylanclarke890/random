@@ -406,7 +406,7 @@ input:checked + .slider:before {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 160px;
+  height: 175px;
   padding: 0.2em;
   width: 160px;
   transition: 0.4s;
@@ -421,7 +421,7 @@ input:checked + .slider:before {
 }
 
 .level-option__preview {
-  height: 150px;
+  /* height: 150px; */
   width: 150px;
 }
 
