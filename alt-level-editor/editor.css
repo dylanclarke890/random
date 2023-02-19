@@ -27,10 +27,11 @@ body {
 
 header {
   align-items: center;
+  background: linear-gradient(to left bottom, black, #2e3033);
   display: flex;
   font-weight: bold;
   justify-content: space-between;
-  background: linear-gradient(to left bottom, black, #2e3033);
+  user-select: none;
 }
 
 button {
