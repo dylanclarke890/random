@@ -47,7 +47,7 @@ header {
   user-select: none;
 }
 
-button {
+.btn {
   background-color: grey;
   border: none;
   border-radius: 2px;
@@ -56,9 +56,14 @@ button {
   font-size: 16px;
   padding: 10px 24px;
   text-align: center;
+  transition: all ease 0.1s;
 }
 
-button:hover {
+.btn-sm {
+  padding: 5px 12px;
+}
+
+.btn:hover {
   background-color: rgb(88, 88, 88);
 }
 
@@ -112,6 +117,13 @@ canvas {
   text-transform: uppercase;
 }
 
+.panel__actions {
+  display: flex;
+  gap: 0.5em;
+  justify-content: center;
+  margin-top: 0.5em;
+}
+
 /* #region LAYER PANEL */
 
 #layers {
@@ -136,6 +148,7 @@ canvas {
 #new-layer {
   cursor: pointer;
   font-weight: 900;
+  transition: color ease 0.1s;
 }
 
 #new-layer:hover {
@@ -199,21 +212,24 @@ canvas {
 .input-settings-layout input {
   border-radius: 3px;
   padding: 2px;
+  place-self: flex-start;
 }
 
 .input-settings-layout input[type="text"] {
   max-width: 10em;
-  place-self: flex-end;
 }
 
 .input-settings-layout input[type="number"] {
   max-width: 2.5em;
-  place-self: flex-start;
 }
 
 /* #endregion INPUT SETTINGS LAYOUT */
 
 /* #region TOGGLE OPTION */
+
+.toggle-option {
+  margin-top: 0.5em;
+}
 
 .toggle-option >:first-child {
   margin-inline: 0.5em;

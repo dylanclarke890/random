@@ -12,10 +12,10 @@
     <header>
       <span id="level-name" data-unsaved="true">untitled.js</span>
       <div id="menu-bar">
-        <button id="new">New</button>
-        <button id="load">Load</button>
-        <button id="save">Save</button>
-        <button id="saveAs">Save As</button>
+        <button id="level-new" class="btn">New</button>
+        <button id="level-load" class="btn">Load</button>
+        <button id="level-save" class="btn">Save</button>
+        <button id="level-save-as" class="btn">Save As</button>
       </div>
     </header>
     <main id="editor">
@@ -24,7 +24,7 @@
         <div id="layers" class="panel">
           <div id="layers-header">
             <h2 class="panel__header">Layers</h2>
-            <div id="new-layer">+</div>
+            <div id="layer-new">+</div>
           </div>
           <div id="layers-list">
             <div id="layer-entities" class="layer">
@@ -55,12 +55,39 @@
             <label for="distance">Distance:</label>
             <input type="number" name="distance" id="distance" autocomplete="off" />
           </div>
-          <div class="toggle-option">
-            <label class="switch">
-              <input type="checkbox" disabled />
-              <span class="slider round"></span>
-            </label>
-            <span>Is Collision Layer</span>
+          <div class="toggle-option-list">
+            <div class="toggle-option">
+              <label class="switch">
+                <input type="checkbox" id="is-collision-layer" />
+                <span class="slider round"></span>
+              </label>
+              <span>is collision layer</span>
+            </div>
+            <div class="toggle-option">
+              <label class="switch">
+                <input type="checkbox" id="pre-render" />
+                <span class="slider round"></span>
+              </label>
+              <span>pre-render in game</span>
+            </div>
+            <div class="toggle-option">
+              <label class="switch">
+                <input type="checkbox" id="repeat-map" />
+                <span class="slider round"></span>
+              </label>
+              <span>repeat</span>
+            </div>
+            <div class="toggle-option">
+              <label class="switch">
+                <input type="checkbox" id="link-with-collision" />
+                <span class="slider round"></span>
+              </label>
+              <span>link with collision</span>
+            </div>
+          </div>
+          <div class="panel__actions">
+            <button id="layer-apply" class="btn btn-sm">Apply</button>
+            <button id="layer-delete" class="btn btn-sm">Delete</button>
           </div>
         </div>
         <div id="entities" class="panel">
