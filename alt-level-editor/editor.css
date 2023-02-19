@@ -62,7 +62,8 @@ button:hover {
 
 #menu-bar {
   margin-right: 1em;
-  padding-top: 0.5em;
+  padding-bottom: 0.25em;
+  padding-top: 0.25em;
 }
 
 #editor {
