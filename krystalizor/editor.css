@@ -18,6 +18,19 @@
   background-color: rgba(0, 0, 0, 0);
 }
 
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
 html,
 body {
   background-color: black;
@@ -170,32 +183,34 @@ canvas {
 
 /* #endregion LAYER PANEL */
 
+.settings-layout {
+  display: grid;
+  grid-template-columns: 1fr 4fr;
+  padding: 0.5em;
+  gap: 0.5em;
+}
+
+.settings-layout > label {
+  padding: 2px;
+}
+
+.settings-layout input {
+  border-radius: 3px;
+  padding: 2px;
+}
+
+.settings-layout input[type="text"] {
+  max-width: 10em;
+  place-self: flex-end;
+}
+
+.settings-layout input[type="number"] {
+  max-width: 2.5em;
+  place-self: flex-start;
+}
+
 .input-text-group {
   display: flex;
   justify-content: space-between;
   margin-top: 0.5em;
-}
-
-.input-text-group > input {
-  max-width: 120px;
-  margin-right: 0.5em;
-}
-
-.input-text-group > label {
-  margin-left: 0.5em;
-}
-
-.input-number-group {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 0.5em;
-}
-
-.input-number-group > input {
-  max-width: 40px;
-  margin-right: 0.5em;
-}
-
-.input-number-group > label {
-  margin-left: 0.5em;
 }
