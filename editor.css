@@ -6,10 +6,19 @@
   padding: 0;
 }
 
+::-webkit-scrollbar {
+  width: 2px;
+}
+
+::-webkit-scrollbar-track-piece {
+  background-color: rgba(0, 0, 0, 0);
+}
+
 html,
 body {
   background-color: black;
   height: 100%;
+  font-family: sans-serif;
 }
 
 header {
@@ -58,7 +67,7 @@ button:hover {
 
 #editor {
   display: grid;
-  grid-template-columns: 4fr 1fr;
+  grid-template-columns: 1fr 4fr;
   height: calc(100% - 52px);
 }
 
@@ -69,5 +78,47 @@ canvas {
 }
 
 #panels {
-  background-color: blue;
+  background-color: lightblue;
 }
+
+/* #region LAYER PANEL */
+
+#layers {
+  max-height: 200px;
+  overflow: auto;
+}
+
+#layers-header {
+  display: flex;
+  justify-content: space-between;
+  color: grey;
+  padding: 0.5em;
+  text-align: center;
+  align-items: center;
+  border-bottom: 1px solid #555;
+}
+
+#layers-header h2 {
+  text-transform: uppercase;
+  font-size: 100%;
+}
+
+#new-layer {
+  cursor: pointer;
+  font-weight: 900;
+}
+
+#new-layer:hover {
+  color: white;
+}
+
+.layer {
+  display: grid;
+  grid-template-columns: 1fr 4fr;
+}
+
+.layer__visibility {
+
+}
+
+/* #endregion LAYER PANEL */

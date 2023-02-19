@@ -6,7 +6,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Krystal Games Editor</title>
-    <link rel="stylesheet" href="editor.css">
+    <link rel="stylesheet" href="editor.css" />
   </head>
   <body>
     <header>
@@ -18,9 +18,27 @@
         <button id="saveAs">Save As</button>
       </div>
     </header>
-    <div id="editor">
+    <main id="editor">
+      <div id="panels">
+        <div id="layers">
+          <div id="layers-header">
+            <h2>Layers</h2>
+            <div id="new-layer">+</div>
+          </div>
+          <div id="layers-list">
+            <div id="layer-entities" class="layer">
+              <span class="layer__visibility" data-checked="false"></span>
+              <span class="layer__name" data-checked="false">entities</span>
+            </div>
+          </div>
+        </div>
+
+        <div id="layer-settings"></div>
+        <div id="entities"></div>
+        <div id="entity-settings"></div>
+      </div>
       <canvas></canvas>
-      <div id="panels"></div>
-    </div>
+    </main>
+    <div id="zoomIndicator"></div>
   </body>
 </html>
