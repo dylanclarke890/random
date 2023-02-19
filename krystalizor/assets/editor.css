@@ -175,13 +175,13 @@ header {
 }
 
 .layer__visibility {
-  background-image: url("assets/eye.svg");
+  background-image: url("eye.svg");
   background-repeat: no-repeat;
   margin-left: 0.3em;
 }
 
 .layer__visibility[data-checked="true"] {
-  background-image: url("assets/eye-slash.svg");
+  background-image: url("eye-slash.svg");
   position: relative;
   right: 2px;
 }
