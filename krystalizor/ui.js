@@ -1,5 +1,4 @@
 import { config } from "./config.js";
-import { KrystalizorHttpClient } from "./http-client.js";
 
 export class Modal {
   /**
@@ -148,17 +147,17 @@ export class SelectLevelModal extends Modal {
    * @param {[string[]]} settings.buttonIds
    * @param {[string]} settings.onSelect
    */
-  constructor(settings = {}) {
+  constructor(settings = {}, httpClient) {
     super(settings);
-    new KrystalizorHttpClient().api.browse(config.levels.directory, "scripts").then((levels) => {
-      this.levels = levels;
-      this.updateLevels();
-    });
+    this.httpClient = httpClient;
+    this.httpClient.api
+      .browse(config.levels.directory, "scripts")
+      .then((paths) => this.loadLevels(paths));
     this.selected = null;
   }
 
   construct({ id }) {
-    const body = "No levels to display.";
+    const body = "Loading...";
     const footer = `
       <div class="panel__actions">
         <button class="btn btn-sm modal-confirm">Select</button>
@@ -168,25 +167,99 @@ export class SelectLevelModal extends Modal {
     super.construct({ id, title: "Select Level", body, footer, size: "fullscreen" });
   }
 
-  updateLevels() {
-    const body = this.modal.querySelector(".modal-body");
-    body.innerHTML = "";
-    for (let i = 0; i < this.levels.length; i++) {
-      const path = this.levels[i];
+  /**
+   * @param {string[]} paths
+   */
+  loadLevels(paths) {
+    const totalToLoad = paths.length;
+    let loaded = 0;
+    const levels = [];
+    for (let i = 0; i < paths.length; i++)
+      this.httpClient.api.file(paths[i], { parseResponse: false }).then((data) => {
+        levels.push({ path: paths[i], data: this.parseData(data) });
+        if (++loaded === totalToLoad) this.updateLevels(levels);
+      });
+  }
+
+  parseData(data) {
+    if (!data) {
+      console.debug("LevelEditor: parseData - no data provided.");
+      return;
+    }
+
+    // extract JS object from level data.
+    const jsonMatch = data.match(/\/\*JSON-BEGIN\*\/\s?([\s\S]*?);?\s?\/\*JSON-END\*/);
+    if (jsonMatch) {
+      let json = jsonMatch[1];
+      // Some keys may be stored in modern JS format i.e without quotes. Find and replace them.
+      const matches = json.match(/(\w+):/g);
+      if (matches) {
+        matches.forEach((v) => {
+          // v = match + : - we want it to be "match":
+          const match = v.substring(0, v.length - 1);
+          json = json.replace(v, `"${match}":`);
+        });
+      }
+
+      // Remove all trailing commas on arrays and objects.
+      json = json.replace(/,(?=\s*[}|\]])/gm, "");
+
+      // Finally, we can parse it:
+      data = JSON.parse(json);
+    }
+
+    return data;
+  }
+
+  updateLevels(levels) {
+    this.levels = levels;
+    const options = [];
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+
+    for (let i = 0; i < levels.length; i++) {
+      const { path, data } = levels[i];
       const levelName = path.substring(path.lastIndexOf("/") + 1);
       const levelOption = document.createElement("div");
+      levelOption.className = "level-option";
+      levelOption.dataset.path = path;
       levelOption.innerHTML = `
-        <div class="level-option" data-path="${path}">
-          <img class="level-option__preview">
-          <span class="level-option__name">${levelName}</span>
-        </div>`;
-      body.appendChild(levelOption);
+        <img class="level-option__preview loading" src="../krystalizor/assets/loading.svg" >
+        <span class="level-option__name">${levelName}</span>`;
+      options.push(levelOption);
+      this.getLevelPreviewImage(levelOption, ctx, data);
+    }
+    const body = this.modal.querySelector(".modal-body");
+    body.innerHTML = "";
+    body.append(...options);
+    this.bindLevelOptionEvents(options);
+  }
+
+  /**
+   *
+   * @param {CanvasRenderingContext2D} ctx
+   * @param {*} data
+   * @returns
+   */
+  getLevelPreviewImage(levelOption, ctx, data) {
+    // const img = levelOption.querySelector("img");
+    // img.src = ctx.getImageData(0, 0, 150, 150);
+    // img.classList.remove("loading");
+  }
+
+  bindLevelOptionEvents(options) {
+    for (let i = 0; i < options.length; i++) {
+      const opt = options[i];
+      opt.addEventListener("click", () => {
+        this.selected = this.levels.find((l) => l.path === opt.dataset.path);
+        for (let j = 0; j < options.length; j++)
+          options[j].classList.toggle("selected", options[j] === opt);
+      });
     }
   }
 
   bindEvents({ buttonIds, onSelect }) {
     super.bindEvents({ buttonIds });
-
     const noop = () => null;
     this.onSelected = onSelect ?? noop;
 
@@ -195,7 +268,7 @@ export class SelectLevelModal extends Modal {
       const btn = closeBtns[i];
       btn.addEventListener("click", () => {
         this.selected = null;
-        this.close(null);
+        this.close();
       });
     }
 
@@ -213,6 +286,8 @@ export class SelectLevelModal extends Modal {
 
   close() {
     this.onSelected(this.selected);
+    const options = this.modal.querySelectorAll(".level-option");
+    for (let i = 0; i < options.length; i++) options[i].classList.remove("selected");
     super.close();
   }
 }
