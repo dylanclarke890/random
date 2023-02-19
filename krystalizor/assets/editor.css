@@ -230,7 +230,7 @@ header {
   margin-top: 0.5em;
 }
 
-.toggle-option >:first-child {
+.toggle-option > :first-child {
   margin-inline: 0.5em;
 }
 
@@ -258,8 +258,8 @@ header {
   right: 0;
   bottom: 0;
   background-color: #ccc;
-  -webkit-transition: .4s;
-  transition: .4s;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
 }
 
 .slider:before {
@@ -270,8 +270,8 @@ header {
   left: 2px;
   bottom: 2px;
   background-color: white;
-  -webkit-transition: .4s;
-  transition: .4s;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
 }
 
 input:disabled + .slider {
@@ -279,11 +279,11 @@ input:disabled + .slider {
 }
 
 input:checked + .slider {
-  background-color: #2196F3;
+  background-color: #2196f3;
 }
 
 input:focus + .slider {
-  box-shadow: 0 0 1px #2196F3;
+  box-shadow: 0 0 1px #2196f3;
 }
 
 input:checked + .slider:before {
@@ -300,4 +300,79 @@ input:checked + .slider:before {
 .slider.round:before {
   border-radius: 50%;
 }
+
 /* #endregion TOGGLE OPTION */
+
+/* #region MODAL */
+
+/* The Modal (background) */
+.modal {
+  background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+  display: none; /* Hidden by default */
+  height: 100%; /* Full height */
+  left: 0;
+  overflow: auto; /* Enable scroll if needed */
+  position: fixed; /* Stay in place */
+  top: 0;
+  width: 100%; /* Full width */
+  z-index: 1; /* Sit on top */
+}
+
+/* Modal Content */
+.modal-content {
+  animation-name: animatetop;
+  animation-duration: 0.4s;
+  border-radius: 4px;
+  border: 2px solid white;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  color: white;
+  padding: 0;
+  position: relative;
+  margin: auto;
+  top: 15%;
+  width: 80%;
+}
+
+/* Modal Header */
+.modal-header {
+  padding: 0.1em 1em;
+}
+
+/* Modal Body */
+.modal-body {
+  padding: 2px 16px;
+}
+
+/* Modal Footer */
+.modal-footer {
+  padding: 0.1em 1em;
+}
+
+/* The Close Button */
+.modal-close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  transition: 0.4s;
+}
+
+.modal-close:hover,
+.modal-close:focus {
+  color: white;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+@keyframes animatetop {
+  from {
+    top: -300px;
+    opacity: 0;
+  }
+  to {
+    top: 15%;
+    opacity: 1;
+  }
+}
+
+/* #endregion MODAL */
