@@ -10,10 +10,10 @@ export class Krystalizor {
     this.game = this.canvas; // for game loop
     this.loop = new GameLoop({ runner: this });
     this.loop.start();
-    this.initDialogs();
+    this.initModals();
   }
 
-  initDialogs() {
+  initModals() {
     const saveBody = "<p>Save Content?</p>";
     const loadBody = "Load Level?";
     new Modal({
@@ -24,7 +24,7 @@ export class Krystalizor {
     });
     new ConfirmModal({
       id: "modal-load-level",
-      title: "Load",
+      title: "Load Level",
       body: loadBody,
       buttonIds: ["level-load"],
       onCancel: () => console.log("Test cancel"),

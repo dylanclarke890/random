@@ -144,13 +144,14 @@ header {
   border-bottom: none;
 }
 
-#new-layer {
+#layer-new {
   cursor: pointer;
+  color: grey;
   font-weight: 900;
   transition: color ease 0.1s;
 }
 
-#new-layer:hover {
+#layer-new:hover {
   color: white;
 }
 
@@ -343,7 +344,7 @@ input:checked + .slider:before {
   width: 80%;
 }
 .modal-content.fullscreen {
-  width: 100%;
+  width: calc(100% - 5px);
 }
 
 /* Modal Header */

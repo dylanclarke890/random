@@ -54,7 +54,7 @@ export class Modal {
       btn.addEventListener("click", () => this.open());
     }
 
-    const closeBtns = this.modal.querySelectorAll("span.modal-close");
+    const closeBtns = this.modal.querySelectorAll(".modal-close");
     for (let i = 0; i < closeBtns.length; i++) {
       const btn = closeBtns[i];
       btn.addEventListener("click", () => this.close());
