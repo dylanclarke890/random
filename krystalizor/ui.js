@@ -242,6 +242,7 @@ export class SelectLevelModal extends Modal {
    * @returns
    */
   getLevelPreviewImage(levelOption, ctx, data) {
+    console.log(data.layer);
     // const img = levelOption.querySelector("img");
     // img.src = ctx.getImageData(0, 0, 150, 150);
     // img.classList.remove("loading");
