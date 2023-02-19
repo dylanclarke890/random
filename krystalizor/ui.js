@@ -1,3 +1,4 @@
+import { BackgroundMap } from "../canvas-game-engine/modules/core/map.js";
 import { config } from "./config.js";
 
 export class Modal {
@@ -252,8 +253,10 @@ export class SelectLevelModal extends Modal {
       }),
       { x: 0, y: 0, ts: 0 }
     );
-    canvas.width = x * ts;
-    canvas.height = y * ts;
+    const w = x * ts;
+    const h = y * ts;
+    canvas.width = w;
+    canvas.height = h;
 
     const colors = [
       "red",
@@ -271,7 +274,8 @@ export class SelectLevelModal extends Modal {
     for (let i = 0; i < data.layer.length; i++) {
       const layer = data.layer[i];
       if (!layer.visible || layer.repeat || layer.name === "collision") continue;
-      this.drawMapLayer(layer, ctx);
+      const bgMap = new BackgroundMap({ ...layer, system: { width: w, height: h, ctx } });
+      this.drawMapLayer(bgMap, ctx);
       ctx.fillStyle = colors[++currentColor];
     }
 
@@ -286,18 +290,18 @@ export class SelectLevelModal extends Modal {
 
   /**
    *
-   * @param {*} layer
+   * @param {BackgroundMap} map
    * @param {CanvasRenderingContext2D} ctx
    * @returns
    */
-  drawMapLayer(layer, ctx) {
-    const { tilesize, height, width, data } = layer;
-    console.log(layer);
-    for (let y = 0; y < height; y++)
-      for (let x = 0; x < width; x++) {
-        if (layer.name === "path") console.log(data[y][x]);
-        if (data[y][x] > 0) ctx.fillRect(x * tilesize, y * tilesize, tilesize, tilesize);
-      }
+  drawMapLayer(map, ctx) {
+    map.draw();
+    console.log(map);
+    // const { tilesize, height, width, data } = map;
+    // for (let y = 0; y < height; y++)
+    //   for (let x = 0; x < width; x++) {
+    //     if (data[y][x] > 0) ctx.fillRect(x * tilesize, y * tilesize, tilesize, tilesize);
+    //   }
   }
 
   bindLevelOptionEvents(options) {
