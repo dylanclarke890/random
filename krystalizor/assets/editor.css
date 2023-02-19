@@ -322,6 +322,7 @@ input:checked + .slider:before {
 .modal-content {
   animation-name: animatetop;
   animation-duration: 0.4s;
+  background-color: black;
   border-radius: 4px;
   border: 2px solid white;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
@@ -335,17 +336,19 @@ input:checked + .slider:before {
 
 /* Modal Header */
 .modal-header {
-  padding: 0.1em 1em;
+  padding: 0.5em;
+  border-bottom: 1px solid grey;
 }
 
 /* Modal Body */
 .modal-body {
-  padding: 2px 16px;
+  padding: 0.5em;
 }
 
 /* Modal Footer */
 .modal-footer {
-  padding: 0.1em 1em;
+  border-top: 1px solid grey;
+  padding: 0.5em;
 }
 
 /* The Close Button */

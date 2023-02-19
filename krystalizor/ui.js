@@ -83,3 +83,56 @@ export class Modal {
     document.body.removeChild(this.modal);
   }
 }
+
+export class ConfirmModal extends Modal {
+  /**
+   * @param {Object} settings
+   * @param {string} settings.id
+   * @param {[string]} settings.title
+   * @param {[string]} settings.body
+   * @param {[string[]]} settings.buttonIds
+   * @param {[() => void]} settings.okText
+   * @param {[string]} settings.onOk
+   * @param {[() => void]} settings.onCancel
+   * @param {[string]} settings.cancelText
+   */
+  constructor(settings = {}) {
+    super(settings);
+  }
+
+  construct({ id, title, body, okText = "Confirm", cancelText = "Cancel" }) {
+    const footer = `
+      <div class="panel__actions">
+        <button class="btn btn-sm modal-confirm">${okText}</button>
+        <button class="btn btn-sm modal-cancel">${cancelText}</button>
+      </div>
+    `;
+    super.construct({ id, title, body, footer });
+  }
+
+  bindEvents({ buttonIds, onOk, onCancel }) {
+    super.bindEvents({ buttonIds });
+
+    const noop = () => null;
+    onOk ??= noop;
+    onCancel ??= noop;
+
+    const closeBtns = this.modal.querySelectorAll(".modal-close");
+    for (let i = 0; i < closeBtns.length; i++) {
+      const btn = closeBtns[i];
+      btn.addEventListener("click", (e) => onCancel(e));
+    }
+
+    const cancelBtn = this.modal.querySelector(".modal-cancel");
+    const confirmBtn = this.modal.querySelector(".modal-confirm");
+
+    cancelBtn.addEventListener("click", (e) => {
+      onCancel(e);
+      this.close();
+    });
+    confirmBtn.addEventListener("click", (e) => {
+      onOk(e);
+      this.close();
+    });
+  }
+}
