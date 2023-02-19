@@ -2,7 +2,7 @@ import { config } from "./config.js";
 
 export class Canvas {
   /**
-   * @param {System} system
+   * @param {import("./system.js").System} system
    */
   constructor(system) {
     this.system = system;
@@ -31,9 +31,17 @@ export class Canvas {
 
   //#endregion Events
 
-  draw() {
+  clear() {
     const { ctx, height, width } = this.system;
-    ctx.clearRect(0, 0, width, height);
+    const clearColor = this.config.colors.clear;
+    if (clearColor) {
+      ctx.fillStyle = clearColor;
+      ctx.fillRect(0, 0, width, height);
+    } else ctx.clearRect(0, 0, width, height);
+  }
+
+  draw() {
+    this.clear();
     this.drawLabels();
   }
 
@@ -47,13 +55,13 @@ export class Canvas {
     let xlabel = this.screen.actual.x - (this.screen.actual.x % step) - step;
     for (let tx = Math.floor(-this.screen.actual.x % step); tx < width; tx += step) {
       xlabel += step;
-      ctx.fillText(xlabel, tx * scale, 0);
+      ctx.fillText(xlabel, tx * scale, 10);
     }
 
     let ylabel = this.screen.actual.y - (this.screen.actual.y % step) - step;
     for (let ty = Math.floor(-this.screen.actual.y % step); ty < height; ty += step) {
       ylabel += step;
-      ctx.fillText(ylabel, 0, ty * scale);
+      ctx.fillText(ylabel, 0, ty * scale + 10);
     }
   }
 
