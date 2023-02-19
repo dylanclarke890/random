@@ -172,13 +172,13 @@ export class SelectLevelModal extends Modal {
     const body = this.modal.querySelector(".modal-body");
     body.innerHTML = "";
     for (let i = 0; i < this.levels.length; i++) {
-      let level = this.levels[i];
-      level = level.substring(level.lastIndexOf("/") + 1);
+      const path = this.levels[i];
+      const levelName = path.substring(path.lastIndexOf("/") + 1);
       const levelOption = document.createElement("div");
       levelOption.innerHTML = `
-        <div class="level-option">
+        <div class="level-option" data-path="${path}">
           <img class="level-option__preview">
-          <span class="level-option__name">${level}</span>
+          <span class="level-option__name">${levelName}</span>
         </div>`;
       body.appendChild(levelOption);
     }
