@@ -33,7 +33,6 @@ input[type="number"] {
 
 html,
 body {
-  background-color: black;
   height: 100%;
   font-family: sans-serif;
 }
@@ -97,12 +96,6 @@ header {
   display: grid;
   grid-template-columns: 4fr 1fr;
   height: calc(100% - 52px);
-}
-
-canvas {
-  background-color: green;
-  height: 100%;
-  width: 100%;
 }
 
 /* #region PANEL */

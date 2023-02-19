@@ -99,17 +99,6 @@
       </div>
     </main>
     <div id="zoom-indicator"></div>
-    <script type="text/javascript">
-      // For demo
-      document.addEventListener("DOMContentLoaded", () => {
-        const visibilityIcons = document.querySelectorAll(".layer__visibility");
-        for (let i = 0; i < visibilityIcons.length; i++) {
-          const icon = visibilityIcons[i];
-          icon.addEventListener("click", () => {
-            icon.dataset.checked = icon.dataset.checked === "true" ? "false" : "true";
-          });
-        }
-      });
-    </script>
+    <script type="module" src="../krystalizor/main.js"></script>
   </body>
 </html>
