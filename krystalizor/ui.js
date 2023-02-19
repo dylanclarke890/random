@@ -1,4 +1,5 @@
 import { BackgroundMap } from "../canvas-game-engine/modules/core/map.js";
+import { VendorAttributes } from "../canvas-game-engine/modules/lib/utils/vendor-attributes.js";
 import { config } from "./config.js";
 
 export class Modal {
@@ -226,7 +227,6 @@ export class SelectLevelModal extends Modal {
         <img class="level-option__preview loading" src="../krystalizor/assets/loading.svg" >
         <span class="level-option__name">${levelName}</span>`;
       options.push(levelOption);
-      console.log(data);
       this.getLevelPreviewImage(levelOption, data);
     }
     const body = this.modal.querySelector(".modal-body");
@@ -271,32 +271,50 @@ export class SelectLevelModal extends Modal {
     ];
     let currentColor = 0;
     ctx.fillStyle = colors[currentColor];
-    for (let i = 0; i < data.layer.length; i++) {
-      const layer = data.layer[i];
-      if (!layer.visible || layer.repeat || layer.name === "collision") continue;
-      const bgMap = new BackgroundMap({ ...layer, system: { width: w, height: h, ctx } });
-      this.drawMapLayer(bgMap, ctx);
-      ctx.fillStyle = colors[++currentColor];
+    const bgLayers = data.layer.filter((l) => l.visible && !l.repeat && l.name !== "collision");
+    for (let i = 0; i < bgLayers.length; i++) {
+      const layer = bgLayers[i];
+      const bgMap = new BackgroundMap({
+        ...layer,
+        system: {
+          width: w,
+          height: h,
+          ctx,
+          ready: true,
+          scale: 1,
+          getImagePixels(image, x, y, width, height) {
+            const canvas = document.createElement("canvas");
+            canvas.width = image.width;
+            canvas.height = image.height;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(image, 0, 0, width, height);
+            return ctx.getImageData(x, y, width, height);
+          },
+          drawPosition(x) {
+            return x;
+          },
+        },
+        autoset: true,
+      });
+      bgMap.tiles.load(() => {
+        this.drawMapLayer(bgMap);
+        ctx.fillStyle = colors[++currentColor];
+        if (currentColor >= bgLayers.length) {
+          const img = levelOption.querySelector("img");
+          img.src = canvas.toDataURL();
+          img.classList.remove("loading");
+        }
+      });
     }
-
-    const img = levelOption.querySelector("img");
-    const orig = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    canvas.width = 150;
-    canvas.height = 150;
-    ctx.putImageData(orig, 0, 0);
-    img.src = canvas.toDataURL();
-    img.classList.remove("loading");
   }
 
   /**
    *
    * @param {BackgroundMap} map
-   * @param {CanvasRenderingContext2D} ctx
    * @returns
    */
-  drawMapLayer(map, ctx) {
+  drawMapLayer(map) {
     map.draw();
-    console.log(map);
     // const { tilesize, height, width, data } = map;
     // for (let y = 0; y < height; y++)
     //   for (let x = 0; x < width; x++) {

@@ -12,10 +12,23 @@ export class Krystalizor {
     this.loop = new GameLoop({ runner: this });
     this.loop.start();
     this.httpClient = new KrystalizorHttpClient();
-    this.httpClient.api.browse("../assets/", "images").then((res) => {
-      console.log(res);
+
+    this.httpClient.api.browse("../assets/", "images").then((imgPaths) => {
+      const totalToLoad = imgPaths.length;
+      let loaded = 0;
+      for (let i = 0; i < imgPaths.length; i++) {
+        const path = imgPaths[i];
+        this.httpClient.api.file(path, { parseResponse: false }).then((data) => {
+          const img = new Image();
+          const handle = () => {
+            if (++loaded === totalToLoad) this.initModals();
+          };
+          img.addEventListener("load", handle);
+          img.addEventListener("error", handle);
+          img.src = data;
+        });
+      }
     });
-    this.initModals();
   }
 
   initModals() {
