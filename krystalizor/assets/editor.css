@@ -33,7 +33,6 @@ input[type="number"] {
 
 html,
 body {
-  height: 100%;
   font-family: sans-serif;
 }
 
@@ -95,7 +94,6 @@ header {
 #editor {
   display: grid;
   grid-template-columns: 4fr 1fr;
-  height: calc(100% - 52px);
 }
 
 /* #region PANEL */
