@@ -112,13 +112,33 @@ canvas {
   color: white;
 }
 
+#layers-list {
+  padding-left: 0.2em;
+  padding-top: 0.2em;
+}
+
 .layer {
   display: grid;
-  grid-template-columns: 1fr 4fr;
+  grid-template-columns: 1.5fr 9fr;
 }
 
 .layer__visibility {
+  background-image: url("assets/eye-black.svg");
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
 
+.layer__visibility[data-checked="true"] {
+  background-image: url("assets/eye-white.svg");
+}
+
+.layer__name {
+  text-align: left;
+}
+
+.layer__size {
+  font-size: 75%;
+  color: rgba(255, 255, 255, 0.7);
 }
 
 /* #endregion LAYER PANEL */
