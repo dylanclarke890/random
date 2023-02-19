@@ -1,3 +1,7 @@
+:root {
+  --panel-border-bottom: 1px solid #555;
+}
+
 *,
 *::after,
 *::before {
@@ -74,20 +78,24 @@ button:hover {
 
 canvas {
   background-color: green;
-  width: 100%;
   height: 100%;
+  width: 100%;
 }
 
 #panels {
   background-color: lightblue;
 }
 
+.panel {
+  user-select: none;
+}
+
 .panel__header {
-  text-transform: uppercase;
-  font-size: 100%;
-  padding-left: 0.5em;
-  padding-top: 0.5em;
+  border-bottom: var(--panel-border-bottom);
   color: grey;
+  font-size: 100%;
+  padding: 0.5em;
+  text-transform: uppercase;
 }
 
 /* #region LAYER PANEL */
@@ -103,11 +111,12 @@ canvas {
   padding: 0.5em;
   text-align: center;
   align-items: center;
-  border-bottom: 1px solid #555;
+  border-bottom: var(--panel-border-bottom);
 }
 
 #layers-header .panel__header {
   padding: 0;
+  border-bottom: none;
 }
 
 #new-layer {

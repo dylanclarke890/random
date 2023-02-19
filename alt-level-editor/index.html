@@ -36,8 +36,12 @@
         <div id="layer-settings" class="panel">
           <h2 class="panel__header">Layer Settings</h2>
         </div>
-        <div id="entities" class="panel"></div>
-        <div id="entity-settings" class="panel"></div>
+        <div id="entities" class="panel">
+          <h2 class="panel__header">Entities</h2>
+        </div>
+        <div id="entity-settings" class="panel">
+          <h2 class="panel__header">Entity Settings</h2>
+        </div>
       </div>
     </main>
     <div id="zoomIndicator"></div>
@@ -49,9 +53,9 @@
           const icon = visibilityIcons[i];
           icon.addEventListener("click", () => {
             icon.dataset.checked = icon.dataset.checked === "true" ? "false" : "true";
-          })
+          });
         }
-      })
+      });
     </script>
   </body>
 </html>
