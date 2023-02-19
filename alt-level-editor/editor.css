@@ -82,6 +82,14 @@ canvas {
   background-color: lightblue;
 }
 
+.panel__header {
+  text-transform: uppercase;
+  font-size: 100%;
+  padding-left: 0.5em;
+  padding-top: 0.5em;
+  color: grey;
+}
+
 /* #region LAYER PANEL */
 
 #layers {
@@ -92,16 +100,14 @@ canvas {
 #layers-header {
   display: flex;
   justify-content: space-between;
-  color: grey;
   padding: 0.5em;
   text-align: center;
   align-items: center;
   border-bottom: 1px solid #555;
 }
 
-#layers-header h2 {
-  text-transform: uppercase;
-  font-size: 100%;
+#layers-header .panel__header {
+  padding: 0;
 }
 
 #new-layer {

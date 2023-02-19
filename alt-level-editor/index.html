@@ -21,9 +21,9 @@
     <main id="editor">
       <canvas></canvas>
       <div id="panels">
-        <div id="layers">
+        <div id="layers" class="panel">
           <div id="layers-header">
-            <h2>Layers</h2>
+            <h2 class="panel__header">Layers</h2>
             <div id="new-layer">+</div>
           </div>
           <div id="layers-list">
@@ -33,14 +33,16 @@
             </div>
           </div>
         </div>
-
-        <div id="layer-settings"></div>
-        <div id="entities"></div>
-        <div id="entity-settings"></div>
+        <div id="layer-settings" class="panel">
+          <h2 class="panel__header">Layer Settings</h2>
+        </div>
+        <div id="entities" class="panel"></div>
+        <div id="entity-settings" class="panel"></div>
       </div>
     </main>
     <div id="zoomIndicator"></div>
     <script type="text/javascript">
+      // For demo
       document.addEventListener("DOMContentLoaded", () => {
         const visibilityIcons = document.querySelectorAll(".layer__visibility");
         for (let i = 0; i < visibilityIcons.length; i++) {
