@@ -331,7 +331,19 @@ input:checked + .slider:before {
   position: relative;
   margin: auto;
   top: 15%;
+}
+
+.modal-content.sm {
+  width: 20%;
+}
+.modal-content.md {
+  width: 50%;
+}
+.modal-content.lg {
   width: 80%;
+}
+.modal-content.fullscreen {
+  width: 100%;
 }
 
 /* Modal Header */

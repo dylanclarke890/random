@@ -2,6 +2,7 @@ export class Modal {
   /**
    * @param {Object} settings
    * @param {string} settings.id
+   * @param {["sm"|"md"|"lg"|"fullscreen"]} settings.size
    * @param {[string]} settings.title
    * @param {[string]} settings.body
    * @param {[string]} settings.footer
@@ -12,7 +13,7 @@ export class Modal {
     this.bindEvents(settings);
   }
 
-  construct({ id, title, body, footer }) {
+  construct({ id, title, body, footer, size }) {
     title = title
       ? `
       <div class="modal-header">
@@ -37,7 +38,7 @@ export class Modal {
     modal.id = id;
     modal.className = "modal";
     modal.innerHTML = `
-      <div class="modal-content">
+      <div class="modal-content ${size ?? "md"}">
         ${title}
         ${body}
         ${footer}
