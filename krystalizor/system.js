@@ -6,7 +6,7 @@ export class System {
 
     const header = document.querySelector("header");
     const panels = document.querySelector("#panels");
-    this.height = window.innerHeight - header.offsetHeight;
+    this.height = window.innerHeight - header.offsetHeight - 1;
     this.width = window.innerWidth - panels.offsetWidth;
     this.canvas = document.querySelector("canvas");
 
