@@ -12,6 +12,9 @@ export class Krystalizor {
     this.loop = new GameLoop({ runner: this });
     this.loop.start();
     this.httpClient = new KrystalizorHttpClient();
+    this.httpClient.api.browse("../assets/", "images").then((res) => {
+      console.log(res);
+    });
     this.initModals();
   }
 
