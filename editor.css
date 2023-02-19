@@ -67,7 +67,7 @@ button:hover {
 
 #editor {
   display: grid;
-  grid-template-columns: 1fr 4fr;
+  grid-template-columns: 4fr 1fr;
   height: calc(100% - 52px);
 }
 
@@ -113,23 +113,33 @@ canvas {
 }
 
 #layers-list {
-  padding-left: 0.2em;
   padding-top: 0.2em;
 }
 
 .layer {
   display: grid;
-  grid-template-columns: 1.5fr 9fr;
+  grid-template-columns: 2fr 9fr;
+  padding: 6px 4px;
+  cursor: pointer;
+  transition: background-color 0.1s linear;
+  border-top: 1px solid rgba(255, 255, 255, 0);
+  border-bottom: 1px solid rgba(255, 255, 255, 0);
+}
+
+.layer:hover {
+  background-color: rgb(202, 233, 243);
 }
 
 .layer__visibility {
-  background-image: url("assets/eye-black.svg");
+  background-image: url("assets/eye.svg");
   background-repeat: no-repeat;
-  cursor: pointer;
+  margin-left: 0.3em;
 }
 
 .layer__visibility[data-checked="true"] {
-  background-image: url("assets/eye-white.svg");
+  background-image: url("assets/eye-slash.svg");
+  position: relative;
+  right: 2px;
 }
 
 .layer__name {

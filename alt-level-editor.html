@@ -19,6 +19,7 @@
       </div>
     </header>
     <main id="editor">
+      <canvas></canvas>
       <div id="panels">
         <div id="layers">
           <div id="layers-header">
@@ -37,8 +38,18 @@
         <div id="entities"></div>
         <div id="entity-settings"></div>
       </div>
-      <canvas></canvas>
     </main>
     <div id="zoomIndicator"></div>
+    <script type="text/javascript">
+      document.addEventListener("DOMContentLoaded", () => {
+        const visibilityIcons = document.querySelectorAll(".layer__visibility");
+        for (let i = 0; i < visibilityIcons.length; i++) {
+          const icon = visibilityIcons[i];
+          icon.addEventListener("click", () => {
+            icon.dataset.checked = icon.dataset.checked === "true" ? "false" : "true";
+          })
+        }
+      })
+    </script>
   </body>
 </html>
