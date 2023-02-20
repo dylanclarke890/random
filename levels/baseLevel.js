@@ -2,7 +2,6 @@ export const baseLevel = /*JSON-BEGIN*/ {
   entities: [],
   layer: [
     {
-      id: "test",
       name: "grass",
       width: 24,
       height: 20,
