@@ -1,4 +1,4 @@
-import { Guard } from "../modules/lib/sanity/guard.js";
+import { Guard } from "../krystal-games-engine/modules/lib/sanity/guard.js";
 
 export class Undo {
   static TYPE = {
@@ -15,7 +15,6 @@ export class Undo {
 
   constructor({ editor, levels = 10 } = {}) {
     Guard.againstNull({ editor });
-
     this.editor = editor;
     this.levels = levels;
   }
