@@ -12,6 +12,8 @@ export class Krystallizer {
     this.game = this.canvas; // for game loop
     this.loop = new GameLoop({ runner: this });
     this.httpClient = new KrystallizerHttpClient();
+    this.layers = [];
+    this.entities = [];
     this.preloadImages();
     this.loop.start();
   }
@@ -53,13 +55,10 @@ export class Krystallizer {
 
   loadLevel(data) {
     if (!data) return;
-    console.log(data);
-    while (this.layers.length) {
-      this.layers[0].destroy();
-      this.layers.splice(0, 1);
-    }
+
+    this.layers = [];
+    this.entities = [];
     this.screen.actual = { x: 0, y: 0 };
-    this.entities.clear();
 
     for (let i = 0; i < data.entities.length; i++) {
       const entity = data.entities[i];
@@ -92,7 +91,6 @@ export class Krystallizer {
     }
 
     this.setActiveLayer("entities");
-
     this.reorderLayers();
     // eslint-disable-next-line no-undef
     $("#layers").sortable("refresh");
