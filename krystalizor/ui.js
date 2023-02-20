@@ -331,9 +331,7 @@ export class SelectLevelModal extends Modal {
       this.selected = null;
       this.close();
     });
-    confirmBtn.addEventListener("click", () => {
-      this.close();
-    });
+    confirmBtn.addEventListener("click", () => this.close());
   }
 
   close() {
