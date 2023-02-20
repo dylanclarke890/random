@@ -22,6 +22,10 @@ export class Krystallizer {
     this.loop.start();
   }
 
+  /**
+   * Loads all images from 'config.directories.images' before initialising any modals.
+   * This is to prevent blank screens from being drawn for the level previews.
+   */
   preloadImages() {
     this.httpClient.api.browse(config.directories.images, "images").then((paths) => {
       const totalToLoad = paths.length;
