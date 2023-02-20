@@ -4,6 +4,7 @@ import { config } from "./config.js";
 import { KrystallizerHttpClient } from "./http-client.js";
 import { System } from "./system.js";
 import { Modal, SelectLevelModal } from "./ui.js";
+import { Undo } from "./undo.js";
 
 export class Krystallizer {
   constructor() {
@@ -14,6 +15,7 @@ export class Krystallizer {
     this.httpClient = new KrystallizerHttpClient();
     this.layers = [];
     this.entities = [];
+    this.undo = new Undo({ editor: this, levels: config.undoLevels });
     this.preloadImages();
     this.loop.start();
   }
@@ -59,6 +61,7 @@ export class Krystallizer {
     this.layers = [];
     this.entities = [];
     this.screen.actual = { x: 0, y: 0 };
+    this.undo.clear();
 
     for (let i = 0; i < data.entities.length; i++) {
       const entity = data.entities[i];

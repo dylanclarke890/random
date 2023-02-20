@@ -17,4 +17,5 @@ export const config = {
     levels: "../levels",
     images: "../assets/",
   },
+  undoLevels: 50,
 };
