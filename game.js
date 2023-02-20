@@ -1,4 +1,4 @@
-import { Game } from "./krystal-games-engine/modules/core/game.js";
+import { KrystalGame } from "./krystal-games-engine/modules/core/game.js";
 import { Input } from "./krystal-games-engine/modules/core/input.js";
 import { EventChain } from "./krystal-games-engine/modules/lib/event-chain.js";
 import {
@@ -17,7 +17,7 @@ import {
 } from "./entities/index.js";
 import { baseLevel } from "./levels/baseLevel.js";
 
-export class TowerDefenseGame extends Game {
+export class TowerDefenseGame extends KrystalGame {
   static MAP_TILE_SIZE = 32;
   /** @type {TurretSelector}  */
   turretSelector;
