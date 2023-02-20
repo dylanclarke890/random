@@ -93,6 +93,10 @@ export class KrystallizerHttpClient extends HttpClient {
 
   get api() {
     return {
+      /**
+       * @param {string} dir
+       * @param {"images" | "scripts"} type
+       */
       browse: (dir, type, opts = {}) =>
         this.get(`browse.php?dir=${encodeURIComponent(dir)}&type=${type}`, opts),
       glob: (filepaths, opts = {}) =>

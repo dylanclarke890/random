@@ -67,13 +67,8 @@ export class Modal {
 
   open() {
     this.modal.style.display = "block";
-    this.outsideClickEvent = (e) => {
-      if (e.target === this.modal) this.close();
-    };
-    this.keyupEvent = (e) => {
-      if (e.key === "Escape") this.close();
-    };
-
+    this.outsideClickEvent = (e) => e.target === this.modal && this.close();
+    this.keyupEvent = (e) => e.key === "Escape" && this.close();
     window.addEventListener("click", this.outsideClickEvent);
     document.addEventListener("keyup", this.keyupEvent);
   }
@@ -243,59 +238,57 @@ export class SelectLevelModal extends Modal {
    * @returns
    */
   getLevelPreviewImage(levelOption, data) {
-    (function () {
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
 
-      const { x, y, ts } = data.layer.reduce(
-        (prev, curr) => ({
-          x: Math.max(prev.x, curr.width),
-          y: Math.max(prev.y, curr.height),
-          ts: Math.max(prev.ts, curr.tilesize),
-        }),
-        { x: 0, y: 0, ts: 0 }
-      );
-      const w = x * ts;
-      const h = y * ts;
-      canvas.width = w;
-      canvas.height = h;
-      canvas.id = uniqueId("test-");
-      let currentLayer = 0;
-      const bgLayers = data.layer.filter((l) => l.visible && !l.repeat && l.name !== "collision");
-      for (let i = 0; i < bgLayers.length; i++) {
-        const layer = bgLayers[i];
-        const bgMap = new BackgroundMap({
-          ...layer,
-          system: {
-            width: w,
-            height: h,
-            ctx,
-            ready: true,
-            scale: 1,
-            getImagePixels(image, x, y, width, height) {
-              const canvas = document.createElement("canvas");
-              canvas.width = image.width;
-              canvas.height = image.height;
-              const ctx = canvas.getContext("2d");
-              ctx.drawImage(image, 0, 0, width, height);
-              return ctx.getImageData(x, y, width, height);
-            },
-            drawPosition(x) {
-              return x;
-            },
+    const { x, y, ts } = data.layer.reduce(
+      (prev, curr) => ({
+        x: Math.max(prev.x, curr.width),
+        y: Math.max(prev.y, curr.height),
+        ts: Math.max(prev.ts, curr.tilesize),
+      }),
+      { x: 0, y: 0, ts: 0 }
+    );
+    const w = x * ts;
+    const h = y * ts;
+    canvas.width = w;
+    canvas.height = h;
+    canvas.id = uniqueId("test-");
+    let currentLayer = 0;
+    const bgLayers = data.layer.filter((l) => l.visible && !l.repeat && l.name !== "collision");
+    for (let i = 0; i < bgLayers.length; i++) {
+      const layer = bgLayers[i];
+      const bgMap = new BackgroundMap({
+        ...layer,
+        system: {
+          width: w,
+          height: h,
+          ctx,
+          ready: true,
+          scale: 1,
+          getImagePixels(image, x, y, width, height) {
+            const canvas = document.createElement("canvas");
+            canvas.width = image.width;
+            canvas.height = image.height;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(image, 0, 0, width, height);
+            return ctx.getImageData(x, y, width, height);
           },
-          autoset: true,
-        });
-        bgMap.tiles.load(() => {
-          bgMap.draw();
-          if (++currentLayer >= bgLayers.length) {
-            const img = levelOption.querySelector("img");
-            img.src = canvas.toDataURL();
-            img.classList.remove("loading");
-          }
-        });
-      }
-    })();
+          drawPosition(x) {
+            return x;
+          },
+        },
+        autoset: true,
+      });
+      bgMap.tiles.load(() => {
+        bgMap.draw();
+        if (++currentLayer >= bgLayers.length) {
+          const img = levelOption.querySelector("img");
+          img.src = canvas.toDataURL();
+          img.classList.remove("loading");
+        }
+      });
+    }
   }
 
   bindLevelOptionEvents(options) {
