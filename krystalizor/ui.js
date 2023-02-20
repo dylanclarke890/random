@@ -1,5 +1,4 @@
 import { BackgroundMap } from "../canvas-game-engine/modules/core/map.js";
-import { VendorAttributes } from "../canvas-game-engine/modules/lib/utils/vendor-attributes.js";
 import { config } from "./config.js";
 
 export class Modal {
