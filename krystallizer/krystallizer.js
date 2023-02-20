@@ -1,6 +1,7 @@
 import { GameLoop } from "../krystal-games-engine/modules/core/loop.js";
 import { Canvas } from "./canvas.js";
 import { config } from "./config.js";
+import { EditMap } from "./edit-map.js";
 import { KrystallizerHttpClient } from "./http-client.js";
 import { System } from "./system.js";
 import { Modal, SelectLevelModal } from "./ui.js";
@@ -15,6 +16,7 @@ export class Krystallizer {
     this.httpClient = new KrystallizerHttpClient();
     this.layers = [];
     this.entities = [];
+    this.screen = { actual: { x: 0, y: 0 }, rounded: { x: 0, y: 0 } };
     this.undo = new Undo({ editor: this, levels: config.undoLevels });
     this.preloadImages();
     this.loop.start();
@@ -49,7 +51,7 @@ export class Krystallizer {
       {
         id: "modal-load-level",
         buttonIds: ["level-load"],
-        onSelect: (lvl) => this.loadLevel(lvl),
+        onSelect: (lvl) => this.loadLevel(lvl.data),
       },
       this.httpClient
     );
@@ -76,7 +78,7 @@ export class Krystallizer {
         tileset: layer.tilesetName || layer.tileset,
         foreground: !!layer.foreground,
         system: this.system,
-        config: this.config,
+        config,
         editor: this,
       });
       newLayer.resize(layer.width || layer.data[0].length, layer.height || layer.data.length);
@@ -96,7 +98,7 @@ export class Krystallizer {
     this.setActiveLayer("entities");
     this.reorderLayers();
     // eslint-disable-next-line no-undef
-    $("#layers").sortable("refresh");
+    $("#layers-list").sortable("refresh");
 
     this.resetModified();
     this.undo.clear();
