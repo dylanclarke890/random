@@ -32,19 +32,16 @@ export class Krystalizor {
   }
 
   initModals() {
-    const saveBody = "<p>Save Content?</p>";
-    const loadBody = "Load Level?";
     new Modal({
       id: "modal-save-as",
       title: "Save As",
-      body: saveBody,
+      body: "<p>Save As?</p> <input />",
       buttonIds: ["level-save-as"],
     });
     new SelectLevelModal(
       {
         id: "modal-load-level",
         title: "Load Level",
-        body: loadBody,
         buttonIds: ["level-load"],
         onSelect: (lvl) => this.loadLevel(lvl),
       },

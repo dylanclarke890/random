@@ -165,7 +165,7 @@ export class SelectLevelModal extends Modal {
         <button class="btn btn-sm modal-cancel">Cancel</button>
       </div>
     `;
-    super.construct({ id, title: "Select Level", body, footer, size: "fullscreen" });
+    super.construct({ id, title: "Select Level", body, footer, size: "lg" });
   }
 
   /**
@@ -256,20 +256,7 @@ export class SelectLevelModal extends Modal {
     const h = y * ts;
     canvas.width = w;
     canvas.height = h;
-
-    const colors = [
-      "red",
-      "gray",
-      "orange",
-      "blue",
-      "purple",
-      "turquoise",
-      "cyan",
-      "pink",
-      "hotpink",
-    ];
-    let currentColor = 0;
-    ctx.fillStyle = colors[currentColor];
+    let currentLayer = 0;
     const bgLayers = data.layer.filter((l) => l.visible && !l.repeat && l.name !== "collision");
     for (let i = 0; i < bgLayers.length; i++) {
       const layer = bgLayers[i];
@@ -296,29 +283,13 @@ export class SelectLevelModal extends Modal {
         autoset: true,
       });
       bgMap.tiles.load(() => {
-        this.drawMapLayer(bgMap);
-        ctx.fillStyle = colors[++currentColor];
-        if (currentColor >= bgLayers.length) {
-          const img = levelOption.querySelector("img");
-          img.src = canvas.toDataURL();
-          img.classList.remove("loading");
-        }
+        bgMap.draw();
+        if (++currentLayer < bgLayers.length) return;
+        const img = levelOption.querySelector("img");
+        img.src = canvas.toDataURL();
+        img.classList.remove("loading");
       });
     }
-  }
-
-  /**
-   *
-   * @param {BackgroundMap} map
-   * @returns
-   */
-  drawMapLayer(map) {
-    map.draw();
-    // const { tilesize, height, width, data } = map;
-    // for (let y = 0; y < height; y++)
-    //   for (let x = 0; x < width; x++) {
-    //     if (data[y][x] > 0) ctx.fillRect(x * tilesize, y * tilesize, tilesize, tilesize);
-    //   }
   }
 
   bindLevelOptionEvents(options) {

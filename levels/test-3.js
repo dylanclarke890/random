@@ -7,7 +7,7 @@ export const levelThree = /*JSON-BEGIN*/ {
       height: 20,
       linkWithCollision: false,
       visible: true,
-      tilesetName: "assets/tiles/grass/grass_0_new.png",
+      tilesetName: "assets/tiles/grass/marble_floor_6.png",
       repeat: false,
       preRender: false,
       distance: 1,

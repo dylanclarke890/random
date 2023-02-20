@@ -441,6 +441,8 @@ input:checked + .slider:before {
 #modal-load-level .modal-body {
   max-height: 500px;
   overflow: auto;
+  display: grid;
+  grid-template-columns: repeat(6, 200px);
 }
 
 

@@ -7,7 +7,7 @@ export const levelOne = /*JSON-BEGIN*/ {
       height: 20,
       linkWithCollision: false,
       visible: true,
-      tilesetName: "assets/tiles/grass/grass_0_new.png",
+      tilesetName: "assets/tiles/grass/dirt_1.png",
       repeat: false,
       preRender: false,
       distance: 1,
