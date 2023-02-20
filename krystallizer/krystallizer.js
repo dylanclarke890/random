@@ -51,7 +51,7 @@ export class Krystallizer {
       {
         id: "modal-load-level",
         buttonIds: ["level-load"],
-        onSelect: (lvl) => this.loadLevel(lvl.data),
+        onSelect: (lvl) => this.loadLevel(lvl?.data),
       },
       this.httpClient
     );

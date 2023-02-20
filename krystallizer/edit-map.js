@@ -32,15 +32,15 @@ export class EditMap extends BackgroundMap {
     this.editor = editor;
 
     this.div = $new("div");
-    this.div.className = "layer layerActive";
-    this.div.id = `layer_${name}`;
+    this.div.className = "layer";
+    this.div.id = `layer-${name}`;
     this.div.addEventListener("click", () => this.click());
 
     this.setName(name);
     this.setTileset(tileset || "");
 
-    if (this.foreground) $el("#layers").prepend(this.div);
-    else $el("#layerEntities").after(this.div);
+    if (this.foreground) $el("#layers-list").prepend(this.div);
+    else $el("#layer-entities").after(this.div);
     this.tileSelect = new TileSelect({ layer: this, system: this.system, config: this.config });
   }
 
@@ -115,30 +115,27 @@ export class EditMap extends BackgroundMap {
   }
 
   resetDiv() {
-    const visClass = this.visible ? "checkedVis" : "";
     this.div.innerHTML = `
-      <span class="visible ${visClass}" title="Toggle Visibility (Shift+${this.hotkey})"></span>
-      <span class="name">${this.name}</span>
-      <span class="size">${this.width}x${this.height}</span>
+      <span class="layer__visibility" data-checked="false" title="Toggle Visibility (Shift+${this.hotkey})"></span>
+      <span class="layer__name">${this.name} 
+        <span class="layer__size">${this.width}&times;${this.height}</span>
+      </span>
     `;
     this.div.title = `Select Layer (${this.hotkey})`;
     this.div
-      .querySelector(".visible")
-      .addEventListener("mousedown", () => this.toggleVisibilityClick());
+      .querySelector(".layer__visibility")
+      .addEventListener("click", () => this.toggleVisibilityClick());
   }
 
   setActive(active) {
     this.active = active;
-    if (active) this.div.classList.add("layerActive");
-    else this.div.classList.remove("layerActive");
+    this.div.classList.toggle("layer__active", active);
   }
 
   toggleVisibility() {
     this.visible = !this.visible;
     this.resetDiv();
-    const visibleEl = this.div.querySelector(".visible");
-    if (this.visible) visibleEl.classList.add("checkedVis");
-    else visibleEl.classList.remove("checkedVis");
+    this.div.querySelector(".layer__visibility").dataset.checked = !this.visible.toString();
     this.editor.draw();
   }
 

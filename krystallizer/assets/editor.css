@@ -97,7 +97,7 @@ header {
 
 #editor {
   display: grid;
-  grid-template-columns: 4fr 1fr;
+  grid-template-columns: 5fr 1fr;
 }
 
 /* #region PANEL */
@@ -195,7 +195,8 @@ header {
 
 .layer__size {
   font-size: 75%;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgb(65 63 63 / 70%);
+  margin-left: 0.5em;
 }
 
 /* #endregion LAYER PANEL */
@@ -444,7 +445,6 @@ input:checked + .slider:before {
   display: grid;
   grid-template-columns: repeat(6, 200px);
 }
-
 
 .loading {
   animation: loading 1.5s;
