@@ -238,9 +238,6 @@ export class SelectLevelModal extends Modal {
    * @returns
    */
   getLevelPreviewImage(levelOption, data) {
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
-
     const { x, y, ts } = data.layer.reduce(
       (prev, curr) => ({
         x: Math.max(prev.x, curr.width),
@@ -251,9 +248,13 @@ export class SelectLevelModal extends Modal {
     );
     const w = x * ts;
     const h = y * ts;
+
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
     canvas.width = w;
     canvas.height = h;
     canvas.id = uniqueId("test-");
+
     let currentLayer = 0;
     const bgLayers = data.layer.filter((l) => l.visible && !l.repeat && l.name !== "collision");
     for (let i = 0; i < bgLayers.length; i++) {
@@ -319,7 +320,6 @@ export class SelectLevelModal extends Modal {
 
     const cancelBtn = this.modal.querySelector(".modal-cancel");
     const confirmBtn = this.modal.querySelector(".modal-confirm");
-
     cancelBtn.addEventListener("click", () => {
       this.selected = null;
       this.close();
@@ -329,6 +329,7 @@ export class SelectLevelModal extends Modal {
 
   close() {
     this.onSelected(this.selected);
+    this.selected = null;
     const options = this.modal.querySelectorAll(".level-option");
     for (let i = 0; i < options.length; i++) options[i].classList.remove("selected");
     super.close();
