@@ -41,20 +41,20 @@ export class Krystallizer {
   }
 
   initModals() {
-    new Modal({
-      id: "modal-save-as",
-      title: "Save As",
-      body: "<p>Save As?</p> <input />",
-      buttonIds: ["level-save-as"],
-    });
     this.levelSelect = new SelectLevelModal(
       {
         id: "modal-load-level",
-        buttonIds: ["level-load"],
+        triggeredBy: ["#level-load"],
         onSelect: (lvl) => this.loadLevel(lvl?.data),
       },
       this.httpClient
     );
+    new Modal({
+      id: "modal-save-as",
+      title: "Save As",
+      body: "<p>Save As?</p> <input />",
+      triggeredBy: ["#level-save-as"],
+    });
   }
 
   loadLevel(data) {

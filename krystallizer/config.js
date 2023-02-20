@@ -15,7 +15,8 @@ export const config = {
   },
   directories: {
     levels: "../levels",
-    images: "../assets/",
+    images: "../assets",
   },
+  newFileName: "untitled.js",
   undoLevels: 50,
 };

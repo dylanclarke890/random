@@ -10,7 +10,7 @@ export class Modal {
    * @param {[string]} settings.title
    * @param {[string]} settings.body
    * @param {[string]} settings.footer
-   * @param {[string[]]} settings.buttonIds
+   * @param {[string[]]} settings.triggeredBy
    */
   constructor(settings = {}) {
     this.construct(settings);
@@ -51,11 +51,11 @@ export class Modal {
     this.modal = modal;
   }
 
-  bindEvents({ buttonIds }) {
-    for (let i = 0; i < buttonIds.length; i++) {
-      const btn = document.getElementById(buttonIds[i]);
-      if (!btn) continue;
-      btn.addEventListener("click", () => this.open());
+  bindEvents({ triggeredBy }) {
+    for (let i = 0; i < triggeredBy.length; i++) {
+      const triggers = document.querySelectorAll(triggeredBy[i]);
+      if (!triggers || !triggers.length) continue;
+      triggers.forEach((trigger) => trigger.addEventListener("click", () => this.open()));
     }
 
     const closeBtns = this.modal.querySelectorAll(".modal-close");
@@ -95,7 +95,7 @@ export class ConfirmModal extends Modal {
    * @param {string} settings.id
    * @param {[string]} settings.title
    * @param {[string]} settings.body
-   * @param {[string[]]} settings.buttonIds
+   * @param {[string[]]} settings.triggeredBy
    * @param {[() => void]} settings.okText
    * @param {[string]} settings.onOk
    * @param {[() => void]} settings.onCancel
@@ -115,8 +115,8 @@ export class ConfirmModal extends Modal {
     super.construct({ id, title, body, footer });
   }
 
-  bindEvents({ buttonIds, onOk, onCancel }) {
-    super.bindEvents({ buttonIds });
+  bindEvents({ triggeredBy, onOk, onCancel }) {
+    super.bindEvents({ triggeredBy });
 
     const noop = () => null;
     onOk ??= noop;
@@ -146,7 +146,7 @@ export class SelectLevelModal extends Modal {
   /**
    * @param {Object} settings
    * @param {string} settings.id
-   * @param {[string[]]} settings.buttonIds
+   * @param {[string[]]} settings.triggeredBy
    * @param {[string]} settings.onSelect
    */
   constructor(settings = {}, httpClient) {
@@ -310,8 +310,8 @@ export class SelectLevelModal extends Modal {
     }
   }
 
-  bindEvents({ buttonIds, onSelect }) {
-    super.bindEvents({ buttonIds });
+  bindEvents({ triggeredBy, onSelect }) {
+    super.bindEvents({ triggeredBy });
     const noop = () => null;
     this.onSelected = onSelect ?? noop;
 
