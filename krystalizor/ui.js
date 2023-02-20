@@ -165,7 +165,7 @@ export class SelectLevelModal extends Modal {
         <button class="btn btn-sm modal-cancel">Cancel</button>
       </div>
     `;
-    super.construct({ id, title: "Select Level", body, footer, size: "lg" });
+    super.construct({ id, title: "Load Level", body, footer, size: "lg" });
   }
 
   /**

@@ -11,8 +11,8 @@ export class Krystalizor {
     this.game = this.canvas; // for game loop
     this.loop = new GameLoop({ runner: this });
     this.loop.start();
-    this.httpClient = new KrystalizorHttpClient();
 
+    this.httpClient = new KrystalizorHttpClient();
     this.httpClient.api.browse("../assets/", "images").then((imgPaths) => {
       const totalToLoad = imgPaths.length;
       let loaded = 0;
@@ -24,7 +24,7 @@ export class Krystalizor {
             if (++loaded === totalToLoad) this.initModals();
           };
           img.addEventListener("load", handle);
-          img.addEventListener("error", handle);
+          img.addEventListener("error", handle); // don't care if it fails; probably not important
           img.src = data;
         });
       }
@@ -41,7 +41,6 @@ export class Krystalizor {
     new SelectLevelModal(
       {
         id: "modal-load-level",
-        title: "Load Level",
         buttonIds: ["level-load"],
         onSelect: (lvl) => this.loadLevel(lvl),
       },
