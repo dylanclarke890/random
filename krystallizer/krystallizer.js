@@ -11,19 +11,21 @@ export class Krystallizer {
     this.canvas = new Canvas(this.system);
     this.game = this.canvas; // for game loop
     this.loop = new GameLoop({ runner: this });
-    this.loop.start();
-
     this.httpClient = new KrystallizerHttpClient();
-    this.httpClient.api.browse(config.directories.images, "images").then((imgPaths) => {
-      const totalToLoad = imgPaths.length;
+    this.preloadImages();
+    this.loop.start();
+  }
+
+  preloadImages() {
+    this.httpClient.api.browse(config.directories.images, "images").then((paths) => {
+      const totalToLoad = paths.length;
       let loaded = 0;
-      for (let i = 0; i < imgPaths.length; i++) {
-        const path = imgPaths[i];
-        this.httpClient.api.file(path, { parseResponse: false }).then((data) => {
-          const img = new Image();
+      for (let i = 0; i < paths.length; i++) {
+        this.httpClient.api.file(paths[i], { parseResponse: false }).then((data) => {
           const handle = () => {
             if (++loaded === totalToLoad) this.initModals();
           };
+          const img = new Image();
           img.addEventListener("load", handle);
           img.addEventListener("error", handle); // don't care if it fails; probably not important
           img.src = data;
@@ -39,7 +41,7 @@ export class Krystallizer {
       body: "<p>Save As?</p> <input />",
       buttonIds: ["level-save-as"],
     });
-    new SelectLevelModal(
+    this.levelSelect = new SelectLevelModal(
       {
         id: "modal-load-level",
         buttonIds: ["level-load"],
@@ -49,7 +51,54 @@ export class Krystallizer {
     );
   }
 
-  loadLevel(level) {
-    if (!level) return;
+  loadLevel(data) {
+    if (!data) return;
+    console.log(data);
+    while (this.layers.length) {
+      this.layers[0].destroy();
+      this.layers.splice(0, 1);
+    }
+    this.screen.actual = { x: 0, y: 0 };
+    this.entities.clear();
+
+    for (let i = 0; i < data.entities.length; i++) {
+      const entity = data.entities[i];
+      this.entities.spawnEntity(entity.type, entity.x, entity.y, entity.settings);
+    }
+
+    for (let i = 0; i < data.layer.length; i++) {
+      const layer = data.layer[i];
+      const newLayer = new EditMap({
+        name: layer.name,
+        tilesize: layer.tilesize,
+        tileset: layer.tilesetName || layer.tileset,
+        foreground: !!layer.foreground,
+        system: this.system,
+        config: this.config,
+        editor: this,
+      });
+      newLayer.resize(layer.width || layer.data[0].length, layer.height || layer.data.length);
+      newLayer.linkWithCollision = layer.linkWithCollision;
+      newLayer.repeat = layer.repeat;
+      newLayer.preRender = !!layer.preRender;
+      newLayer.distance = layer.distance;
+      newLayer.visible = !layer.visible;
+      newLayer.data = layer.data;
+      newLayer.toggleVisibility();
+      this.layers.push(newLayer);
+
+      if (layer.name === "collision") this.collisionLayer = newLayer;
+      this.setActiveLayer(layer.name);
+    }
+
+    this.setActiveLayer("entities");
+
+    this.reorderLayers();
+    // eslint-disable-next-line no-undef
+    $("#layers").sortable("refresh");
+
+    this.resetModified();
+    this.undo.clear();
+    this.draw();
   }
 }
