@@ -1,12 +1,12 @@
-import { Game } from "./canvas-game-engine/modules/core/game.js";
-import { Input } from "./canvas-game-engine/modules/core/input.js";
-import { EventChain } from "./canvas-game-engine/modules/lib/event-chain.js";
+import { Game } from "./krystal-games-engine/modules/core/game.js";
+import { Input } from "./krystal-games-engine/modules/core/input.js";
+import { EventChain } from "./krystal-games-engine/modules/lib/event-chain.js";
 import {
   Algorithm,
   HeuristicType,
-} from "./canvas-game-engine/modules/lib/pathfinding/constants.js";
-import { Grid } from "./canvas-game-engine/modules/lib/pathfinding/data-structures.js";
-import { PathFinder } from "./canvas-game-engine/modules/lib/pathfinding/pathfinder.js";
+} from "./krystal-games-engine/modules/lib/pathfinding/constants.js";
+import { Grid } from "./krystal-games-engine/modules/lib/pathfinding/data-structures.js";
+import { PathFinder } from "./krystal-games-engine/modules/lib/pathfinding/pathfinder.js";
 import {
   Cannon,
   Enemy_Pitchfork,

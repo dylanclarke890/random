@@ -1,4 +1,4 @@
-import { GameLoop } from "../canvas-game-engine/modules/core/loop.js";
+import { GameLoop } from "../krystal-games-engine/modules/core/loop.js";
 import { Canvas } from "./canvas.js";
 import { KrystalizorHttpClient } from "./http-client.js";
 import { System } from "./system.js";

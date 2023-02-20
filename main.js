@@ -1,5 +1,5 @@
 import { TowerDefenseGame } from "./game.js";
-import { GameRunner } from "./canvas-game-engine/modules/core/runner.js";
+import { GameRunner } from "./krystal-games-engine/modules/core/runner.js";
 
 new GameRunner({
   canvasId: "play-area",

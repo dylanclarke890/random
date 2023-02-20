@@ -1,10 +1,10 @@
-import { Entity } from "../canvas-game-engine/modules/core/entity.js";
-import { Register } from "../canvas-game-engine/modules/core/register.js";
-import { removeItem } from "../canvas-game-engine/modules/lib/utils/array.js";
-import { toRad } from "../canvas-game-engine/modules/lib/utils/number.js";
-import { EventChain } from "../canvas-game-engine/modules/lib/event-chain.js";
-import { ClickableMixin } from "../canvas-game-engine/modules/lib/mixins/clickable.js";
-import { mix } from "../canvas-game-engine/modules/lib/mixin.js";
+import { Entity } from "../krystal-games-engine/modules/core/entity.js";
+import { Register } from "../krystal-games-engine/modules/core/register.js";
+import { removeItem } from "../krystal-games-engine/modules/lib/utils/array.js";
+import { toRad } from "../krystal-games-engine/modules/lib/utils/number.js";
+import { EventChain } from "../krystal-games-engine/modules/lib/event-chain.js";
+import { ClickableMixin } from "../krystal-games-engine/modules/lib/mixins/clickable.js";
+import { mix } from "../krystal-games-engine/modules/lib/mixin.js";
 
 import { Enemy_Pitchfork, CannonBullet, MGBullet, Missile } from "./index.js";
 import { TowerDefenseGame } from "../game.js";

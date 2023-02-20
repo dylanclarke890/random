@@ -1,5 +1,5 @@
-import { BackgroundMap } from "../canvas-game-engine/modules/core/map.js";
-import { uniqueId } from "../canvas-game-engine/modules/lib/utils/string.js";
+import { BackgroundMap } from "../krystal-games-engine/modules/core/map.js";
+import { uniqueId } from "../krystal-games-engine/modules/lib/utils/string.js";
 import { config } from "./config.js";
 
 export class Modal {

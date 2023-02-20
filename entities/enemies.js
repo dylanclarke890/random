@@ -1,5 +1,5 @@
-import { Register } from "../canvas-game-engine/modules/core/register.js";
-import { EntityMover } from "../canvas-game-engine/modules/lib/entities/mover.js";
+import { Register } from "../krystal-games-engine/modules/core/register.js";
+import { EntityMover } from "../krystal-games-engine/modules/lib/entities/mover.js";
 
 export class Enemy extends EntityMover {
   maxHealth = 20;
