@@ -13,7 +13,8 @@ export const config = {
     secondary: "#555555", // Grid and tile selection bounds
     selection: "#ff9933", // Selection cursor box on tile maps
   },
-  levels: {
-    directory: "../levels",
+  directories: {
+    levels: "../levels",
+    images: "../assets/",
   },
 };

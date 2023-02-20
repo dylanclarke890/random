@@ -1,5 +1,6 @@
 import { GameLoop } from "../krystal-games-engine/modules/core/loop.js";
 import { Canvas } from "./canvas.js";
+import { config } from "./config.js";
 import { KrystallizerHttpClient } from "./http-client.js";
 import { System } from "./system.js";
 import { Modal, SelectLevelModal } from "./ui.js";
@@ -13,7 +14,7 @@ export class Krystallizer {
     this.loop.start();
 
     this.httpClient = new KrystallizerHttpClient();
-    this.httpClient.api.browse("../assets/", "images").then((imgPaths) => {
+    this.httpClient.api.browse(config.directories.images, "images").then((imgPaths) => {
       const totalToLoad = imgPaths.length;
       let loaded = 0;
       for (let i = 0; i < imgPaths.length; i++) {

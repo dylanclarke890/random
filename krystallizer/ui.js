@@ -153,7 +153,7 @@ export class SelectLevelModal extends Modal {
     super(settings);
     this.httpClient = httpClient;
     this.httpClient.api
-      .browse(config.levels.directory, "scripts")
+      .browse(config.directories.levels, "scripts")
       .then((paths) => this.loadLevels(paths));
     this.selected = null;
   }
