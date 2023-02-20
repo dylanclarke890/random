@@ -301,10 +301,11 @@ export class SelectLevelModal extends Modal {
   bindLevelOptionEvents(options) {
     for (let i = 0; i < options.length; i++) {
       const opt = options[i];
-      opt.addEventListener("click", () => {
+      opt.addEventListener("click", (e) => {
         this.selected = this.levels.find((l) => l.path === opt.dataset.path);
         for (let j = 0; j < options.length; j++)
           options[j].classList.toggle("selected", options[j] === opt);
+        if (e.detail === 2) this.close(); //double click
       });
     }
   }
