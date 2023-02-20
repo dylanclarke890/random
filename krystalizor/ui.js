@@ -1,4 +1,5 @@
 import { BackgroundMap } from "../canvas-game-engine/modules/core/map.js";
+import { uniqueId } from "../canvas-game-engine/modules/lib/utils/string.js";
 import { config } from "./config.js";
 
 export class Modal {
@@ -175,11 +176,13 @@ export class SelectLevelModal extends Modal {
     const totalToLoad = paths.length;
     let loaded = 0;
     const levels = [];
-    for (let i = 0; i < paths.length; i++)
-      this.httpClient.api.file(paths[i], { parseResponse: false }).then((data) => {
-        levels.push({ path: paths[i], data: this.parseData(data) });
+    for (let i = 0; i < paths.length; i++) {
+      const path = paths[i];
+      this.httpClient.api.file(path, { parseResponse: false }).then((data) => {
+        levels.push({ path, data: this.parseData(data) });
         if (++loaded === totalToLoad) this.updateLevels(levels);
       });
+    }
   }
 
   parseData(data) {
@@ -215,7 +218,6 @@ export class SelectLevelModal extends Modal {
   updateLevels(levels) {
     this.levels = levels;
     const options = [];
-
     for (let i = 0; i < levels.length; i++) {
       const { path, data } = levels[i];
       const levelName = path.substring(path.lastIndexOf("/") + 1);
@@ -241,55 +243,59 @@ export class SelectLevelModal extends Modal {
    * @returns
    */
   getLevelPreviewImage(levelOption, data) {
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
+    (function () {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
 
-    const { x, y, ts } = data.layer.reduce(
-      (prev, curr) => ({
-        x: Math.max(prev.x, curr.width),
-        y: Math.max(prev.y, curr.height),
-        ts: Math.max(prev.ts, curr.tilesize),
-      }),
-      { x: 0, y: 0, ts: 0 }
-    );
-    const w = x * ts;
-    const h = y * ts;
-    canvas.width = w;
-    canvas.height = h;
-    let currentLayer = 0;
-    const bgLayers = data.layer.filter((l) => l.visible && !l.repeat && l.name !== "collision");
-    for (let i = 0; i < bgLayers.length; i++) {
-      const layer = bgLayers[i];
-      const bgMap = new BackgroundMap({
-        ...layer,
-        system: {
-          width: w,
-          height: h,
-          ctx,
-          ready: true,
-          scale: 1,
-          getImagePixels(image, x, y, width, height) {
-            const canvas = document.createElement("canvas");
-            canvas.width = image.width;
-            canvas.height = image.height;
-            const ctx = canvas.getContext("2d");
-            ctx.drawImage(image, 0, 0, width, height);
-            return ctx.getImageData(x, y, width, height);
+      const { x, y, ts } = data.layer.reduce(
+        (prev, curr) => ({
+          x: Math.max(prev.x, curr.width),
+          y: Math.max(prev.y, curr.height),
+          ts: Math.max(prev.ts, curr.tilesize),
+        }),
+        { x: 0, y: 0, ts: 0 }
+      );
+      const w = x * ts;
+      const h = y * ts;
+      canvas.width = w;
+      canvas.height = h;
+      canvas.id = uniqueId("test-");
+      let currentLayer = 0;
+      const bgLayers = data.layer.filter((l) => l.visible && !l.repeat && l.name !== "collision");
+      for (let i = 0; i < bgLayers.length; i++) {
+        const layer = bgLayers[i];
+        const bgMap = new BackgroundMap({
+          ...layer,
+          system: {
+            width: w,
+            height: h,
+            ctx,
+            ready: true,
+            scale: 1,
+            getImagePixels(image, x, y, width, height) {
+              const canvas = document.createElement("canvas");
+              canvas.width = image.width;
+              canvas.height = image.height;
+              const ctx = canvas.getContext("2d");
+              ctx.drawImage(image, 0, 0, width, height);
+              return ctx.getImageData(x, y, width, height);
+            },
+            drawPosition(x) {
+              return x;
+            },
           },
-          drawPosition(x) {
-            return x;
-          },
-        },
-        autoset: true,
-      });
-      bgMap.tiles.load(() => {
-        bgMap.draw();
-        if (++currentLayer < bgLayers.length) return;
-        const img = levelOption.querySelector("img");
-        img.src = canvas.toDataURL();
-        img.classList.remove("loading");
-      });
-    }
+          autoset: true,
+        });
+        bgMap.tiles.load(() => {
+          bgMap.draw();
+          if (++currentLayer >= bgLayers.length) {
+            const img = levelOption.querySelector("img");
+            img.src = canvas.toDataURL();
+            img.classList.remove("loading");
+          }
+        });
+      }
+    })();
   }
 
   bindLevelOptionEvents(options) {
