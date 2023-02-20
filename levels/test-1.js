@@ -77,7 +77,6 @@ export const levelOne = /*JSON-BEGIN*/ {
       height: 20,
       linkWithCollision: false,
       visible: true,
-      tilesetName: "assets/tiles/grass/grass_0_new.png",
       repeat: false,
       preRender: false,
       distance: 1,
@@ -105,7 +104,7 @@ export const levelOne = /*JSON-BEGIN*/ {
         [0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       ],
-      tileset: "assets/tiles/white-marble/white_marble_0.png",
+      tileset: "assets/tiles/marble/marble_floor_2.png",
     },
     {
       name: "collision",
