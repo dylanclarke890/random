@@ -83,10 +83,10 @@ export class HttpClient {
   }
 }
 
-export class KrystalizorHttpClient extends HttpClient {
+export class KrystallizerHttpClient extends HttpClient {
   constructor(returnFormat = "application/json") {
     super({
-      baseUrl: `${window.location.origin}/krystal-games-engine/server/krystalizor/`,
+      baseUrl: `${window.location.origin}/krystal-games-engine/server/krystallizer/`,
       headers: { Accept: returnFormat },
     });
   }

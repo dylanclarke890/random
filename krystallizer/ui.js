@@ -225,7 +225,7 @@ export class SelectLevelModal extends Modal {
       levelOption.className = "level-option";
       levelOption.dataset.path = path;
       levelOption.innerHTML = `
-        <img class="level-option__preview loading" src="../krystalizor/assets/loading.svg" >
+        <img class="level-option__preview loading" src="../krystallizer/assets/loading.svg" >
         <span class="level-option__name">${levelName}</span>`;
       options.push(levelOption);
       this.getLevelPreviewImage(levelOption, data);

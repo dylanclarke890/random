@@ -1,4 +1,4 @@
-import { Krystalizor } from "./krystalizor.js";
+import { Krystallizer } from "./krystallizer.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   const visibilityIcons = document.querySelectorAll(".layer__visibility");
@@ -9,4 +9,4 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
-new Krystalizor();
+new Krystallizer();

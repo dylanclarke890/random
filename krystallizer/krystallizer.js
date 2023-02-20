@@ -1,10 +1,10 @@
 import { GameLoop } from "../krystal-games-engine/modules/core/loop.js";
 import { Canvas } from "./canvas.js";
-import { KrystalizorHttpClient } from "./http-client.js";
+import { KrystallizerHttpClient } from "./http-client.js";
 import { System } from "./system.js";
 import { Modal, SelectLevelModal } from "./ui.js";
 
-export class Krystalizor {
+export class Krystallizer {
   constructor() {
     this.system = new System();
     this.canvas = new Canvas(this.system);
@@ -12,7 +12,7 @@ export class Krystalizor {
     this.loop = new GameLoop({ runner: this });
     this.loop.start();
 
-    this.httpClient = new KrystalizorHttpClient();
+    this.httpClient = new KrystallizerHttpClient();
     this.httpClient.api.browse("../assets/", "images").then((imgPaths) => {
       const totalToLoad = imgPaths.length;
       let loaded = 0;
