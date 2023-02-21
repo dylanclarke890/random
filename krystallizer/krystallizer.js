@@ -42,10 +42,10 @@ export class Krystallizer {
     const {
       name,
       tileset,
-      tilesize,
+      // tilesize,
       distance,
-      width,
-      height,
+      // width,
+      // height,
       isCollisionLayer,
       preRender,
       repeat,
