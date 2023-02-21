@@ -122,9 +122,11 @@ export class EditMap extends BackgroundMap {
       </span>
     `;
     this.div.title = `Select Layer (${this.hotkey})`;
-    this.div
-      .querySelector(".layer__visibility")
-      .addEventListener("click", () => this.toggleVisibilityClick());
+    console.log("hola");
+    this.div.querySelector(".layer__visibility").addEventListener("click", () => {
+      if (!this.active) this.ignoreLastClick = true;
+      this.toggleVisibility();
+    });
   }
 
   setActive(active) {
@@ -137,11 +139,6 @@ export class EditMap extends BackgroundMap {
     this.resetDiv();
     this.div.querySelector(".layer__visibility").dataset.checked = !this.visible.toString();
     this.editor.draw();
-  }
-
-  toggleVisibilityClick() {
-    if (!this.active) this.ignoreLastClick = true;
-    this.toggleVisibility();
   }
 
   click() {

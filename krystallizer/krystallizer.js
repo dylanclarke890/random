@@ -17,10 +17,12 @@ export class Krystallizer {
     this.httpClient = new KrystallizerHttpClient();
     this.layers = [];
     this.entities = [];
+    this.drawEntities = false;
     this.screen = { actual: { x: 0, y: 0 }, rounded: { x: 0, y: 0 } };
     this.undo = new Undo({ editor: this, levels: config.undoLevels });
     this.preloadImages();
     this.DOMElements = {
+      entitiesLayerVisibility: $el("#layer-entities .layer__visibility"),
       layerSettings: {
         name: $el("#name"),
         tileset: $el("#tileset"),
@@ -39,6 +41,17 @@ export class Krystallizer {
   }
 
   bindEvents() {
+    // eslint-disable-next-line no-undef
+    $("#layers-list").sortable({
+      cancel: ".layer__visibility",
+      update: () => this.reorderLayers(),
+    });
+
+    this.DOMElements.entitiesLayerVisibility.addEventListener("click", () => {
+      this.drawEntities = !this.drawEntities;
+      this.DOMElements.entitiesLayerVisibility.dataset.checked = this.drawEntities.toString();
+    });
+
     const {
       name,
       tileset,
