@@ -20,11 +20,6 @@ export class Krystallizer {
     this.screen = { actual: { x: 0, y: 0 }, rounded: { x: 0, y: 0 } };
     this.undo = new Undo({ editor: this, levels: config.undoLevels });
     this.preloadImages();
-    this.bindEvents();
-    this.loop.start();
-  }
-
-  bindEvents() {
     this.DOMElements = {
       layerSettings: {
         name: $el("#name"),
@@ -39,6 +34,11 @@ export class Krystallizer {
         linkWithCollision: $el("#link-with-collision"),
       },
     };
+    this.bindEvents();
+    this.loop.start();
+  }
+
+  bindEvents() {
     const {
       name,
       tileset,
@@ -53,13 +53,9 @@ export class Krystallizer {
     } = this.DOMElements.layerSettings;
 
     isCollisionLayer.addEventListener("change", () => {
-      const isDisabled = isCollisionLayer.checked;
-      name.disabled = isDisabled;
-      tileset.disabled = isDisabled;
-      distance.disabled = isDisabled;
-      preRender.disabled = isDisabled;
-      repeat.disabled = isDisabled;
-      linkWithCollision.disabled = isDisabled;
+      [name, tileset, distance, preRender, repeat, linkWithCollision].forEach(
+        (el) => (el.disabled = isCollisionLayer.checked)
+      );
     });
   }
 
