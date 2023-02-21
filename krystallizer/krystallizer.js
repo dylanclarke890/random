@@ -22,6 +22,7 @@ export class Krystallizer {
     this.undo = new Undo({ editor: this, levels: config.undoLevels });
     this.preloadImages();
     this.DOMElements = {
+      layers: $el("#layers-list"),
       entitiesLayer: {
         div: $el("#layer-entities"),
         visibility: $el(".layer__visibility"),
@@ -45,7 +46,7 @@ export class Krystallizer {
 
   bindEvents() {
     // eslint-disable-next-line no-undef
-    $("#layers-list").sortable({
+    $(this.DOMElements.layers).sortable({
       cancel: ".layer__visibility",
       update: () => this.reorderLayers(),
     });
@@ -156,7 +157,7 @@ export class Krystallizer {
     this.setActiveLayer("entities");
     this.reorderLayers();
     // eslint-disable-next-line no-undef
-    $("#layers-list").sortable("refresh");
+    $(this.DOMElements.layers).sortable("refresh");
 
     this.resetModified();
     this.undo.clear();
@@ -174,6 +175,37 @@ export class Krystallizer {
     }
   }
 
-  reorderLayers() {}
+  reorderLayers() {
+    const layers = document.querySelectorAll(".layer__name");
+    const newLayers = [];
+    let isForegroundLayer = true;
+    layers.forEach((el, i) => {
+      const name = el.textContent;
+      const hotkey = i + 1;
+
+      if (name === "entities") {
+        isForegroundLayer = false; // All layers after the entity layer are not foreground layers
+        this.DOMElements.entitiesLayer.div.title = `Select Layer (${hotkey})`;
+        this.DOMElements.entitiesLayer.visibility.title = `Toggle Visibility (Shift+${hotkey})`;
+        return;
+      }
+
+      const layer = this.getLayerWithName(name);
+      if (!layer) return;
+      layer.setHotkey(hotkey);
+      layer.foreground = isForegroundLayer;
+      newLayers.unshift(layer);
+    });
+
+    this.layers = newLayers;
+    this.setModified();
+    this.draw();
+  }
+
+  getLayerWithName(name) {
+    return this.layers.find((layer) => layer.name === name);
+  }
+
+  setModified() {}
   resetModified() {}
 }
