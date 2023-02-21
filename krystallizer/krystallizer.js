@@ -131,6 +131,8 @@ export class Krystallizer {
     });
   }
 
+  /**
+   * @param {{ path:string, data: {entities: any[], layer: any[]} }} */
   loadLevel({ path, data } = {}) {
     if (!data || !path) return;
     this.fileName = path.substring(path.lastIndexOf("/") + 1);
@@ -185,7 +187,8 @@ export class Krystallizer {
 
   draw() {}
 
-  setActiveLayer(name) {
+  setActiveLayer(/** @type {string} */ name) {
+    // TODO: Set active layer by name - account for entity layer.
     const activeClass = "layer-active";
     this.DOMElements.entitiesLayer.div.classList.toggle(activeClass, name === "entities");
     for (let i = 0; i < this.layers.length; i++) {
@@ -210,7 +213,6 @@ export class Krystallizer {
       }
 
       const layer = this.getLayerWithName(name);
-      console.log(name);
       if (!layer) return;
       layer.setHotkey(hotkey);
       layer.foreground = isForegroundLayer;
@@ -222,11 +224,11 @@ export class Krystallizer {
     this.draw();
   }
 
-  getLayerWithName(name) {
+  getLayerWithName(/** @type {string} */ name) {
     return this.layers.find((layer) => layer.name === name);
   }
 
-  setModified(isModified) {
+  setModified(/** @type {boolean} */ isModified) {
     this.modified = isModified;
     document.title = `${this.fileName} ${this.modified ? "*" : ""} | Krystallizer`;
     this.DOMElements.levelName.textContent = this.fileName;

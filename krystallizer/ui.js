@@ -152,8 +152,7 @@ export class SelectLevelModal extends Modal {
       .browse(config.directories.levels, "scripts")
       .then((paths) => this.loadLevels(paths));
     this.selected = null;
-    this.levelsLoadedCallbacks = [];
-    if (settings.onLevelsLoaded) this.onLevelsLoaded(settings.onLevelsLoaded);
+    this.onLevelsLoaded(settings.onLevelsLoaded);
   }
 
   construct({ id }) {
@@ -239,10 +238,8 @@ export class SelectLevelModal extends Modal {
   }
 
   /**
-   *
-   * @param {CanvasRenderingContext2D} ctx
+   * @param {HTMLDivElement} levelOption
    * @param {*} data
-   * @returns
    */
   getLevelPreviewImage(levelOption, data) {
     const { x, y, ts } = data.layer.reduce(
@@ -299,6 +296,9 @@ export class SelectLevelModal extends Modal {
     }
   }
 
+  /**
+   * @param {HTMLDivElement[]} options
+   */
   bindLevelOptionEvents(options) {
     for (let i = 0; i < options.length; i++) {
       const opt = options[i];
@@ -311,6 +311,9 @@ export class SelectLevelModal extends Modal {
     }
   }
 
+  /**
+   * @param { { triggeredBy: string[], onSelect: (lvl: LevelData) => void? } }
+   */
   bindEvents({ triggeredBy, onSelect }) {
     super.bindEvents({ triggeredBy });
     const noop = () => null;
@@ -334,7 +337,12 @@ export class SelectLevelModal extends Modal {
     confirmBtn.addEventListener("click", () => this.close());
   }
 
+  /**
+   * Register a callback for when levels have finished loading.
+   * @param {Function} cb
+   */
   onLevelsLoaded(cb) {
+    this.levelsLoadedCallbacks ??= [];
     if (Assert.isType(cb, "function")) this.levelsLoadedCallbacks.push(cb);
   }
 

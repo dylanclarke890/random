@@ -169,9 +169,10 @@ header {
   border-top: 1px solid rgba(255, 255, 255, 0);
   cursor: pointer;
   display: grid;
-  grid-template-columns: 2fr 5fr 4fr;
+  grid-template-columns: 1.25em auto 1fr;
+  gap: 0.5em;
   min-height: 32px;
-  padding: 6px 4px;
+  padding: 0.4em 0.25em 0.4em 0.5em;
   transition: background-color 0.1s linear;
 }
 
@@ -186,7 +187,7 @@ header {
 .layer__visibility {
   background-image: url("eye.svg");
   background-repeat: no-repeat;
-  margin-left: 0.3em;
+  background-position-y: bottom;
 }
 
 .layer__visibility[data-checked="true"] {
@@ -200,8 +201,9 @@ header {
 }
 
 .layer__size {
-  font-size: 75%;
+  align-self: center;
   color: rgb(65 63 63 / 70%);
+  font-size: 75%;
   margin-left: 0.5em;
 }
 
