@@ -31,17 +31,49 @@ export class EditMap extends BackgroundMap {
     this.config = config;
     this.editor = editor;
 
-    this.div = $new("div");
-    this.div.className = "layer";
-    this.div.id = `layer-${name}`;
-    this.div.addEventListener("click", () => this.click());
+    const div = $new("div");
+    div.className = "layer";
+    div.id = `layer-${name}`;
+    div.addEventListener("click", () => this.click());
+    this.construct(div);
 
     this.setName(name);
     this.setTileset(tileset || "");
 
-    if (this.foreground) $el("#layers-list").prepend(this.div);
-    else $el("#layer-entities").after(this.div);
+    if (this.foreground) $el("#layers-list").prepend(div);
+    else $el("#layer-entities").after(div);
     this.tileSelect = new TileSelect({ layer: this, system: this.system, config: this.config });
+  }
+
+  construct(div) {
+    div.innerHTML = `
+      <span class="layer__visibility" title="Toggle Visibility (Shift+${this.hotkey})"
+        data-checked="false">
+      </span>
+      <span class="layer__name">${this.name} 
+        <span class="layer__size">${this.width}&times;${this.height}</span>
+      </span>
+    `;
+    this.DOMElements = {
+      div,
+      visible: div.querySelector(".layer__visibility"),
+      name: div.querySelector(".layer__name"),
+      size: div.querySelector(".layer__size"),
+    };
+
+    this.DOMElements.visible.addEventListener("click", () => {
+      if (!this.active) this.ignoreLastClick = true;
+      this.toggleVisibility();
+    });
+  }
+
+  updateDiv() {
+    const { div, visible, name, size } = this.DOMElements;
+    div.title = `Select Layer (${this.hotkey})`;
+    visible.title = `Toggle Visibility (Shift+${this.hotkey})`;
+    visible.dataset.checked = !this.visible;
+    name.textContent = this.name;
+    size.textContent = `${this.width}&times;${this.height}`;
   }
 
   getSaveData() {
@@ -73,7 +105,7 @@ export class EditMap extends BackgroundMap {
     this.data = newData;
     this.width = newWidth;
     this.height = newHeight;
-    this.resetDiv();
+    this.updateDiv();
   }
 
   beginEditing() {
@@ -111,33 +143,17 @@ export class EditMap extends BackgroundMap {
 
   setName(name) {
     this.name = name.replace(/[^0-9a-zA-Z]/g, "_");
-    this.resetDiv();
-  }
-
-  resetDiv() {
-    this.div.innerHTML = `
-      <span class="layer__visibility" data-checked="false" title="Toggle Visibility (Shift+${this.hotkey})"></span>
-      <span class="layer__name">${this.name} 
-        <span class="layer__size">${this.width}&times;${this.height}</span>
-      </span>
-    `;
-    this.div.title = `Select Layer (${this.hotkey})`;
-    console.log("hola");
-    this.div.querySelector(".layer__visibility").addEventListener("click", () => {
-      if (!this.active) this.ignoreLastClick = true;
-      this.toggleVisibility();
-    });
+    this.updateDiv();
   }
 
   setActive(active) {
     this.active = active;
-    this.div.classList.toggle("layer__active", active);
+    this.DOMElements.div.classList.toggle("layer__active", active);
   }
 
   toggleVisibility() {
     this.visible = !this.visible;
-    this.resetDiv();
-    this.div.querySelector(".layer__visibility").dataset.checked = !this.visible.toString();
+    this.updateDiv();
     this.editor.draw();
   }
 
