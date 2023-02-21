@@ -17,6 +17,10 @@ export const config = {
     levels: "../levels",
     images: "../assets",
   },
+  collisionTiles: {
+    path: "./assets/collision_tiles.png",
+    tilesize: 64,
+  },
   newFileName: "untitled.js",
   undoLevels: 50,
 };

@@ -145,4 +145,12 @@ export class Krystallizer {
     this.undo.clear();
     this.draw();
   }
+
+  draw() {}
+
+  // eslint-disable-next-line no-unused-vars
+  setActiveLayer(name) {}
+
+  reorderLayers() {}
+  resetModified() {}
 }
