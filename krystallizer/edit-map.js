@@ -5,7 +5,7 @@ import { Guard } from "../krystal-games-engine/modules/lib/sanity/guard.js";
 import { GameImage } from "../krystal-games-engine/modules/core/image.js";
 import { BackgroundMap } from "../krystal-games-engine/modules/core/map.js";
 
-import { TileSelect } from "../krystal-games-engine/level-editor/tile-select.js";
+import { TileSelect } from "./tile-select.js";
 
 export class EditMap extends BackgroundMap {
   name = "";
