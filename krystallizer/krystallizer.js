@@ -22,7 +22,10 @@ export class Krystallizer {
     this.undo = new Undo({ editor: this, levels: config.undoLevels });
     this.preloadImages();
     this.DOMElements = {
-      entitiesLayerVisibility: $el("#layer-entities .layer__visibility"),
+      entitiesLayer: {
+        div: $el("#layer-entities"),
+        visibility: $el(".layer__visibility"),
+      },
       layerSettings: {
         name: $el("#name"),
         tileset: $el("#tileset"),
@@ -47,9 +50,11 @@ export class Krystallizer {
       update: () => this.reorderLayers(),
     });
 
-    this.DOMElements.entitiesLayerVisibility.addEventListener("click", () => {
+    const { div, visibility } = this.DOMElements.entitiesLayer;
+    div.addEventListener("click", () => this.setActiveLayer("entities"));
+    visibility.addEventListener("click", () => {
       this.drawEntities = !this.drawEntities;
-      this.DOMElements.entitiesLayerVisibility.dataset.checked = this.drawEntities.toString();
+      visibility.dataset.checked = this.drawEntities.toString();
     });
 
     const {
@@ -64,7 +69,6 @@ export class Krystallizer {
       repeat,
       linkWithCollision,
     } = this.DOMElements.layerSettings;
-
     isCollisionLayer.addEventListener("change", () => {
       [name, tileset, distance, preRender, repeat, linkWithCollision].forEach(
         (el) => (el.disabled = isCollisionLayer.checked)
@@ -162,7 +166,13 @@ export class Krystallizer {
   draw() {}
 
   // eslint-disable-next-line no-unused-vars
-  setActiveLayer(name) {}
+  setActiveLayer(name) {
+    this.DOMElements.entitiesLayer.div.classList.toggle("layer-active", name === "entities");
+    for (let i = 0; i < this.layers.length; i++) {
+      const layer = this.layers[i];
+      if (layer.DOMElements.div.classList.toggle("layer-active", layer.name === name));
+    }
+  }
 
   reorderLayers() {}
   resetModified() {}

@@ -174,8 +174,12 @@ header {
   transition: background-color 0.1s linear;
 }
 
-.layer:hover {
+.layer:not(.layer-active):hover {
   background-color: rgb(202, 233, 243);
+}
+
+.layer-active {
+  background-color: rgb(100 171 182)
 }
 
 .layer__visibility {
