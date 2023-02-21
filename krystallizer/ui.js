@@ -1,4 +1,5 @@
 import { BackgroundMap } from "../krystal-games-engine/modules/core/map.js";
+import { Assert } from "../krystal-games-engine/modules/lib/sanity/assert.js";
 import { uniqueId } from "../krystal-games-engine/modules/lib/utils/string.js";
 import { config } from "./config.js";
 
@@ -151,6 +152,8 @@ export class SelectLevelModal extends Modal {
       .browse(config.directories.levels, "scripts")
       .then((paths) => this.loadLevels(paths));
     this.selected = null;
+    this.levelsLoadedCallbacks = [];
+    if (settings.onLevelsLoaded) this.onLevelsLoaded(settings.onLevelsLoaded);
   }
 
   construct({ id }) {
@@ -175,7 +178,11 @@ export class SelectLevelModal extends Modal {
       const path = paths[i];
       this.httpClient.api.file(path, { parseResponse: false }).then((data) => {
         levels.push({ path, data: this.parseData(data) });
-        if (++loaded === totalToLoad) this.updateLevels(levels);
+        if (++loaded === totalToLoad) {
+          this.updateLevels(levels);
+          for (let i = 0; i < this.levelsLoadedCallbacks.length; i++)
+            this.levelsLoadedCallbacks[i](levels);
+        }
       });
     }
   }
@@ -325,6 +332,10 @@ export class SelectLevelModal extends Modal {
       this.close();
     });
     confirmBtn.addEventListener("click", () => this.close());
+  }
+
+  onLevelsLoaded(cb) {
+    if (Assert.isType(cb, "function")) this.levelsLoadedCallbacks.push(cb);
   }
 
   close() {

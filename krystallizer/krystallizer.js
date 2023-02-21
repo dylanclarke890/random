@@ -11,17 +11,23 @@ import { Undo } from "./undo.js";
 export class Krystallizer {
   constructor() {
     this.system = new System();
+    this.system.canvas;
     this.canvas = new Canvas(this.system);
     this.game = this.canvas; // for game loop
     this.loop = new GameLoop({ runner: this });
-    this.httpClient = new KrystallizerHttpClient();
+
     this.layers = [];
     this.entities = [];
     this.drawEntities = false;
     this.screen = { actual: { x: 0, y: 0 }, rounded: { x: 0, y: 0 } };
-    this.undo = new Undo({ editor: this, levels: config.undoLevels });
-    this.fileName = config.newFileName;
+
+    const { undoDepth, newFileName } = config.general;
+    this.undo = new Undo({ editor: this, levels: undoDepth });
+    this.fileName = newFileName;
+
+    this.httpClient = new KrystallizerHttpClient();
     this.preloadImages();
+
     this.DOMElements = {
       levelName: $el("#level-name"),
       layers: $el("#layers-list"),
@@ -107,10 +113,13 @@ export class Krystallizer {
       {
         id: "modal-load-level",
         triggeredBy: ["#level-load"],
-        onSelect: (lvl) => {
-          if (!lvl) return;
-          this.fileName = lvl.path.substring(lvl.path.lastIndexOf("/") + 1);
-          this.loadLevel(lvl.data);
+        onSelect: (lvl) => this.loadLevel(lvl),
+        onLevelsLoaded: (levels) => {
+          const lastLevelPath = localStorage.getItem(config.storageKeys.lastLevel);
+          if (!lastLevelPath || !config.general.loadLastLevel) return;
+          const level = levels.find((l) => l.path === lastLevelPath);
+          if (!level) return;
+          this.loadLevel(level);
         },
       },
       this.httpClient
@@ -123,8 +132,10 @@ export class Krystallizer {
     });
   }
 
-  loadLevel(data) {
-    if (!data) return;
+  loadLevel({ path, data } = {}) {
+    if (!data || !path) return;
+    this.fileName = path.substring(path.lastIndexOf("/") + 1);
+    if (config.general.loadLastLevel) localStorage.setItem(config.storageKeys.lastLevel, path);
 
     this.layers = [];
     this.entities = [];

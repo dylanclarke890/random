@@ -1,9 +1,7 @@
 export const config = {
-  /** Font face and size for entity labels and the grid coordinates. */
-  labels: {
-    draw: true,
-    step: 32,
-    font: "10px Bitstream Vera Sans Mono, Monaco, sans-serif",
+  collisionTiles: {
+    path: "./assets/collision_tiles.png",
+    tilesize: 64,
   },
   /** Colors to use for the background, selection boxes, text and the grid. */
   colors: {
@@ -14,13 +12,21 @@ export const config = {
     selection: "#ff9933", // Selection cursor box on tile maps
   },
   directories: {
-    levels: "../levels",
     images: "../assets",
+    levels: "../levels",
   },
-  collisionTiles: {
-    path: "./assets/collision_tiles.png",
-    tilesize: 64,
+  general: {
+    loadLastLevel: true,
+    newFileName: "untitled.js",
+    undoDepth: 50,
   },
-  newFileName: "untitled.js",
-  undoLevels: 50,
+  /** Font face and size for entity labels and the grid coordinates. */
+  labels: {
+    draw: true,
+    font: "10px Bitstream Vera Sans Mono, Monaco, sans-serif",
+    step: 32,
+  },
+  storageKeys: {
+    lastLevel: "krystallizer_lastLevel",
+  },
 };
