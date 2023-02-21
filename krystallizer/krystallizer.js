@@ -1,4 +1,5 @@
 import { GameLoop } from "../krystal-games-engine/modules/core/loop.js";
+import { $el } from "../krystal-games-engine/modules/lib/utils/dom.js";
 import { Canvas } from "./canvas.js";
 import { config } from "./config.js";
 import { EditMap } from "./edit-map.js";
@@ -19,7 +20,47 @@ export class Krystallizer {
     this.screen = { actual: { x: 0, y: 0 }, rounded: { x: 0, y: 0 } };
     this.undo = new Undo({ editor: this, levels: config.undoLevels });
     this.preloadImages();
+    this.bindEvents();
     this.loop.start();
+  }
+
+  bindEvents() {
+    this.DOMElements = {
+      layerSettings: {
+        name: $el("#name"),
+        tileset: $el("#tileset"),
+        tilesize: $el("#tilesize"),
+        distance: $el("#distance"),
+        width: $el("#dimensions-x"),
+        height: $el("#dimensions-y"),
+        isCollisionLayer: $el("#is-collision-layer"),
+        preRender: $el("#pre-render"),
+        repeat: $el("#repeat-map"),
+        linkWithCollision: $el("#link-with-collision"),
+      },
+    };
+    const {
+      name,
+      tileset,
+      tilesize,
+      distance,
+      width,
+      height,
+      isCollisionLayer,
+      preRender,
+      repeat,
+      linkWithCollision,
+    } = this.DOMElements.layerSettings;
+
+    isCollisionLayer.addEventListener("change", () => {
+      const isDisabled = isCollisionLayer.checked;
+      name.disabled = isDisabled;
+      tileset.disabled = isDisabled;
+      distance.disabled = isDisabled;
+      preRender.disabled = isDisabled;
+      repeat.disabled = isDisabled;
+      linkWithCollision.disabled = isDisabled;
+    });
   }
 
   /**
