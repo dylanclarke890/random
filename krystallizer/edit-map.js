@@ -50,9 +50,8 @@ export class EditMap extends BackgroundMap {
       <span class="layer__visibility" title="Toggle Visibility (Shift+${this.hotkey})"
         data-checked="false">
       </span>
-      <span class="layer__name">${this.name} 
-        <span class="layer__size">${this.width}&times;${this.height}</span>
-      </span>
+      <span class="layer__name">${this.name}</span>
+      <span class="layer__size">${this.width}&times;${this.height}</span>
     `;
     this.DOMElements = {
       div,
@@ -73,7 +72,7 @@ export class EditMap extends BackgroundMap {
     visible.title = `Toggle Visibility (Shift+${this.hotkey})`;
     visible.dataset.checked = !this.visible;
     name.textContent = this.name;
-    size.textContent = `${this.width}&times;${this.height}`;
+    size.textContent = `${this.width}\u00D7${this.height}`;
   }
 
   getSaveData() {
@@ -94,6 +93,10 @@ export class EditMap extends BackgroundMap {
     return this.name === "collision" ? baseData : { ...baseData, tileset: this.tiles.path };
   }
 
+  /**
+   * @param {number} newWidth
+   * @param {number} newHeight
+   */
   resize(newWidth, newHeight) {
     const newData = new Array(newHeight);
     for (let y = 0; y < newHeight; y++) {
