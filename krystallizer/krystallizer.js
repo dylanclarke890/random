@@ -11,7 +11,6 @@ import { Undo } from "./undo.js";
 export class Krystallizer {
   constructor() {
     this.system = new System();
-    this.system.canvas;
     this.canvas = new Canvas(this.system);
     this.game = this.canvas; // for game loop
     this.loop = new GameLoop({ runner: this });
