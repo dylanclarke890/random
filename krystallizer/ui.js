@@ -189,7 +189,7 @@ export class SelectLevelModal extends Modal {
 
   parseData(data) {
     if (!data) {
-      console.debug("LevelEditor: parseData - no data provided.");
+      console.debug("Krystallizer: parseData - no data provided.");
       return;
     }
 
@@ -201,7 +201,7 @@ export class SelectLevelModal extends Modal {
       const matches = json.match(/(\w+):/g);
       if (matches) {
         matches.forEach((v) => {
-          // v = match + : - we want it to be "match":
+          // v === 'match:' - we want it to be '"match":'
           const match = v.substring(0, v.length - 1);
           json = json.replace(v, `"${match}":`);
         });
