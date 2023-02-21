@@ -177,10 +177,11 @@ export class Krystallizer {
 
   reorderLayers() {
     const layers = document.querySelectorAll(".layer__name");
+    const layerNameOffset = "layer-".length;
     const newLayers = [];
     let isForegroundLayer = true;
     layers.forEach((el, i) => {
-      const name = el.textContent;
+      const name = el.id.substring(layerNameOffset);
       const hotkey = i + 1;
 
       if (name === "entities") {
