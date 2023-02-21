@@ -134,7 +134,9 @@ export class Krystallizer {
   loadLevel({ path, data } = {}) {
     if (!data || !path) return;
     this.fileName = path.substring(path.lastIndexOf("/") + 1);
-    if (config.general.loadLastLevel) localStorage.setItem(config.storageKeys.lastLevel, path);
+    if (config.general.loadLastLevel) {
+      localStorage.setItem(config.storageKeys.lastLevel, path);
+    }
 
     this.layers = [];
     this.entities = [];
@@ -183,7 +185,6 @@ export class Krystallizer {
 
   draw() {}
 
-  // eslint-disable-next-line no-unused-vars
   setActiveLayer(name) {
     const activeClass = "layer-active";
     this.DOMElements.entitiesLayer.div.classList.toggle(activeClass, name === "entities");
@@ -195,11 +196,10 @@ export class Krystallizer {
 
   reorderLayers() {
     const layers = document.querySelectorAll(".layer__name");
-    const layerNameOffset = "layer-".length;
     const newLayers = [];
     let isForegroundLayer = true;
     layers.forEach((el, i) => {
-      const name = el.id.substring(layerNameOffset);
+      const name = el.textContent;
       const hotkey = i + 1;
 
       if (name === "entities") {
@@ -210,6 +210,7 @@ export class Krystallizer {
       }
 
       const layer = this.getLayerWithName(name);
+      console.log(name);
       if (!layer) return;
       layer.setHotkey(hotkey);
       layer.foreground = isForegroundLayer;
