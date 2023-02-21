@@ -48,6 +48,7 @@ body {
   padding: 10px 24px;
   text-align: center;
   transition: all ease 0.1s;
+  user-select: none;
 }
 
 .btn-sm {
@@ -342,6 +343,7 @@ input:checked + .slider:before {
   position: relative;
   margin: auto;
   top: 15%;
+  user-select: none;
 }
 
 .modal-content.sm {
@@ -417,6 +419,7 @@ input:checked + .slider:before {
   width: 160px;
   position: relative;
   transition: 0.4s;
+  user-select: none;
 }
 
 .level-option:hover {

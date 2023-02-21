@@ -20,12 +20,14 @@ export class Krystallizer {
     this.drawEntities = false;
     this.screen = { actual: { x: 0, y: 0 }, rounded: { x: 0, y: 0 } };
     this.undo = new Undo({ editor: this, levels: config.undoLevels });
+    this.fileName = config.newFileName;
     this.preloadImages();
     this.DOMElements = {
+      levelName: $el("#level-name"),
       layers: $el("#layers-list"),
       entitiesLayer: {
         div: $el("#layer-entities"),
-        visibility: $el(".layer__visibility"),
+        visibility: $el("#layer-entities > .layer__visibility"),
       },
       layerSettings: {
         name: $el("#name"),
@@ -71,6 +73,7 @@ export class Krystallizer {
       linkWithCollision,
     } = this.DOMElements.layerSettings;
     isCollisionLayer.addEventListener("change", () => {
+      // only collision-specific inputs should be enabled if 'isCollisionLayer' is checked.
       [name, tileset, distance, preRender, repeat, linkWithCollision].forEach(
         (el) => (el.disabled = isCollisionLayer.checked)
       );
@@ -104,7 +107,11 @@ export class Krystallizer {
       {
         id: "modal-load-level",
         triggeredBy: ["#level-load"],
-        onSelect: (lvl) => this.loadLevel(lvl?.data),
+        onSelect: (lvl) => {
+          if (!lvl) return;
+          this.fileName = lvl.path.substring(lvl.path.lastIndexOf("/") + 1);
+          this.loadLevel(lvl.data);
+        },
       },
       this.httpClient
     );
@@ -159,7 +166,7 @@ export class Krystallizer {
     // eslint-disable-next-line no-undef
     $(this.DOMElements.layers).sortable("refresh");
 
-    this.resetModified();
+    this.setModified(false);
     this.undo.clear();
     this.draw();
   }
@@ -168,10 +175,11 @@ export class Krystallizer {
 
   // eslint-disable-next-line no-unused-vars
   setActiveLayer(name) {
-    this.DOMElements.entitiesLayer.div.classList.toggle("layer-active", name === "entities");
+    const activeClass = "layer-active";
+    this.DOMElements.entitiesLayer.div.classList.toggle(activeClass, name === "entities");
     for (let i = 0; i < this.layers.length; i++) {
       const layer = this.layers[i];
-      if (layer.DOMElements.div.classList.toggle("layer-active", layer.name === name));
+      layer.DOMElements.div.classList.toggle(activeClass, layer.name === name);
     }
   }
 
@@ -199,7 +207,7 @@ export class Krystallizer {
     });
 
     this.layers = newLayers;
-    this.setModified();
+    this.setModified(true);
     this.draw();
   }
 
@@ -207,6 +215,10 @@ export class Krystallizer {
     return this.layers.find((layer) => layer.name === name);
   }
 
-  setModified() {}
-  resetModified() {}
+  setModified(isModified) {
+    this.modified = isModified;
+    document.title = `${this.fileName} ${this.modified ? "*" : ""} | Krystallizer`;
+    this.DOMElements.levelName.textContent = this.fileName;
+    this.DOMElements.levelName.dataset.unsaved = isModified;
+  }
 }
