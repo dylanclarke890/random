@@ -37,11 +37,16 @@ export class Krystallizer {
         delete: $el("#layer-delete"),
         apply: $el("#layer-apply"),
       },
+      entities: $el("#entities"),
       entitiesLayer: {
         div: $el("#layer-entities"),
         visibility: $el("#layer-entities > .layer__visibility"),
       },
+      entitySettings: {
+        div: $el("#entity-settings"),
+      },
       layerSettings: {
+        div: $el("#layer-settings"),
         name: $el("#name"),
         tileset: $el("#tileset"),
         tilesize: $el("#tilesize"),
@@ -59,41 +64,28 @@ export class Krystallizer {
   }
 
   bindEvents() {
+    const { layers, layerActions, entitiesLayer, layerSettings } = this.DOMElements;
+
     // eslint-disable-next-line no-undef
-    $(this.DOMElements.layers).sortable({
+    $(layers).sortable({
       cancel: ".layer__visibility",
       update: () => this.reorderLayers(),
     });
 
-    const actions = this.DOMElements.layerActions;
+    const actions = layerActions;
     actions.new.addEventListener("click", () => this.addLayer());
     actions.delete.addEventListener("click", () => this.removeLayer());
-    // actions.apply.addEventListener("click", () => this.addLayer()); TODO
-    const { div, visibility } = this.DOMElements.entitiesLayer;
+    actions.apply.addEventListener("click", () => this.saveLayerSettings());
+
+    const { div, visibility } = entitiesLayer;
     div.addEventListener("click", () => this.setActiveLayer("entities"));
     visibility.addEventListener("click", () => {
       this.drawEntities = !this.drawEntities;
       visibility.dataset.checked = this.drawEntities.toString();
     });
 
-    const {
-      name,
-      tileset,
-      // tilesize,
-      distance,
-      // width,
-      // height,
-      isCollisionLayer,
-      preRender,
-      repeat,
-      linkWithCollision,
-    } = this.DOMElements.layerSettings;
-    isCollisionLayer.addEventListener("change", () => {
-      // only collision-specific inputs should be enabled if 'isCollisionLayer' is checked.
-      [name, tileset, distance, preRender, repeat, linkWithCollision].forEach(
-        (el) => (el.disabled = isCollisionLayer.checked)
-      );
-    });
+    const { isCollisionLayer } = layerSettings;
+    isCollisionLayer.addEventListener("change", () => this.setCollisionLayerSettings());
   }
 
   /**
@@ -211,10 +203,14 @@ export class Krystallizer {
     this.activeLayer = name === "entities" ? name : this.getLayerByName(name);
     const activeClass = "layer-active";
     this.DOMElements.entitiesLayer.div.classList.toggle(activeClass, name === "entities");
+    this.DOMElements.layerSettings.div.style.display = name === "entities" ? "none" : "block";
+    this.DOMElements.entitySettings.div.style.display = name === "entities" ? "block" : "none";
+    this.DOMElements.entities.style.display = name === "entities" ? "block" : "none";
     for (let i = 0; i < this.layers.length; i++) {
       const layer = this.layers[i];
       layer.DOMElements.div.classList.toggle(activeClass, layer.name === name);
     }
+    this.updateLayerSettings();
   }
 
   reorderLayers() {
@@ -286,6 +282,7 @@ export class Krystallizer {
   }
 
   updateLayerSettings() {
+    if (this.activeLayer === "entities") return;
     const {
       name,
       tileset,
@@ -296,6 +293,7 @@ export class Krystallizer {
       preRender,
       repeat,
       linkWithCollision,
+      isCollisionLayer,
     } = this.DOMElements.layerSettings;
 
     name.value = this.activeLayer.name;
@@ -307,9 +305,13 @@ export class Krystallizer {
     preRender.checked = this.activeLayer.preRender;
     repeat.checked = this.activeLayer.repeat;
     linkWithCollision.checked = this.activeLayer.linkWithCollision;
+    isCollisionLayer.checked = this.activeLayer === this.collisionLayer;
+    this.setCollisionLayerSettings();
   }
 
   saveLayerSettings() {
+    if (this.activeLayer === "entities") return;
+
     const { isCollisionLayer, name, width, height, tilesize } = this.DOMElements.layerSettings;
     const isCollision = isCollisionLayer.checked;
     const newName = isCollision ? "collision" : name.value;
@@ -339,11 +341,20 @@ export class Krystallizer {
     // Is a collision layer
     if (newName === "collision") this.collisionLayer = this.activeLayer;
     // Was a collision layer, but is no more
-    else if (this.activeLayer.name == "collision") this.collisionLayer = null;
+    else if (this.activeLayer.name === "collision") this.collisionLayer = undefined;
 
     this.activeLayer.setName(newName);
-    this.setModified();
+    this.setModified(true);
     this.draw();
+  }
+
+  setCollisionLayerSettings() {
+    const { isCollisionLayer, name, tileset, distance, preRender, repeat, linkWithCollision } =
+      this.DOMElements.layerSettings;
+    // only collision-specific inputs should be enabled if 'isCollisionLayer' is checked.
+    [name, tileset, distance, preRender, repeat, linkWithCollision].forEach(
+      (el) => (el.disabled = isCollisionLayer.checked)
+    );
   }
 
   // #endregion Layers
