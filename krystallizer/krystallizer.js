@@ -85,7 +85,7 @@ export class Krystallizer {
     });
 
     const { isCollisionLayer } = layerSettings;
-    isCollisionLayer.addEventListener("change", () => this.setCollisionLayerSettings());
+    isCollisionLayer.addEventListener("change", () => this.updateCollisionLayerSettings());
   }
 
   /**
@@ -306,7 +306,16 @@ export class Krystallizer {
     repeat.checked = this.activeLayer.repeat;
     linkWithCollision.checked = this.activeLayer.linkWithCollision;
     isCollisionLayer.checked = this.activeLayer === this.collisionLayer;
-    this.setCollisionLayerSettings();
+    this.updateCollisionLayerSettings();
+  }
+
+  updateCollisionLayerSettings() {
+    const { isCollisionLayer, name, tileset, distance, preRender, repeat, linkWithCollision } =
+      this.DOMElements.layerSettings;
+    // only collision-specific inputs should be enabled if 'isCollisionLayer' is checked.
+    [name, tileset, distance, preRender, repeat, linkWithCollision].forEach(
+      (el) => (el.disabled = isCollisionLayer.checked)
+    );
   }
 
   saveLayerSettings() {
@@ -346,15 +355,6 @@ export class Krystallizer {
     this.activeLayer.setName(newName);
     this.setModified(true);
     this.draw();
-  }
-
-  setCollisionLayerSettings() {
-    const { isCollisionLayer, name, tileset, distance, preRender, repeat, linkWithCollision } =
-      this.DOMElements.layerSettings;
-    // only collision-specific inputs should be enabled if 'isCollisionLayer' is checked.
-    [name, tileset, distance, preRender, repeat, linkWithCollision].forEach(
-      (el) => (el.disabled = isCollisionLayer.checked)
-    );
   }
 
   // #endregion Layers
