@@ -54,6 +54,10 @@ export class Modal {
 
   bindEvents({ triggeredBy }) {
     for (let i = 0; i < triggeredBy.length; i++) {
+      if (triggeredBy[i] instanceof HTMLElement) {
+        triggeredBy[i].addEventListener("click", () => this.open());
+        continue;
+      }
       const triggers = document.querySelectorAll(triggeredBy[i]);
       if (!triggers || !triggers.length) continue;
       triggers.forEach((trigger) => trigger.addEventListener("click", () => this.open()));

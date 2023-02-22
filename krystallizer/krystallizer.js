@@ -74,8 +74,10 @@ export class Krystallizer {
 
     const actions = layerActions;
     actions.new.addEventListener("click", () => this.addLayer());
-    actions.delete.addEventListener("click", () => this.removeLayer());
     actions.apply.addEventListener("click", () => this.saveLayerSettings());
+    actions.delete.addEventListener("click", () => {
+      if (!config.general.confirmDeleteLayer) this.removeLayer();
+    });
 
     const { div, visibility } = entitiesLayer;
     div.addEventListener("click", () => this.setActiveLayer("entities"));
@@ -111,6 +113,19 @@ export class Krystallizer {
   }
 
   initModals() {
+    const saveAs = new Modal({
+      id: "modal-save-as",
+      title: "Save As",
+      body: "<p>Save As?</p> <input />",
+      triggeredBy: ["#level-save-as"],
+    });
+    const confirmDelete = new ConfirmModal({
+      id: "modal-delete-layer",
+      title: "Delete Layer?",
+      body: "<p style='text-align:center;'>Are you sure you wish to delete this layer?</p>",
+      triggeredBy: [this.DOMElements.layerActions.delete],
+      onOk: () => this.removeLayer(),
+    });
     const levelSelect = new SelectLevelModal(
       {
         id: "modal-load-level",
@@ -126,19 +141,11 @@ export class Krystallizer {
       },
       this.httpClient
     );
-    const saveAs = new Modal({
-      id: "modal-save-as",
-      title: "Save As",
-      body: "<p>Save As?</p> <input />",
-      triggeredBy: ["#level-save-as"],
-    });
-    const confirmDelete = new ConfirmModal({
-      id: "modal-delete-layer",
-      title: "Delete Layer?",
-      body: "Are you sure you wish to delete this layer?",
-      onOk: () => this.removeLayer(),
-    });
-    this.modals = { levelSelect, saveAs, confirmDelete };
+    this.modals = {
+      levelSelect,
+      saveAs,
+      confirmDelete: config.general.confirmDeleteLayer ? confirmDelete : undefined,
+    };
   }
 
   /**

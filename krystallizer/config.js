@@ -16,6 +16,7 @@ export const config = {
     levels: "../levels",
   },
   general: {
+    confirmDeleteLayer: true,
     loadLastLevel: true,
     newFileName: "untitled.js",
     undoDepth: 50,
