@@ -115,7 +115,7 @@ export class Krystallizer {
       {
         id: "modal-load-level",
         triggeredBy: ["#level-load"],
-        onSelect: (lvl) => this.loadLevel(lvl),
+        onSelect: (lvl) => lvl && this.loadLevel(lvl),
         onLevelsLoaded: (levels) => {
           const lastLevelPath = localStorage.getItem(config.storageKeys.lastLevel);
           if (!lastLevelPath || !config.general.loadLastLevel) return;
