@@ -205,6 +205,8 @@ export class Krystallizer {
     this.DOMElements.levelName.dataset.unsaved = isModified;
   }
 
+  // #region Layers
+
   setActiveLayer(/** @type {string} */ name) {
     this.selectedLayer = name === "entities" ? name : this.getLayerByName(name);
     const activeClass = "layer-active";
@@ -261,7 +263,7 @@ export class Krystallizer {
 
     this.layers.push(newLayer);
     this.setActiveLayer(name);
-    // this.updateLayerSettings();
+    this.updateLayerSettings();
     this.reorderLayers();
     // eslint-disable-next-line no-undef
     $(this.DOMElements.layers).sortable("refresh");
@@ -282,4 +284,30 @@ export class Krystallizer {
     }
     return false;
   }
+
+  updateLayerSettings() {
+    const {
+      name,
+      tileset,
+      tilesize,
+      width,
+      height,
+      distance,
+      preRender,
+      repeat,
+      linkWithCollision,
+    } = this.DOMElements.layerSettings;
+
+    name.value = this.selectedLayer.name;
+    tileset.value = this.selectedLayer.tilesetName;
+    tilesize.value = this.selectedLayer.tilesize;
+    width.value = this.selectedLayer.width;
+    height.value = this.selectedLayer.height;
+    distance.value = this.selectedLayer.distance;
+    preRender.checked = this.selectedLayer.preRender;
+    repeat.checked = this.selectedLayer.repeat;
+    linkWithCollision.checked = this.selectedLayer.linkWithCollision;
+  }
+
+  // #endregion Layers
 }
