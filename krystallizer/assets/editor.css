@@ -130,11 +130,6 @@ header {
 
 /* #region LAYER PANEL */
 
-#layers {
-  max-height: 200px;
-  overflow: auto;
-}
-
 #layers-header {
   display: flex;
   justify-content: space-between;
@@ -162,6 +157,8 @@ header {
 
 #layers-list {
   padding-top: 0.2em;
+  max-height: 200px;
+  overflow: auto;
 }
 
 .layer {
@@ -180,7 +177,7 @@ header {
 }
 
 .layer-active {
-  background-color: rgb(100 171 182)
+  background-color: rgb(100 171 182);
 }
 
 .layer__visibility {
