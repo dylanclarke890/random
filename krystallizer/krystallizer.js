@@ -206,7 +206,7 @@ export class Krystallizer {
 
   setModified(/** @type {boolean} */ isModified) {
     this.modified = isModified;
-    document.title = `${this.fileName} ${this.modified ? "*" : ""} | Krystallizer`;
+    document.title = `${this.fileName}${this.modified ? "*" : ""} | Krystallizer`;
     this.DOMElements.levelName.textContent = this.fileName;
     this.DOMElements.levelName.dataset.unsaved = isModified;
   }
