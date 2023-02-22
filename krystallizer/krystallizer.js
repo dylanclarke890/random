@@ -16,6 +16,8 @@ export class Krystallizer {
     this.loop = new GameLoop({ runner: this });
 
     this.layers = [];
+    /** @type {"entities" | EditMap} */
+    this.selectedLayer;
     this.entities = [];
     this.drawEntities = false;
     this.screen = { actual: { x: 0, y: 0 }, rounded: { x: 0, y: 0 } };
@@ -188,7 +190,7 @@ export class Krystallizer {
   draw() {}
 
   setActiveLayer(/** @type {string} */ name) {
-    // TODO: Set active layer by name - account for entity layer.
+    this.selectedLayer = name === "entities" ? name : this.getLayerByName(name);
     const activeClass = "layer-active";
     this.DOMElements.entitiesLayer.div.classList.toggle(activeClass, name === "entities");
     for (let i = 0; i < this.layers.length; i++) {
@@ -212,7 +214,7 @@ export class Krystallizer {
         return;
       }
 
-      const layer = this.getLayerWithName(name);
+      const layer = this.getLayerByName(name);
       if (!layer) return;
       layer.setHotkey(hotkey);
       layer.foreground = isForegroundLayer;
@@ -224,7 +226,7 @@ export class Krystallizer {
     this.draw();
   }
 
-  getLayerWithName(/** @type {string} */ name) {
+  getLayerByName(/** @type {string} */ name) {
     return this.layers.find((layer) => layer.name === name);
   }
 
