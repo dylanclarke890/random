@@ -17,7 +17,7 @@ export class Krystallizer {
 
     this.layers = [];
     /** @type {"entities" | EditMap} */
-    this.selectedLayer;
+    this.activeLayer;
     this.entities = [];
     this.drawEntities = false;
     this.screen = { actual: { x: 0, y: 0 }, rounded: { x: 0, y: 0 } };
@@ -208,7 +208,7 @@ export class Krystallizer {
   // #region Layers
 
   setActiveLayer(/** @type {string} */ name) {
-    this.selectedLayer = name === "entities" ? name : this.getLayerByName(name);
+    this.activeLayer = name === "entities" ? name : this.getLayerByName(name);
     const activeClass = "layer-active";
     this.DOMElements.entitiesLayer.div.classList.toggle(activeClass, name === "entities");
     for (let i = 0; i < this.layers.length; i++) {
@@ -270,9 +270,9 @@ export class Krystallizer {
   }
 
   removeLayer() {
-    if (this.selectedLayer === "entities") return false;
-    const name = this.selectedLayer.name;
-    this.selectedLayer.destroy();
+    if (this.activeLayer === "entities") return false;
+    const name = this.activeLayer.name;
+    this.activeLayer.destroy();
     for (let i = 0; i < this.layers.length; i++) {
       if (this.layers[i].name !== name) continue;
       this.layers.splice(i, 1);
@@ -298,15 +298,52 @@ export class Krystallizer {
       linkWithCollision,
     } = this.DOMElements.layerSettings;
 
-    name.value = this.selectedLayer.name;
-    tileset.value = this.selectedLayer.tilesetName;
-    tilesize.value = this.selectedLayer.tilesize;
-    width.value = this.selectedLayer.width;
-    height.value = this.selectedLayer.height;
-    distance.value = this.selectedLayer.distance;
-    preRender.checked = this.selectedLayer.preRender;
-    repeat.checked = this.selectedLayer.repeat;
-    linkWithCollision.checked = this.selectedLayer.linkWithCollision;
+    name.value = this.activeLayer.name;
+    tileset.value = this.activeLayer.tilesetName;
+    tilesize.value = this.activeLayer.tilesize;
+    width.value = this.activeLayer.width;
+    height.value = this.activeLayer.height;
+    distance.value = this.activeLayer.distance;
+    preRender.checked = this.activeLayer.preRender;
+    repeat.checked = this.activeLayer.repeat;
+    linkWithCollision.checked = this.activeLayer.linkWithCollision;
+  }
+
+  saveLayerSettings() {
+    const { isCollisionLayer, name, width, height, tilesize } = this.DOMElements.layerSettings;
+    const isCollision = isCollisionLayer.checked;
+    const newName = isCollision ? "collision" : name.value;
+    const newWidth = Math.floor(width.value);
+    const newHeight = Math.floor(height.value);
+    if (newWidth !== this.activeLayer.width || newHeight !== this.activeLayer.height)
+      this.activeLayer.resize(newWidth, newHeight);
+    this.activeLayer.tilesize = Math.floor(tilesize.value);
+
+    if (isCollision) {
+      this.activeLayer.linkWithCollision = false;
+      this.activeLayer.distance = 1;
+      this.activeLayer.repeat = false;
+      this.activeLayer.setCollisionTileset();
+    } else {
+      const { tileset, linkWithCollision, distance, repeat, preRender } =
+        this.DOMElements.layerSettings;
+      const newTilesetName = tileset.value;
+      if (newTilesetName !== this.activeLayer.tilesetName)
+        this.activeLayer.setTileset(newTilesetName);
+      this.activeLayer.distance = parseFloat(distance.value);
+      this.activeLayer.linkWithCollision = linkWithCollision.checked;
+      this.activeLayer.repeat = repeat.checked;
+      this.activeLayer.preRender = preRender.checked;
+    }
+
+    // Is a collision layer
+    if (newName === "collision") this.collisionLayer = this.activeLayer;
+    // Was a collision layer, but is no more
+    else if (this.activeLayer.name == "collision") this.collisionLayer = null;
+
+    this.activeLayer.setName(newName);
+    this.setModified();
+    this.draw();
   }
 
   // #endregion Layers
