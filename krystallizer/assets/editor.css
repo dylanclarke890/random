@@ -165,7 +165,6 @@ header {
 }
 
 .layer {
-  border-bottom: 1px solid rgba(255, 255, 255, 0);
   border-top: 1px solid rgba(255, 255, 255, 0);
   cursor: pointer;
   display: grid;
