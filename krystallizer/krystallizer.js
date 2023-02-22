@@ -5,7 +5,7 @@ import { config } from "./config.js";
 import { EditMap } from "./edit-map.js";
 import { KrystallizerHttpClient } from "./http-client.js";
 import { System } from "./system.js";
-import { Modal, SelectLevelModal } from "./ui.js";
+import { ConfirmModal, Modal, SelectLevelModal } from "./ui.js";
 import { Undo } from "./undo.js";
 
 export class Krystallizer {
@@ -111,7 +111,7 @@ export class Krystallizer {
   }
 
   initModals() {
-    this.levelSelect = new SelectLevelModal(
+    const levelSelect = new SelectLevelModal(
       {
         id: "modal-load-level",
         triggeredBy: ["#level-load"],
@@ -126,12 +126,19 @@ export class Krystallizer {
       },
       this.httpClient
     );
-    new Modal({
+    const saveAs = new Modal({
       id: "modal-save-as",
       title: "Save As",
       body: "<p>Save As?</p> <input />",
       triggeredBy: ["#level-save-as"],
     });
+    const confirmDelete = new ConfirmModal({
+      id: "modal-delete-layer",
+      title: "Delete Layer?",
+      body: "Are you sure you wish to delete this layer?",
+      onOk: () => this.removeLayer(),
+    });
+    this.modals = { levelSelect, saveAs, confirmDelete };
   }
 
   /**
