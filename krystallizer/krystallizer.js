@@ -32,6 +32,11 @@ export class Krystallizer {
     this.DOMElements = {
       levelName: $el("#level-name"),
       layers: $el("#layers-list"),
+      layerActions: {
+        new: $el("#layer-new"),
+        delete: $el("#layer-delete"),
+        apply: $el("#layer-apply"),
+      },
       entitiesLayer: {
         div: $el("#layer-entities"),
         visibility: $el("#layer-entities > .layer__visibility"),
@@ -60,6 +65,10 @@ export class Krystallizer {
       update: () => this.reorderLayers(),
     });
 
+    const actions = this.DOMElements.layerActions;
+    actions.new.addEventListener("click", () => this.addLayer());
+    actions.delete.addEventListener("click", () => this.removeLayer());
+    // actions.apply.addEventListener("click", () => this.addLayer()); TODO
     const { div, visibility } = this.DOMElements.entitiesLayer;
     div.addEventListener("click", () => this.setActiveLayer("entities"));
     visibility.addEventListener("click", () => {
@@ -189,6 +198,13 @@ export class Krystallizer {
 
   draw() {}
 
+  setModified(/** @type {boolean} */ isModified) {
+    this.modified = isModified;
+    document.title = `${this.fileName} ${this.modified ? "*" : ""} | Krystallizer`;
+    this.DOMElements.levelName.textContent = this.fileName;
+    this.DOMElements.levelName.dataset.unsaved = isModified;
+  }
+
   setActiveLayer(/** @type {string} */ name) {
     this.selectedLayer = name === "entities" ? name : this.getLayerByName(name);
     const activeClass = "layer-active";
@@ -230,10 +246,40 @@ export class Krystallizer {
     return this.layers.find((layer) => layer.name === name);
   }
 
-  setModified(/** @type {boolean} */ isModified) {
-    this.modified = isModified;
-    document.title = `${this.fileName} ${this.modified ? "*" : ""} | Krystallizer`;
-    this.DOMElements.levelName.textContent = this.fileName;
-    this.DOMElements.levelName.dataset.unsaved = isModified;
+  addLayer() {
+    const name = "new_layer_" + this.layers.length;
+    const newLayer = new EditMap({
+      config,
+      editor: this,
+      name,
+      system: this.system,
+      tilesize: config.layerDefaults.tilesize,
+    });
+
+    newLayer.resize(config.layerDefaults.width, config.layerDefaults.height);
+    newLayer.setScreenPos(this.screen.actual.x, this.screen.actual.y);
+
+    this.layers.push(newLayer);
+    this.setActiveLayer(name);
+    // this.updateLayerSettings();
+    this.reorderLayers();
+    // eslint-disable-next-line no-undef
+    $(this.DOMElements.layers).sortable("refresh");
+  }
+
+  removeLayer() {
+    if (this.selectedLayer === "entities") return false;
+    const name = this.selectedLayer.name;
+    this.selectedLayer.destroy();
+    for (let i = 0; i < this.layers.length; i++) {
+      if (this.layers[i].name !== name) continue;
+      this.layers.splice(i, 1);
+      this.reorderLayers();
+      // eslint-disable-next-line no-undef
+      $(this.DOMElements.layers).sortable("refresh");
+      this.setActiveLayer("entities");
+      return true;
+    }
+    return false;
   }
 }

@@ -26,6 +26,11 @@ export const config = {
     font: "10px Bitstream Vera Sans Mono, Monaco, sans-serif",
     step: 32,
   },
+  layerDefaults: {
+    width: 10,
+    height: 10,
+    tilesize: 32,
+  },
   storageKeys: {
     lastLevel: "krystallizer_lastLevel",
   },

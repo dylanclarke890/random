@@ -169,7 +169,7 @@ export class EditMap extends BackgroundMap {
   }
 
   destroy() {
-    this.div.remove();
+    this.DOMElements.div.remove();
   }
 
   //#endregion UI
