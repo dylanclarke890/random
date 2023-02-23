@@ -12,13 +12,14 @@ export class Modal {
    * @param {[string]} settings.body
    * @param {[string]} settings.footer
    * @param {[string[]]} settings.triggeredBy
+   * @param {[(modal: HTMLDivElement) => void]} settings.onAfterConstruct
    */
   constructor(settings = {}) {
     this.construct(settings);
     this.bindEvents(settings);
   }
 
-  construct({ id, title, body, footer, size }) {
+  construct({ id, title, body, footer, size, onAfterConstruct }) {
     title = title
       ? `
       <div class="modal-header">
@@ -50,6 +51,7 @@ export class Modal {
       </div>`;
     document.body.querySelector("script").before(modal);
     this.modal = modal;
+    if (Assert.isType(onAfterConstruct, "function")) onAfterConstruct(modal);
   }
 
   bindEvents({ triggeredBy }) {
@@ -91,6 +93,7 @@ export class Modal {
 
 export class ConfirmModal extends Modal {
   /**
+   * @extends Modal
    * @param {Object} settings
    * @param {string} settings.id
    * @param {[string]} settings.title
@@ -100,6 +103,7 @@ export class ConfirmModal extends Modal {
    * @param {[string]} settings.onOk
    * @param {[() => void]} settings.onCancel
    * @param {[string]} settings.cancelText
+   * @param {[(modal: HTMLDivElement) => void]} settings.onAfterConstruct
    */
   constructor(settings = {}) {
     super(settings);
@@ -148,6 +152,7 @@ export class SelectLevelModal extends Modal {
    * @param {string} settings.id
    * @param {[string[]]} settings.triggeredBy
    * @param {[string]} settings.onSelect
+   * @param {[(modal: HTMLDivElement) => void]} settings.onAfterConstruct
    */
   constructor(settings = {}, httpClient) {
     super(settings);

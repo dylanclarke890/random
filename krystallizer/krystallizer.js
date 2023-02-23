@@ -118,6 +118,7 @@ export class Krystallizer {
       title: "Save As",
       body: "<p>Save As?</p> <input />",
       triggeredBy: ["#level-save-as"],
+      onAfterConstruct: (modal) => console.log(`loaded: ${modal}`),
     });
     const confirmDelete = new ConfirmModal({
       id: "modal-delete-layer",
