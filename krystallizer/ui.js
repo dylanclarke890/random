@@ -13,13 +13,32 @@ export class Modal {
    * @param {[string]} settings.footer
    * @param {[string[]]} settings.triggeredBy
    * @param {[(modal: HTMLDivElement) => void]} settings.onAfterConstruct
+   * @param {[(modal: HTMLDivElement) => void]} settings.onOpen
+   * @param {[(modal: HTMLDivElement) => void]} settings.onClose
+   * @param {[(modal: HTMLDivElement) => void]} settings.onDestroy
    */
   constructor(settings = {}) {
+    this.bindListeners(settings);
     this.construct(settings);
     this.bindEvents(settings);
   }
 
-  construct({ id, title, body, footer, size, onAfterConstruct }) {
+  // '#noop' and 'bind' are probably better suited in a utility class but not needed elsewhere currently.
+  static #noop = () => null;
+
+  /** Returns 'fn' if it is a function, else a 'noop' function. */
+  static bind = (fn) => (Assert.isType(fn, "function") ? fn : this.#noop);
+
+  bindListeners({ onAfterConstruct, onOpen, onClose, onDestroy }) {
+    this.events = {
+      afterConstruct: Modal.bind(onAfterConstruct),
+      open: Modal.bind(onOpen),
+      close: Modal.bind(onClose),
+      destroy: Modal.bind(onDestroy),
+    };
+  }
+
+  construct({ id, title, body, footer, size }) {
     title = title
       ? `
       <div class="modal-header">
@@ -51,7 +70,7 @@ export class Modal {
       </div>`;
     document.body.querySelector("script").before(modal);
     this.modal = modal;
-    if (Assert.isType(onAfterConstruct, "function")) onAfterConstruct(modal);
+    this.events.afterConstruct(modal);
   }
 
   bindEvents({ triggeredBy }) {
@@ -73,21 +92,26 @@ export class Modal {
   }
 
   open() {
+    if (this.destroyed) document.body.querySelector("script").before(this.modal);
     this.modal.style.display = "block";
     this.outsideClickEvent = (e) => e.target === this.modal && this.close();
     this.keyupEvent = (e) => e.key === "Escape" && this.close();
     window.addEventListener("click", this.outsideClickEvent);
     document.addEventListener("keyup", this.keyupEvent);
+    this.events.open(this.modal);
   }
 
   close() {
     this.modal.style.display = "none";
     window.removeEventListener("click", this.outsideClickEvent);
     window.removeEventListener("click", this.keyupEvent);
+    this.events.close(this.modal);
   }
 
   destroy() {
     document.body.removeChild(this.modal);
+    this.events.destroy(this.modal);
+    this.destroyed = true;
   }
 }
 
@@ -104,6 +128,9 @@ export class ConfirmModal extends Modal {
    * @param {[() => void]} settings.onCancel
    * @param {[string]} settings.cancelText
    * @param {[(modal: HTMLDivElement) => void]} settings.onAfterConstruct
+   * @param {[(modal: HTMLDivElement) => void]} settings.onOpen
+   * @param {[(modal: HTMLDivElement) => void]} settings.onClose
+   * @param {[(modal: HTMLDivElement) => void]} settings.onDestroy
    */
   constructor(settings = {}) {
     super(settings);
@@ -151,8 +178,11 @@ export class SelectLevelModal extends Modal {
    * @param {Object} settings
    * @param {string} settings.id
    * @param {[string[]]} settings.triggeredBy
-   * @param {[string]} settings.onSelect
+   * @param {[(lvl: LevelData) => void]} settings.onSelect
    * @param {[(modal: HTMLDivElement) => void]} settings.onAfterConstruct
+   * @param {[(modal: HTMLDivElement) => void]} settings.onOpen
+   * @param {[(modal: HTMLDivElement) => void]} settings.onClose
+   * @param {[(modal: HTMLDivElement) => void]} settings.onDestroy
    */
   constructor(settings = {}, httpClient) {
     super(settings);
@@ -162,6 +192,11 @@ export class SelectLevelModal extends Modal {
       .then((paths) => this.loadLevels(paths));
     this.selected = null;
     this.onLevelsLoaded(settings.onLevelsLoaded);
+  }
+
+  bindListeners({ onSelect, ...rest }) {
+    super.bindListeners(rest);
+    this.events.select = Modal.bind(onSelect);
   }
 
   construct({ id }) {
@@ -320,14 +355,8 @@ export class SelectLevelModal extends Modal {
     }
   }
 
-  /**
-   * @param { { triggeredBy: string[], onSelect: (lvl: LevelData) => void? } }
-   */
-  bindEvents({ triggeredBy, onSelect }) {
-    super.bindEvents({ triggeredBy });
-    const noop = () => null;
-    this.onSelected = onSelect ?? noop;
-
+  bindEvents(settings) {
+    super.bindEvents(settings);
     const closeBtns = this.modal.querySelectorAll(".modal-close");
     for (let i = 0; i < closeBtns.length; i++) {
       const btn = closeBtns[i];
@@ -352,11 +381,11 @@ export class SelectLevelModal extends Modal {
    */
   onLevelsLoaded(cb) {
     this.levelsLoadedCallbacks ??= [];
-    if (Assert.isType(cb, "function")) this.levelsLoadedCallbacks.push(cb);
+    this.levelsLoadedCallbacks.push(Modal.bind(cb));
   }
 
   close() {
-    this.onSelected(this.selected);
+    this.events.select(this.selected);
     this.selected = null;
     const options = this.modal.querySelectorAll(".level-option");
     for (let i = 0; i < options.length; i++) options[i].classList.remove("selected");

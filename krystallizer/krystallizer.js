@@ -5,7 +5,7 @@ import { config } from "./config.js";
 import { EditMap } from "./edit-map.js";
 import { KrystallizerHttpClient } from "./http-client.js";
 import { System } from "./system.js";
-import { ConfirmModal, Modal, SelectLevelModal } from "./ui.js";
+import { ConfirmModal, SelectLevelModal } from "./ui.js";
 import { Undo } from "./undo.js";
 
 export class Krystallizer {
@@ -113,17 +113,23 @@ export class Krystallizer {
   }
 
   initModals() {
-    const saveAs = new Modal({
+    const saveAs = new ConfirmModal({
       id: "modal-save-as",
       title: "Save As",
-      body: "<p>Save As?</p> <input />",
+      body: "<input name='new-file-name' id='new-file-name'/>",
       triggeredBy: ["#level-save-as"],
-      onAfterConstruct: (modal) => console.log(`loaded: ${modal}`),
+      onAfterConstruct: () => console.log("built"),
+      onOpen: () => console.log("opened"),
+      onClose: () => {
+        console.log("closed");
+        setTimeout(() => saveAs.destroy(), 1);
+      },
+      onDestroy: () => console.log("destroyed"),
     });
     const confirmDelete = new ConfirmModal({
       id: "modal-delete-layer",
       title: "Delete Layer?",
-      body: "<p style='text-align:center;'>Are you sure you wish to delete this layer?</p>",
+      body: "<p class='text-center'>Are you sure you wish to delete this layer?</p>",
       triggeredBy: [this.DOMElements.layerActions.delete],
       onOk: () => this.removeLayer(),
     });
