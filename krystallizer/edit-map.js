@@ -81,8 +81,8 @@ export class EditMap extends BackgroundMap {
       width: this.width,
       height: this.height,
       tilesize: this.tilesize,
-      data: this.data,
       visible: this.visible,
+      data: this.data,
     };
 
     if (this.name === "collision") return shared;
@@ -116,7 +116,7 @@ export class EditMap extends BackgroundMap {
   }
 
   beginEditing() {
-    this.oldData = Object.assign({}, this.data);
+    this.oldData = [...this.data];
   }
 
   getOldTile(x, y) {

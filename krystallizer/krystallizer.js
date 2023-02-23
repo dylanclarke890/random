@@ -149,6 +149,7 @@ export class Krystallizer {
           const lastLevelPath = localStorage.getItem(config.storageKeys.lastLevel);
           if (!lastLevelPath || !config.general.loadLastLevel) return;
           const level = levels.find((l) => l.path === lastLevelPath);
+          console.log(levels);
           if (!level) return;
           this.loadLevel(level);
         },
