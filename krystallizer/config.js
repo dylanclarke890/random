@@ -20,6 +20,7 @@ export const config = {
     confirmDeleteLayer: true,
     loadLastLevel: true,
     newFileName: "untitled.js",
+    prettyPrint: true,
     undoDepth: 50,
   },
   /** Font face and size for entity labels and the grid coordinates. */

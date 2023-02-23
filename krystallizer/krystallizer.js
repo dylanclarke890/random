@@ -1,5 +1,9 @@
 import { GameLoop } from "../krystal-games-engine/modules/core/loop.js";
 import { $el } from "../krystal-games-engine/modules/lib/utils/dom.js";
+import {
+  formatAsJSON,
+  hyphenToCamelCase,
+} from "../krystal-games-engine/modules/lib/utils/string.js";
 import { Canvas } from "./canvas.js";
 import { config } from "./config.js";
 import { EditMap } from "./edit-map.js";
@@ -120,16 +124,12 @@ export class Krystallizer {
       body: "<input name='new-file-name' id='new-file-name'/>",
       triggeredBy: ["#level-save-as"],
       onOpen: () => {
-        const fallbackName = config.general.newFileName;
-        $el("#new-file-name").value = this.DOMElements.levelName.innerText ?? fallbackName;
+        $el("#new-file-name").value = this.fileName ?? config.general.newFileName;
       },
       onClose: () => {
         let dir = config.directories.levels;
         if (dir[dir.length - 1] !== "/") dir += "/";
-        let file = $el("#new-file-name").value;
-        if (!file.endsWith(".js")) file += ".js";
-        const savePath = `${dir}${file}`;
-        console.log(savePath);
+        this.saveLevel(`${dir}${$el("#new-file-name").value}`);
       },
     });
     const confirmDelete = new ConfirmModal({
@@ -162,22 +162,23 @@ export class Krystallizer {
   }
 
   /**
-   * @param {{ path:string, data: {entities: any[], layer: any[]} }} */
+   * @param {{ path:string, data: {entities: any[], layer: any[]} }}
+   */
   loadLevel({ path, data } = {}) {
     if (!data || !path) return;
-    this.fileName = path.substring(path.lastIndexOf("/") + 1);
-    if (config.general.loadLastLevel) {
-      localStorage.setItem(config.storageKeys.lastLevel, path);
-    }
+    const split = path.lastIndexOf("/");
+    this.filePath = path.substring(0, split);
+    this.fileName = path.substring(split + 1);
 
     this.layers = [];
     this.entities = [];
-    this.screen.actual = { x: 0, y: 0 };
+    this.screen = { actual: { x: 0, y: 0 }, rounded: { x: 0, y: 0 } };
     this.undo.clear();
 
     for (let i = 0; i < data.entities.length; i++) {
       const entity = data.entities[i];
-      this.entities.spawnEntity(entity.type, entity.x, entity.y, entity.settings);
+      // TODO
+      this.spawnEntity(entity.type, entity.x, entity.y, entity.settings);
     }
 
     for (let i = 0; i < data.layer.length; i++) {
@@ -213,6 +214,51 @@ export class Krystallizer {
     this.setModified(false);
     this.undo.clear();
     this.draw();
+  }
+
+  saveLevel(path) {
+    if (!path.match(/\.js$/)) path += ".js";
+
+    this.filePath = path;
+    this.fileName = path.replace(/^.*\//, "");
+
+    const data = {
+      entities: this.entities.map((e) => ({
+        ...e.pos,
+        type: e.constructor.name,
+        settings: e._additionalSettings ?? {},
+      })),
+      layer: this.layers.map((l) => l.getSaveData()),
+    };
+
+    let dataString = JSON.stringify(data);
+    if (config.general.prettyPrint) dataString = formatAsJSON(dataString);
+    const levelName = hyphenToCamelCase(this.fileName.substring(0, this.fileName.lastIndexOf(".")));
+    dataString = `export const ${levelName} = /*JSON-BEGIN*/ ${dataString}; /*JSON-END*/`;
+
+    this.httpClient.api
+      .save(path, dataString)
+      .then((res) => {
+        if (res.error) {
+          console.error(res.msg);
+          return;
+        }
+        this.setModified(false);
+        localStorage.setItem(config.storageKeys.lastLevel, path);
+      })
+      .catch((err) => console.error(err));
+  }
+
+  getEntitiesSaveData() {
+    const entitiesToSave = [];
+    for (let i = 0; i < this.entities.length; i++) {
+      const entity = this.entities[i];
+      const type = entity.constructor.name;
+      const data = { type, ...entity.pos };
+      if (entity._additionalSettings) data.settings = entity._additionalSettings;
+      entitiesToSave.push(data);
+    }
+    return entitiesToSave;
   }
 
   draw() {}
