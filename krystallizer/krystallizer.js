@@ -35,7 +35,13 @@ export class Krystallizer {
     this.preloadImages();
 
     this.DOMElements = {
-      levelName: $el("#level-name"),
+      level: {
+        name: $el("#level-name"),
+        new: $el("#level-new"),
+        load: $el("#level-load"),
+        save: $el("#level-save"),
+        saveAs: $el("#level-save-as"),
+      },
       layers: $el("#layers-list"),
       layerActions: {
         new: $el("#layer-new"),
@@ -69,7 +75,7 @@ export class Krystallizer {
   }
 
   bindEvents() {
-    const { layers, layerActions, entitiesLayer, layerSettings } = this.DOMElements;
+    const { layers, level, layerActions, entitiesLayer, layerSettings } = this.DOMElements;
 
     // eslint-disable-next-line no-undef
     $(layers).sortable({
@@ -77,10 +83,18 @@ export class Krystallizer {
       update: () => this.reorderLayers(),
     });
 
-    const actions = layerActions;
-    actions.new.addEventListener("click", () => this.addLayer());
-    actions.apply.addEventListener("click", () => this.saveLayerSettings());
-    actions.delete.addEventListener("click", () => {
+    level.save.addEventListener("click", () => {
+      if (this.fileName === config.general.newFileName) {
+        this.modals.saveAs.open();
+        return;
+      }
+      this.saveLevel(this.filePath + this.fileName);
+    });
+    level.new.addEventListener("click", () => this.newLevel());
+
+    layerActions.new.addEventListener("click", () => this.addLayer());
+    layerActions.apply.addEventListener("click", () => this.saveLayerSettings());
+    layerActions.delete.addEventListener("click", () => {
       if (!config.general.confirmDeleteLayer) this.removeLayer();
     });
 
@@ -123,7 +137,7 @@ export class Krystallizer {
       size: "sm",
       title: "Save As",
       body: "<input name='new-file-name' id='new-file-name'/>",
-      triggeredBy: ["#level-save-as"],
+      triggeredBy: [this.DOMElements.level.saveAs],
       onOpen: () => {
         $el("#new-file-name").value = this.fileName ?? config.general.newFileName;
       },
@@ -143,12 +157,15 @@ export class Krystallizer {
     const levelSelect = new SelectLevelModal(
       {
         id: "modal-load-level",
-        triggeredBy: ["#level-load"],
+        triggeredBy: [this.DOMElements.level.load],
         onSelect: (lvl) => lvl && this.loadLevel(lvl),
         onLevelsLoaded: (levels) => {
+          if (!config.general.loadLastLevel) return;
+
           let lastLevelPath = localStorage.getItem(config.storageKeys.lastLevel);
+          if (!lastLevelPath) return;
           if (lastLevelPath.startsWith("..")) lastLevelPath = lastLevelPath.slice(2);
-          if (!lastLevelPath || !config.general.loadLastLevel) return;
+
           const level = levels.find((l) => l.path === lastLevelPath);
           if (!level) return;
           this.loadLevel(level);
@@ -163,13 +180,15 @@ export class Krystallizer {
     };
   }
 
+  newLevel() {}
+
   /**
    * @param {{ path:string, data: {entities: any[], layer: any[]} }}
    */
   loadLevel({ path, data } = {}) {
     if (!data || !path) return;
     const split = path.lastIndexOf("/");
-    this.filePath = path.substring(0, split);
+    this.filePath = path.substring(0, split + 1);
     this.fileName = path.substring(split + 1);
     localStorage.setItem(config.storageKeys.lastLevel, path);
 
@@ -256,8 +275,9 @@ export class Krystallizer {
   setModified(/** @type {boolean} */ isModified) {
     this.modified = isModified;
     document.title = `${this.fileName}${isModified ? "*" : ""} | Krystallizer`;
-    this.DOMElements.levelName.textContent = this.fileName;
-    this.DOMElements.levelName.dataset.unsaved = isModified;
+    const levelName = this.DOMElements.level.name;
+    levelName.textContent = this.fileName;
+    levelName.dataset.unsaved = isModified;
   }
 
   // #region Layers
