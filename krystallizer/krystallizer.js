@@ -1,4 +1,5 @@
 import { GameLoop } from "../krystal-games-engine/modules/core/loop.js";
+import { Register } from "../krystal-games-engine/modules/core/register.js";
 import { $el } from "../krystal-games-engine/modules/lib/utils/dom.js";
 import {
   formatAsJSON,
@@ -200,6 +201,17 @@ export class Krystallizer {
   }
 
   draw() {}
+
+  spawnEntity(className, x, y, settings) {
+    const entityClass = Register.getEntityByType(className);
+    if (!entityClass) return null;
+    const newEntity = new entityClass({ x, y, game: this, settings });
+    newEntity._additionalSettings = {};
+    for (let s in settings) newEntity._additionalSettings[s] = settings[s];
+    this.entities.push(newEntity);
+    if (settings.name) this.namedEntities[settings.name] = newEntity;
+    return newEntity;
+  }
 
   clearLevel() {
     this.layers.forEach((l) => l.destroy());
