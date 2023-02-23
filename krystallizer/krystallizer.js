@@ -115,16 +115,21 @@ export class Krystallizer {
   initModals() {
     const saveAs = new ConfirmModal({
       id: "modal-save-as",
+      size: "sm",
       title: "Save As",
       body: "<input name='new-file-name' id='new-file-name'/>",
       triggeredBy: ["#level-save-as"],
-      onAfterConstruct: () => console.log("built"),
-      onOpen: () => console.log("opened"),
-      onClose: () => {
-        console.log("closed");
-        setTimeout(() => saveAs.destroy(), 1);
+      onOpen: () => {
+        $el("#new-file-name").value = this.DOMElements.levelName.innerText;
       },
-      onDestroy: () => console.log("destroyed"),
+      onClose: () => {
+        let dir = config.directories.levels;
+        if (dir[dir.length - 1] !== "/") dir += "/";
+        let file = $el("#new-file-name").value;
+        if (!file.endsWith(".js")) file += ".js";
+        const savePath = `${dir}${file}`;
+        console.log(savePath);
+      },
     });
     const confirmDelete = new ConfirmModal({
       id: "modal-delete-layer",

@@ -122,6 +122,7 @@ export class ConfirmModal extends Modal {
    * @extends Modal
    * @param {Object} settings
    * @param {string} settings.id
+   * @param {["sm"|"md"|"lg"|"fullscreen"]} settings.size
    * @param {[string]} settings.title
    * @param {[string]} settings.body
    * @param {[string[]]} settings.triggeredBy
@@ -145,14 +146,14 @@ export class ConfirmModal extends Modal {
     this.events.cancel = Modal.bind(onCancel);
   }
 
-  construct({ id, title, body, okText = "Confirm", cancelText = "Cancel" }) {
+  construct({ id, size, title, body, okText = "Confirm", cancelText = "Cancel" }) {
     const footer = `
       <div class="panel__actions">
         <button class="btn btn-sm modal-confirm">${okText}</button>
         <button class="btn btn-sm modal-cancel">${cancelText}</button>
       </div>
     `;
-    super.construct({ id, title, body, footer });
+    super.construct({ id, size, title, body, footer });
   }
 
   bindEvents({ triggeredBy }) {

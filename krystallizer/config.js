@@ -13,6 +13,7 @@ export const config = {
   },
   directories: {
     images: "../assets",
+    /** Directory to use for loading and saving files. */
     levels: "../levels",
   },
   general: {
