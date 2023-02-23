@@ -141,10 +141,11 @@ export class Krystallizer {
       body: "<input name='new-file-name' id='new-file-name'/>",
       triggeredBy: [this.DOMElements.level.saveAs],
       onOpen: () => {
-        // TODO - select all text in input on open that isn't '.js'.
-        $el("#new-file-name").value = this.fileName ?? config.general.newFileName;
+        const newFileEl = $el("#new-file-name");
+        const length = newFileEl.value.length;
+        newFileEl.setSelectionRange(newFileEl.selectionStart, length);
       },
-      onClose: () => {
+      onOk: () => {
         let dir = config.directories.levels;
         if (dir[dir.length - 1] !== "/") dir += "/";
         this.saveLevel(`${dir}${$el("#new-file-name").value}`);
@@ -264,6 +265,8 @@ export class Krystallizer {
 
     this.setActiveLayer("entities");
     this.reorderLayers();
+    this.setModified(false);
+
     // eslint-disable-next-line no-undef
     $(this.DOMElements.layers).sortable("refresh");
     this.draw();
