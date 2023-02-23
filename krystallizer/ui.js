@@ -1,6 +1,5 @@
 import { BackgroundMap } from "../krystal-games-engine/modules/core/map.js";
 import { Assert } from "../krystal-games-engine/modules/lib/sanity/assert.js";
-import { uniqueId } from "../krystal-games-engine/modules/lib/utils/string.js";
 import { config } from "./config.js";
 
 export class Modal {
@@ -12,6 +11,7 @@ export class Modal {
    * @param {[string]} settings.body
    * @param {[string]} settings.footer
    * @param {[string[]]} settings.triggeredBy
+   * @param {[(modal: Modal) => void]} settings.onBeforeConstruct
    * @param {[(modal: HTMLDivElement) => void]} settings.onAfterConstruct
    * @param {[(modal: HTMLDivElement) => void]} settings.onOpen
    * @param {[(modal: HTMLDivElement) => void]} settings.onClose
@@ -29,8 +29,9 @@ export class Modal {
   /** Returns 'fn' if it is a function, else a 'noop' function. */
   static bind = (fn) => (Assert.isType(fn, "function") ? fn : this.#noop);
 
-  bindListeners({ onAfterConstruct, onOpen, onClose, onDestroy }) {
+  bindListeners({ onBeforeConstruct, onAfterConstruct, onOpen, onClose, onDestroy }) {
     this.events = {
+      beforeConstruct: Modal.bind(onBeforeConstruct),
       afterConstruct: Modal.bind(onAfterConstruct),
       open: Modal.bind(onOpen),
       close: Modal.bind(onClose),
@@ -39,6 +40,7 @@ export class Modal {
   }
 
   construct({ id, title, body, footer, size }) {
+    this.events.beforeConstruct(this);
     title = title
       ? `
       <div class="modal-header">
@@ -123,10 +125,11 @@ export class ConfirmModal extends Modal {
    * @param {[string]} settings.title
    * @param {[string]} settings.body
    * @param {[string[]]} settings.triggeredBy
-   * @param {[() => void]} settings.okText
-   * @param {[string]} settings.onOk
+   * @param {[string]} settings.okText
+   * @param {[(e: ClickEvent) => void]} settings.onOk
    * @param {[() => void]} settings.onCancel
    * @param {[string]} settings.cancelText
+   * @param {[(modal: ConfirmModal) => void]} settings.onBeforeConstruct
    * @param {[(modal: HTMLDivElement) => void]} settings.onAfterConstruct
    * @param {[(modal: HTMLDivElement) => void]} settings.onOpen
    * @param {[(modal: HTMLDivElement) => void]} settings.onClose
@@ -134,6 +137,12 @@ export class ConfirmModal extends Modal {
    */
   constructor(settings = {}) {
     super(settings);
+  }
+
+  bindListeners({ onOk, onCancel, ...rest }) {
+    super.bindListeners(rest);
+    this.events.ok = Modal.bind(onOk);
+    this.events.cancel = Modal.bind(onCancel);
   }
 
   construct({ id, title, body, okText = "Confirm", cancelText = "Cancel" }) {
@@ -146,28 +155,24 @@ export class ConfirmModal extends Modal {
     super.construct({ id, title, body, footer });
   }
 
-  bindEvents({ triggeredBy, onOk, onCancel }) {
+  bindEvents({ triggeredBy }) {
     super.bindEvents({ triggeredBy });
-
-    const noop = () => null;
-    onOk ??= noop;
-    onCancel ??= noop;
 
     const closeBtns = this.modal.querySelectorAll(".modal-close");
     for (let i = 0; i < closeBtns.length; i++) {
       const btn = closeBtns[i];
-      btn.addEventListener("click", (e) => onCancel(e));
+      btn.addEventListener("click", (e) => this.events.cancel(e));
     }
 
     const cancelBtn = this.modal.querySelector(".modal-cancel");
     const confirmBtn = this.modal.querySelector(".modal-confirm");
 
     cancelBtn.addEventListener("click", (e) => {
-      onCancel(e);
+      this.events.cancel(e);
       this.close();
     });
     confirmBtn.addEventListener("click", (e) => {
-      onOk(e);
+      this.events.ok(e);
       this.close();
     });
   }
@@ -179,10 +184,12 @@ export class SelectLevelModal extends Modal {
    * @param {string} settings.id
    * @param {[string[]]} settings.triggeredBy
    * @param {[(lvl: LevelData) => void]} settings.onSelect
+   * @param {[(modal: SelectLevelModal) => void]} settings.onBeforeConstruct
    * @param {[(modal: HTMLDivElement) => void]} settings.onAfterConstruct
    * @param {[(modal: HTMLDivElement) => void]} settings.onOpen
    * @param {[(modal: HTMLDivElement) => void]} settings.onClose
    * @param {[(modal: HTMLDivElement) => void]} settings.onDestroy
+   * @param {[(lvls: LevelData[]) => void]} settings.onLevelsLoaded
    */
   constructor(settings = {}, httpClient) {
     super(settings);
@@ -191,12 +198,12 @@ export class SelectLevelModal extends Modal {
       .browse(config.directories.levels, "scripts")
       .then((paths) => this.loadLevels(paths));
     this.selected = null;
-    this.onLevelsLoaded(settings.onLevelsLoaded);
   }
 
-  bindListeners({ onSelect, ...rest }) {
+  bindListeners({ onSelect, onLevelsLoaded, ...rest }) {
     super.bindListeners(rest);
     this.events.select = Modal.bind(onSelect);
+    this.events.levelsLoaded = Modal.bind(onLevelsLoaded);
   }
 
   construct({ id }) {
@@ -223,8 +230,7 @@ export class SelectLevelModal extends Modal {
         levels.push({ path, data: this.parseData(data) });
         if (++loaded === totalToLoad) {
           this.updateLevels(levels);
-          for (let i = 0; i < this.levelsLoadedCallbacks.length; i++)
-            this.levelsLoadedCallbacks[i](levels);
+          this.events.levelsLoaded(levels);
         }
       });
     }
@@ -301,7 +307,6 @@ export class SelectLevelModal extends Modal {
     const ctx = canvas.getContext("2d");
     canvas.width = w;
     canvas.height = h;
-    canvas.id = uniqueId("test-");
 
     let currentLayer = 0;
     const bgLayers = data.layer.filter((l) => l.visible && !l.repeat && l.name !== "collision");
