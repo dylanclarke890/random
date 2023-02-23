@@ -120,7 +120,8 @@ export class Krystallizer {
       body: "<input name='new-file-name' id='new-file-name'/>",
       triggeredBy: ["#level-save-as"],
       onOpen: () => {
-        $el("#new-file-name").value = this.DOMElements.levelName.innerText;
+        const fallbackName = config.general.newFileName;
+        $el("#new-file-name").value = this.DOMElements.levelName.innerText ?? fallbackName;
       },
       onClose: () => {
         let dir = config.directories.levels;
