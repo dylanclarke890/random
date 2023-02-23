@@ -142,8 +142,9 @@ export class Krystallizer {
       triggeredBy: [this.DOMElements.level.saveAs],
       onOpen: () => {
         const newFileEl = $el("#new-file-name");
-        const length = newFileEl.value.length;
-        newFileEl.setSelectionRange(newFileEl.selectionStart, length);
+        newFileEl.value = this.fileName;
+        newFileEl.focus();
+        newFileEl.setSelectionRange(0, newFileEl.value.lastIndexOf(".js"));
       },
       onOk: () => {
         let dir = config.directories.levels;
