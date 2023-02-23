@@ -70,6 +70,7 @@ export class Krystallizer {
         linkWithCollision: $el("#link-with-collision"),
       },
     };
+    this.setModified(false);
     this.bindEvents();
     this.loop.start();
   }
