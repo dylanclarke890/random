@@ -246,9 +246,8 @@ export class Krystallizer {
     localStorage.setItem(config.storageKeys.lastLevel, path);
 
     for (let i = 0; i < data.entities.length; i++) {
-      const entity = data.entities[i];
-      // TODO
-      this.spawnEntity(entity.type, entity.x, entity.y, entity.settings);
+      const { type, x, y, settings } = data.entities[i];
+      this.spawnEntity(type, x, y, settings);
     }
 
     for (let i = 0; i < data.layer.length; i++) {
