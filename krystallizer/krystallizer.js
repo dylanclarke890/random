@@ -146,10 +146,10 @@ export class Krystallizer {
         triggeredBy: ["#level-load"],
         onSelect: (lvl) => lvl && this.loadLevel(lvl),
         onLevelsLoaded: (levels) => {
-          const lastLevelPath = localStorage.getItem(config.storageKeys.lastLevel);
+          let lastLevelPath = localStorage.getItem(config.storageKeys.lastLevel);
+          if (lastLevelPath.startsWith("..")) lastLevelPath = lastLevelPath.slice(2);
           if (!lastLevelPath || !config.general.loadLastLevel) return;
           const level = levels.find((l) => l.path === lastLevelPath);
-          console.log(levels);
           if (!level) return;
           this.loadLevel(level);
         },
@@ -171,6 +171,7 @@ export class Krystallizer {
     const split = path.lastIndexOf("/");
     this.filePath = path.substring(0, split);
     this.fileName = path.substring(split + 1);
+    localStorage.setItem(config.storageKeys.lastLevel, path);
 
     this.layers = [];
     this.entities = [];
@@ -212,7 +213,6 @@ export class Krystallizer {
     this.reorderLayers();
     // eslint-disable-next-line no-undef
     $(this.DOMElements.layers).sortable("refresh");
-
     this.setModified(false);
     this.undo.clear();
     this.draw();
