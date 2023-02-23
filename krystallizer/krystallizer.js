@@ -156,7 +156,7 @@ export class Krystallizer {
     this.modals = {
       levelSelect,
       saveAs,
-      confirmDelete: config.general.confirmDeleteLayer ? confirmDelete : undefined,
+      confirmDelete: config.general.confirmDeleteLayer && confirmDelete,
     };
   }
 
