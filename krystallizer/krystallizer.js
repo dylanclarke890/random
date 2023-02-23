@@ -19,6 +19,7 @@ export class Krystallizer {
     this.game = this.canvas; // for game loop
     this.loop = new GameLoop({ runner: this });
 
+    /** @type {EditMap[]} */
     this.layers = [];
     /** @type {"entities" | EditMap} */
     this.activeLayer;
@@ -249,23 +250,11 @@ export class Krystallizer {
       .catch((err) => console.error(err));
   }
 
-  getEntitiesSaveData() {
-    const entitiesToSave = [];
-    for (let i = 0; i < this.entities.length; i++) {
-      const entity = this.entities[i];
-      const type = entity.constructor.name;
-      const data = { type, ...entity.pos };
-      if (entity._additionalSettings) data.settings = entity._additionalSettings;
-      entitiesToSave.push(data);
-    }
-    return entitiesToSave;
-  }
-
   draw() {}
 
   setModified(/** @type {boolean} */ isModified) {
     this.modified = isModified;
-    document.title = `${this.fileName}${this.modified ? "*" : ""} | Krystallizer`;
+    document.title = `${this.fileName}${isModified ? "*" : ""} | Krystallizer`;
     this.DOMElements.levelName.textContent = this.fileName;
     this.DOMElements.levelName.dataset.unsaved = isModified;
   }
@@ -371,10 +360,10 @@ export class Krystallizer {
 
     name.value = this.activeLayer.name;
     tileset.value = this.activeLayer.tilesetName;
-    tilesize.value = this.activeLayer.tilesize;
-    width.value = this.activeLayer.width;
-    height.value = this.activeLayer.height;
-    distance.value = this.activeLayer.distance;
+    tilesize.value = this.activeLayer.tilesize ?? 32;
+    width.value = this.activeLayer.width ?? 10;
+    height.value = this.activeLayer.height ?? 10;
+    distance.value = this.activeLayer.distance ?? 1;
     preRender.checked = this.activeLayer.preRender;
     repeat.checked = this.activeLayer.repeat;
     linkWithCollision.checked = this.activeLayer.linkWithCollision;

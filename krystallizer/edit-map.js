@@ -76,21 +76,25 @@ export class EditMap extends BackgroundMap {
   }
 
   getSaveData() {
-    const baseData = {
+    const shared = {
       name: this.name,
       width: this.width,
       height: this.height,
-      linkWithCollision: this.linkWithCollision,
+      tilesize: this.tilesize,
+      data: this.data,
       visible: this.visible,
-      tilesetName: this.tilesetName,
-      repeat: this.repeat,
+    };
+
+    if (this.name === "collision") return shared;
+    return {
+      ...shared,
+      tileset: this.tiles.path,
+      linkWithCollision: this.linkWithCollision,
       preRender: this.preRender,
       distance: this.distance,
-      tilesize: this.tilesize,
+      repeat: this.repeat,
       foreground: this.foreground,
-      data: this.data,
     };
-    return this.name === "collision" ? baseData : { ...baseData, tileset: this.tiles.path };
   }
 
   /**
