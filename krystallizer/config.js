@@ -18,6 +18,7 @@ export const config = {
   },
   general: {
     confirmDeleteLayer: true,
+    confirmDiscardChanges: true,
     loadLastLevel: true,
     newFileName: "untitled.js",
     prettyPrint: true,

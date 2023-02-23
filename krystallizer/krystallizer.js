@@ -30,6 +30,7 @@ export class Krystallizer {
     const { undoDepth, newFileName } = config.general;
     this.undo = new Undo({ editor: this, levels: undoDepth });
     this.fileName = newFileName;
+    this.discardChangesConfirmed = false;
 
     this.httpClient = new KrystallizerHttpClient();
     this.preloadImages();
@@ -84,6 +85,7 @@ export class Krystallizer {
       update: () => this.reorderLayers(),
     });
 
+    level.new.addEventListener("click", () => this.newLevel());
     level.save.addEventListener("click", () => {
       if (this.fileName === config.general.newFileName) {
         this.modals.saveAs.open();
@@ -91,7 +93,6 @@ export class Krystallizer {
       }
       this.saveLevel(this.filePath + this.fileName);
     });
-    level.new.addEventListener("click", () => this.newLevel());
 
     layerActions.new.addEventListener("click", () => this.addLayer());
     layerActions.apply.addEventListener("click", () => this.saveLayerSettings());
@@ -140,6 +141,7 @@ export class Krystallizer {
       body: "<input name='new-file-name' id='new-file-name'/>",
       triggeredBy: [this.DOMElements.level.saveAs],
       onOpen: () => {
+        // TODO - select all text in input on open that isn't '.js'.
         $el("#new-file-name").value = this.fileName ?? config.general.newFileName;
       },
       onClose: () => {
@@ -154,6 +156,19 @@ export class Krystallizer {
       body: "<p class='text-center'>Are you sure you wish to delete this layer?</p>",
       triggeredBy: [this.DOMElements.layerActions.delete],
       onOk: () => this.removeLayer(),
+    });
+    const confirmDiscard = new ConfirmModal({
+      id: "modal-discard-changes",
+      title: "Discard Changes?",
+      body: "<p class='text-center'>You have unsaved changes, which will be lost if you continue. Start a new file?</p>",
+      triggeredBy: [this.DOMElements.level.new],
+      onOpen: () => {
+        if (!this.modified) confirmDiscard.close();
+      },
+      onOk: () => {
+        this.discardChangesConfirmed = true;
+        this.newLevel();
+      },
     });
     const levelSelect = new SelectLevelModal(
       {
@@ -175,28 +190,46 @@ export class Krystallizer {
       this.httpClient
     );
     this.modals = {
-      levelSelect,
       saveAs,
+      levelSelect,
+      confirmDiscard: config.general.confirmDiscardChanges && confirmDiscard,
       confirmDelete: config.general.confirmDeleteLayer && confirmDelete,
     };
   }
 
-  newLevel() {}
+  draw() {}
+
+  clearLevel() {
+    this.layers.forEach((l) => l.destroy());
+    this.layers = [];
+    this.screen = { actual: { x: 0, y: 0 }, rounded: { x: 0, y: 0 } };
+    this.entities = [];
+    this.undo.clear();
+    localStorage.removeItem(config.storageKeys.lastLevel);
+    this.setActiveLayer("entities");
+  }
+
+  newLevel() {
+    if (this.modified && this.modals.confirmDiscard && !this.discardChangesConfirmed) return;
+    this.clearLevel();
+    this.fileName = config.general.newFileName;
+    this.filePath = config.directories.levels + this.fileName;
+    this.setModified(false);
+    this.discardChangesConfirmed = false;
+  }
 
   /**
    * @param {{ path:string, data: {entities: any[], layer: any[]} }}
    */
   loadLevel({ path, data } = {}) {
     if (!data || !path) return;
+    this.clearLevel();
+
     const split = path.lastIndexOf("/");
     this.filePath = path.substring(0, split + 1);
     this.fileName = path.substring(split + 1);
+    this.setModified(false);
     localStorage.setItem(config.storageKeys.lastLevel, path);
-
-    this.layers = [];
-    this.entities = [];
-    this.screen = { actual: { x: 0, y: 0 }, rounded: { x: 0, y: 0 } };
-    this.undo.clear();
 
     for (let i = 0; i < data.entities.length; i++) {
       const entity = data.entities[i];
@@ -233,8 +266,6 @@ export class Krystallizer {
     this.reorderLayers();
     // eslint-disable-next-line no-undef
     $(this.DOMElements.layers).sortable("refresh");
-    this.setModified(false);
-    this.undo.clear();
     this.draw();
   }
 
@@ -270,8 +301,6 @@ export class Krystallizer {
       })
       .catch((err) => console.error(err));
   }
-
-  draw() {}
 
   setModified(/** @type {boolean} */ isModified) {
     this.modified = isModified;
