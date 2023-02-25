@@ -1,5 +1,5 @@
 :root {
-  --panel-border-bottom: 1px solid #555;
+  --panel-border-style: 1px solid #555;
 }
 
 /* #region GENERAL */
@@ -112,13 +112,15 @@ header {
 }
 
 .panel {
+  border-top: var(--panel-border-style);
   user-select: none;
 }
 
 .panel__header {
-  border-bottom: var(--panel-border-bottom);
+  border-bottom: var(--panel-border-style);
   color: grey;
   font-size: 100%;
+  letter-spacing: 1.5px;
   padding: 0.5em;
   text-transform: uppercase;
 }
@@ -140,7 +142,7 @@ header {
   padding: 0.5em;
   text-align: center;
   align-items: center;
-  border-bottom: var(--panel-border-bottom);
+  border-bottom: var(--panel-border-style);
 }
 
 #layers-header .panel__header {
@@ -472,3 +474,14 @@ input:checked + .slider:before {
     transform: rotate(359deg);
   }
 }
+
+/*#region ENTITY PANEL */
+
+#entity-class-name {
+  font-size: 95%;
+  letter-spacing: normal;
+  text-transform: none;
+  border: none;
+}
+
+/*#region ENTITY PANEL */

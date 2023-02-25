@@ -142,10 +142,10 @@ export class Krystallizer {
       body: "<input name='new-file-name' id='new-file-name'/>",
       triggeredBy: [this.DOMElements.level.saveAs],
       onOpen: () => {
-        const newFileEl = $el("#new-file-name");
-        newFileEl.value = this.fileName;
-        newFileEl.focus();
-        newFileEl.setSelectionRange(0, newFileEl.value.lastIndexOf(".js"));
+        const fileNameInput = $el("#new-file-name");
+        fileNameInput.value = this.fileName;
+        fileNameInput.focus();
+        fileNameInput.setSelectionRange(0, fileNameInput.value.lastIndexOf(".js"));
       },
       onOk: () => {
         let dir = config.directories.levels;
@@ -202,6 +202,8 @@ export class Krystallizer {
 
   draw() {}
 
+  //#region Entity
+
   spawnEntity(className, x, y, settings) {
     const entityClass = Register.getEntityByType(className);
     if (!entityClass) return null;
@@ -212,6 +214,10 @@ export class Krystallizer {
     if (settings.name) this.namedEntities[settings.name] = newEntity;
     return newEntity;
   }
+
+  //#endregion Entity
+
+  //#region Level
 
   clearLevel() {
     this.layers.forEach((l) => l.destroy());
@@ -317,6 +323,8 @@ export class Krystallizer {
       .catch((err) => console.error(err));
   }
 
+  //#endregion Level
+
   setModified(/** @type {boolean} */ isModified) {
     this.modified = isModified;
     document.title = `${this.fileName}${isModified ? "*" : ""} | Krystallizer`;
@@ -325,7 +333,7 @@ export class Krystallizer {
     levelName.dataset.unsaved = isModified;
   }
 
-  // #region Layers
+  //#region Layers
 
   setActiveLayer(/** @type {string} */ name) {
     this.activeLayer = name === "entities" ? name : this.getLayerByName(name);
@@ -485,5 +493,5 @@ export class Krystallizer {
     this.draw();
   }
 
-  // #endregion Layers
+  //#endregion Layers
 }
